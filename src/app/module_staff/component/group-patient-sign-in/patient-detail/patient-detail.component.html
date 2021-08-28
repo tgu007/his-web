@@ -1,0 +1,212 @@
+<form nz-form [formGroup]="patientDetailForm">
+  <fieldset>
+    <legend>基本信息：</legend>
+    <div nz-row>
+      <div nz-col nzSpan="8">
+        <button nz-button nzType="primary" nzSize="small"
+                (click)="readIcCard()" [nzLoading]="this.readingIcCard"
+                style="margin-top: 10px"
+        >医保读卡
+        </button>
+      </div>
+    </div>
+
+    <div nz-row>
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtName">姓名</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="txtName"
+                   placeholder="输入姓名"
+            />
+            <div *ngIf="formErrors['txtName']">{{ formErrors['txtName'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectGender">性别</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选择性别">
+            <nz-select
+              nzShowSearch
+              formControlName="selectGender"
+            >
+              <nz-option *ngFor="let gender of this.genderList" [nzValue]="gender.id"
+                         [nzLabel]="gender.name"></nz-option>
+            </nz-select>
+            <div *ngIf="formErrors['selectGender']">{{ formErrors['selectGender'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="dateBirthday">出生日期</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选择出生日期">
+            <nz-date-picker
+              formControlName="dateBirthday"
+              nzFormat="yyyy-MM-dd"
+              [nzDisabledDate]="false"
+              [nzDisabledTime]="true"
+              [nzShowTime]="false"
+              [nzShowToday]="false"
+            >
+            </nz-date-picker>
+            <div *ngIf="formErrors['dateBirthday']">{{ formErrors['dateBirthday'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectEthnic">民族</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选择民族">
+            <nz-select
+              nzShowSearch
+              formControlName="selectEthnic"
+            >
+              <nz-option *ngFor="let ethnic of this.ethnicList" [nzValue]="ethnic.id"
+                         [nzLabel]="ethnic.name"></nz-option>
+            </nz-select>
+            <div *ngIf="formErrors['selectEthnic']">{{ formErrors['selectEthnic'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectMarriageStatus">婚姻状况</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选择婚姻状况">
+            <nz-select
+              nzShowSearch
+              formControlName="selectMarriageStatus"
+            >
+              <nz-option *ngFor="let marriageStatus of this.marriageStatusList" [nzValue]="marriageStatus.id"
+                         [nzLabel]="marriageStatus.name"></nz-option>
+            </nz-select>
+            <div *ngIf="formErrors['selectMarriageStatus']">{{ formErrors['selectMarriageStatus'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectOccupation">职业</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-select
+              nzShowSearch
+              formControlName="selectOccupation"
+            >
+              <nz-option *ngFor="let occupation of this.occupationList" [nzValue]="occupation.id"
+                         [nzLabel]="occupation.name"></nz-option>
+            </nz-select>
+            <div *ngIf="formErrors['selectOccupation']">{{ formErrors['selectOccupation'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectIdType">证件类型</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选择证件类型">
+            <nz-select
+              nzShowSearch
+              formControlName="selectIdType"
+            >
+              <nz-option *ngFor="let idType of this.idTypeList" [nzValue]="idType.id"
+                         [nzLabel]="idType.name"></nz-option>
+            </nz-select>
+            <div *ngIf="formErrors['selectIdType']">{{ formErrors['selectIdType'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtIdNumber">证件号码</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入证件号码">
+            <input nz-input formControlName="txtIdNumber"
+                   placeholder="输入证件号码"
+            />
+            <div *ngIf="formErrors['txtIdNumber']">{{ formErrors['txtIdNumber'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtDomicile">户籍所在地</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入户籍所在地">
+            <input nz-input formControlName="txtDomicile"
+                   placeholder="输入户籍所在地"
+            />
+            <div *ngIf="formErrors['txtDomicile']">{{ formErrors['txtDomicile'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtBirthPlace">出生地</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="txtBirthPlace"
+                   placeholder="出生地"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtNativePlace">籍贯</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="txtNativePlace"
+                   placeholder="籍贯"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row nzJustify="start">
+      <div nz-col nzSpan="16">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtAddressResidential">家庭住址</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzErrorTip="请输入家庭住址">
+            <input nz-input formControlName="txtAddressResidential"
+                   placeholder="输入家庭住址"
+            />
+            <div *ngIf="formErrors['txtAddressResidential']">{{ formErrors['txtAddressResidential'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row nzJustify="start">
+      <div nz-col nzSpan="16">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtWorkUnit">工作单位</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <input nz-input formControlName="txtWorkUnit"
+                   placeholder="工作单位"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+  </fieldset>
+  <fieldset>
+    <legend>联系人：</legend>
+
+    <button nz-button nzType="primary" (click)="this.patientContactTableComponent.addLineControl()"><i nz-icon
+                                                                                                       type="plus"
+                                                                                                       theme="outline"></i>添加联系人
+    </button>
+    <app-patient-detail-contact [patientDetailForm]="this.patientDetailForm"></app-patient-detail-contact>
+  </fieldset>
+</form>
+<!--<button nz-button nzType="primary" (click)="savePatient()">保存</button>-->

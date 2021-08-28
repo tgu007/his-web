@@ -1,0 +1,74 @@
+<form nz-form [formGroup]="feeDetailForm">
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtSignInNumber">住院号</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtSignInNumber"
+                 placeholder="住院号"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtPatientInfo">病人信息</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtPatientInfo"
+                 placeholder="病人信息"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectItem">付费项目</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24" nzErrorTip="请选择付费项目">
+          <nz-select
+            nzShowSearch
+            formControlName="selectItem"
+          >
+            <nz-option *ngFor="let item of this.itemList" [nzValue]="item.uuid"
+                       [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="numberQuantity">计费数量</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="请填写计费数量">
+          <nz-input-number
+            nz-input
+            formControlName="numberQuantity"
+            [nzStep]="1"
+            [nzMin]=1
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>计费日期</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd HH:mm:ss"
+            nzPlaceHolder="选择日期时间"
+            formControlName="dateFeeDate"
+            nzSize="small"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+
+</form>

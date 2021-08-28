@@ -1,0 +1,42 @@
+.outContainer {
+  width: 100%;
+  height: 100%;
+}
+
+
+/*div{*/
+/*  border:1px solid #00ff00;*/
+/*  //padding-top: 5px;*/
+/*}*/
+
+.container {
+  font-weight: bold !important;
+  text-align: center !important;
+  font-size: small !important;
+  border: black 1px solid;
+  /*width: 240mm;*/
+  width: 80%;
+  height: 160mm;
+  margin-left: 3%;
+  margin-top: 10px;
+  color: black;
+  font-family: Arial,"Microsoft YaHei";
+}
+
+.cell {
+  border: black 1px solid;
+  height: 14mm;
+}
+
+.singleLineCell {
+  border: black 1px solid;
+  height: 7mm;
+}
+
+.lastLineCell {
+  border: black 2px solid;
+  height: 20mm;
+}
+
+
+

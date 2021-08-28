@@ -1,0 +1,118 @@
+<nz-table #orderLineTable [nzData]="orderForm.get('orderLines').controls" nzSize="small"
+          nzShowPagination="false"
+>
+  <thead>
+  <tr>
+    <th [hidden]="true"></th>
+    <th>发票号</th>
+    <th>名称</th>
+    <th>规格</th>
+    <th>数量</th>
+    <th>单位</th>
+    <th>批号</th>
+    <ng-template [ngIf]="this.orderType == 'medicine'">
+      <th>制造商</th>
+      <th>批准文号</th>
+      <th>失效日期</th>
+    </ng-template>
+    <th>备注</th>
+    <th *ngIf="this.sessionService.getUserPermission().commonComponent.partialOrderPermission.allowEdit"></th>
+  </tr>
+  </thead>
+  <tbody *ngFor="let lineControl of orderForm.get('orderLines').controls; let i= index">
+  <td [hidden]="true">
+    {{lineControl.value.line ? lineControl.value.line.uuid : undefined}}
+  </td>
+  <tr [formGroup]="lineControl">
+    <td>
+      {{lineControl.value.line.masterOrderLine.invoiceNumber}}
+    </td>
+    <td>
+      {{this.orderType == 'item' ? lineControl.value.line.masterOrderLine.item.name : lineControl.value.line.masterOrderLine.medicine.name}}
+    </td>
+    <td>
+      {{ this.orderType == 'item' ? lineControl.value.line.masterOrderLine.item.warehouseModel : lineControl.value.line.masterOrderLine.medicine.warehouseModel}}
+    </td>
+    <td>
+      <ng-container
+        *ngIf="!(editCache[i].inEdit && this.order && (this.order.orderStatus == '已创建'|| this.order.uuid == undefined)); else quantityInput">
+        {{lineControl.value.numberQuantity}}
+        <nz-tag [nzColor]="'red'"
+                *ngIf="this.order && this.order.orderStatus != '已批准' && lineControl.value.line && lineControl.value.line.uuid && lineControl.value.line.exceedMasterLineQuantity"
+        >超量
+        </nz-tag>
+      </ng-container>
+      <ng-template #quantityInput>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberQuantity"
+            [nzStep]="1"
+            [nzMin]=0.001
+          ></nz-input-number>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container
+        *ngIf="!(editCache[i].inEdit && this.order && (this.order.orderStatus == '已创建'|| this.order.uuid == undefined)); else uomSelect">
+        {{lineControl.value.selectUom ? lineControl.value.selectUom.code : undefined}}
+
+      </ng-container>
+      <ng-template #uomSelect>
+        <nz-form-control>
+          <nz-select
+            nzShowSearch
+            nzServerSearch
+            formControlName="selectUom"
+            [nzShowArrow]="false"
+            [nzDropdownMatchSelectWidth]=false
+            style="width:50px;"
+          >
+            <nz-option *ngFor="let uom of this.editCache[i].rowSelectionList.uomList"
+                       [nzLabel]="uom.code"
+                       [nzValue]="uom"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      {{lineControl.value.line.masterOrderLine.batchNumber}}
+    </td>
+    <ng-template [ngIf]="this.orderType == 'medicine'">
+      <td>
+        {{lineControl.value.line.masterOrderLine.manufacturer ? lineControl.value.line.masterOrderLine.manufacturer.name : undefined}}
+      </td>
+      <td>
+        {{lineControl.value.line.masterOrderLine.batchText}}
+      </td>
+      <td>
+        {{formattedDate(lineControl.value.line.masterOrderLine.expireDate)}}
+      </td>
+    </ng-template>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else referenceTextInput">
+        {{lineControl.value.line.reference}}
+      </ng-container>
+      <ng-template #referenceTextInput>
+        <nz-form-control>
+          <input type="text" nz-input formControlName="txtReference"/>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td *ngIf="this.allowEdit()">
+      <ng-container *ngIf="!editCache[i].inEdit; else inEdit">
+        <button nz-button nzType="primary" (click)="editLineControl(i)"
+        ><i nz-icon nzType="edit"></i></button>
+      </ng-container>
+      <ng-template #inEdit>
+        <button nz-button nzType="primary" (click)="commitLineControl(i)"
+        ><i nz-icon nzType="save"></i></button>
+      </ng-template>
+      <button nz-button nzType="primary" (click)="removeLineControl(i)"
+              [disabled]="this.order.orderStatus  =='已批准'"
+      ><i nz-icon nzType="delete"></i></button>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

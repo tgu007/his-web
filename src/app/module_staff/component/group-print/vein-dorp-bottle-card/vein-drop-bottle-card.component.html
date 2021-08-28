@@ -1,0 +1,64 @@
+<!--<p class = "PageNext">vein-dorp-bottle-card works!</p>-->
+
+<!--<p class = "PageNext">test!</p>-->
+
+<div class="page" *ngFor="let page of this.pages; let pi=index">
+  <div nz-row class="row" *ngFor="let row of this.rows; let ri=index">
+    <div nz-col nzSpan="12" class="cardBorder" *ngFor="let col of this.columns; let ci=index">
+      <ng-template [ngIf]="this.data[pi.toString() + ri.toString() + ci.toString()]">
+        <nz-card [nzBordered]="false">
+          <div nz-row>
+                <span
+                  style="float: left"
+                >
+                   {{this.getUseMethod(this.data[pi.toString() + ri.toString() + ci.toString()])}}
+                </span>
+            <span
+              style="margin-left: 10px; float: left"
+            >
+                    {{this.printData.cardDate}}
+                </span>
+            <span
+              style="margin-left: 10px; float: left"
+            >
+                    {{this.data[pi.toString() + ri.toString() + ci.toString()].patientName}}
+                </span>
+            <span
+              style="margin-left: 10px; float: left"
+            >
+                     {{this.data[pi.toString() + ri.toString() + ci.toString()].bedInfo}}
+                </span>
+          </div>
+          <div nz-row>
+            <nz-table #tblPrescription
+                      [nzData]="this.data[pi.toString() + ri.toString() + ci.toString()].nursingCardRespDtoList"
+                      nzSize="small"
+                      [nzShowPagination]="false"
+                      nzBordered
+            >
+              <thead>
+              <tr>
+                <th>名称</th>
+                <th>剂量</th>
+                <th>滴速</th>
+                <th>备注</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let presciption of tblPrescription.data">
+                <td>{{presciption.entityName}}</td>
+                <td>{{presciption.serveInfo}}</td>
+                <td>{{presciption.dropSpeed}}</td>
+                <td>{{presciption.reference}}</td>
+              </tr>
+              </tbody>
+            </nz-table>
+
+          </div>
+        </nz-card>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+

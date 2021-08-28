@@ -1,0 +1,111 @@
+<div nz-row>
+
+  <nz-select [(ngModel)]="selectOrderStatus"
+             (ngModelChange)="this.loadOrderList()"
+             nzMode="multiple"
+             style="float: left;margin-right: 10px;">
+    <nz-option *ngFor="let status of this.statusList" [nzValue]="status"
+               [nzLabel]="status"></nz-option>
+  </nz-select>
+
+  <nz-form-label
+    nzFor="selectWarehouse"
+    [hidden]="this.warehouseList && this.warehouseList.length <=1"
+    style=" float: left;margin-left: 10px; "
+  >{{this.isReturnOrder ? "出库部门" : "入库部门"}}
+  </nz-form-label>
+  <nz-select nzShowSearch [(ngModel)]="this.selectWarehouse"
+             (ngModelChange)="this.loadOrderList()"
+             [hidden]="this.warehouseList && this.warehouseList.length <=1"
+             style="width:150px; float: left;margin-right: 10px;"
+  >
+    <nz-option *ngFor="let warehouse of this.warehouseList"
+               [nzLabel]="warehouse.department.name"
+               [nzValue]="warehouse.uuid"
+    ></nz-option>
+  </nz-select>
+
+
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   (ngModelChange)="this.loadOrderList()"
+                   style="width: 300px; float: left;
+  margin-right: 10px;"></nz-range-picker>
+
+  <input nz-input [(ngModel)]="searchNumber"
+         [placeholder]="this.isReturnOrder?'退购单号':'采购单号/申购单号'"
+         style=" float: left; margin-left: 10px; width:200px"/>
+  <button nz-button nzType="primary" (click)="this.loadOrderList()"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询
+  </button>
+
+  <button nz-button nzType="primary" (click)="addOrder()"
+          style=" float: left;margin-left: 10px;"
+          *ngIf="this.sessionService.getUserPermission().commonComponent.orderpermission.allowAdd"
+  >新增
+  </button>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="itemOrderList" nzSize="small" style="background-color:white"
+              [nzTotal]="totalDataCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=pageIndexChanged()
+    >
+      <thead>
+      <tr>
+        <th>{{this.isReturnOrder ? "退货单号" : "采购单号"}}</th>
+        <th *ngIf="!this.isReturnOrder">申购单号</th>
+        <th *ngIf="!this.isReturnOrder">申购计划</th>
+        <th>创建时间</th>
+        <th>{{this.isReturnOrder ? "出库部门" : "入库部门"}}</th>
+        <th>{{this.isReturnOrder ? "退货单位" : "供货单位"}}</th>
+        <th>备注</th>
+        <th>录入人</th>
+        <th *ngIf="!this.isReturnOrder">批准日期</th>
+        <th *ngIf="!this.isReturnOrder">批准人</th>
+        <th>状态</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{data.orderNumber}}</td>
+        <td *ngIf="!this.isReturnOrder">{{data.orderRequest?.orderRequestNumber}}</td>
+        <td *ngIf="!this.isReturnOrder">{{data.orderRequest?.name}}</td>
+        <td>{{data.orderDate}}</td>
+        <td>{{data.toWarehouse.department.name}}</td>
+        <td>{{data.supplier}}</td>
+        <td>{{data.reference}}</td>
+        <td>{{data.whoCreated}}</td>
+        <td *ngIf="!this.isReturnOrder">{{data.approvedDate}}</td>
+        <td *ngIf="!this.isReturnOrder">{{data.approvedBy}}</td>
+        <td>{{data.orderStatus}}</td>
+        <td>
+          <button nz-button nzSize="small" nzType="primary" (click)="editOrder(data)">查看</button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="orderDetailVisible"
+  [nzTitle]="this.isReturnOrder? '退货单':'采购单'"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveOrder()"
+  nzWidth="95%"
+  [nzOkText]="this.allowEdit()?'保存':null"
+  nzCancelText="关闭"
+  [nzOkLoading]=this.orderDetailComponent.saving
+  [nzStyle]="{ top: '20px' }"
+>
+  <app-order-detail (orderListRefreshRequiredEvent)="onRefreshRequired($event)"
+                    [isReturnOrder]=this.isReturnOrder
+                    [orderType]="this.orderType"
+  ></app-order-detail>
+</nz-modal>

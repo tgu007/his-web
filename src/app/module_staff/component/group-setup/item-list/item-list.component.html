@@ -1,0 +1,133 @@
+<div nz-row>
+  <nz-form-label
+    style=" float: left;margin-left: 10px;"
+  >库房类型
+  </nz-form-label>
+  <nz-select nzShowSearch [(ngModel)]="this.selectWarehouseType"
+             (ngModelChange)="this.reloadItemClicked()"
+             nzAllowClear
+             style="width:150px; float: left; "
+  >
+    <nz-option *ngFor="let warehouseType of this.warehouseTypeList"
+               [nzLabel]="warehouseType.name"
+               [nzValue]="warehouseType.id"
+    ></nz-option>
+  </nz-select>
+
+  <input nz-input [(ngModel)]="filterItemName"
+         placeholder="输入名字/拼音搜索"
+         style=" float: left; margin-left: 10px; width:300px"/>
+  <button nz-button nzType="primary" (click)="searchItem()"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询
+  </button>
+
+
+  <button
+    *ngIf="this.controlMode == 'full' || this.controlMode == 'setup'"
+    nz-button nzType="primary" (click)="initItemDetailModal()"
+    style=" float: left; margin-left: 10px;">添加物品
+  </button>
+
+  <button nz-button nzType="primary" nzShape="circle" (click)="reloadItemClicked()"
+          style=" float: left; margin-left: 10px;"><i nz-icon nzType="reload"></i>
+  </button>
+
+  <label nz-checkbox [(ngModel)]="chkIncludeDisable"
+         style=" float: left; margin-left: 10px;">包含作废物品</label>
+
+  <ng-template [ngIf]="this.controlMode == 'full' || this.controlMode == 'setup'">
+    <label nz-checkbox [(ngModel)]="this.filterOnNotUploaded"
+           (ngModelChange)="this.reloadItemClicked()"
+           style="float: left;margin-right: 10px;">未上传物品</label>
+
+    <label nz-checkbox [(ngModel)]="this.filterOnNotMatched"
+           (ngModelChange)="this.reloadItemList()"
+           style="float: left;margin-right: 10px;">未匹配物品</label>
+  </ng-template>
+
+
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="itemList" nzSize="small" style="background-color:white"
+              [nzTotal]="totalDataCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=reloadItemList()
+    >
+      <thead>
+      <tr>
+        <th>名称</th>
+        <th>库存类型</th>
+        <ng-template [ngIf]="this.controlMode == 'full' || this.controlMode == 'setup'">
+          <th>仓库规格</th>
+          <th>出库规格</th>
+          <th>产地</th>
+          <th>医保上传</th>
+          <th>医保匹配</th>
+        </ng-template>
+        <th>作废</th>
+        <ng-template [ngIf]="this.controlMode == 'full' || this.controlMode == 'feeSetting'">
+          <th>库房规格</th>
+          <th>产地</th>
+          <th>价格</th>
+          <th>单位</th>
+          <th>可自动计费</th>
+          <th>必选医嘱</th>
+        </ng-template>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data" nzShowRowSelection>
+        <td>{{data.name}}</td>
+        <td>{{data.warehouseType.name}}</td>
+        <ng-template [ngIf]="this.controlMode == 'full' || this.controlMode == 'setup'">
+          <td>{{data.warehouseModel}}</td>
+          <td>{{data.departmentModel}}</td>
+          <td>{{data.manufacturer?.name}}</td>
+          <td
+            nz-popover
+            [nzPopoverTitle]="data.ybUploadStatus == '上传出错'?'错误信息':null"
+            [nzPopoverContent]="data.ybUploadStatus == '上传出错'?data.ybUploadError:null"
+          >{{data.ybUploadStatus}}</td>
+          <td>{{data.ybMatchStatus}}</td>
+        </ng-template>
+        <td><label nz-checkbox [(ngModel)]="!data.enabled" nzDisabled></label></td>
+        <ng-template [ngIf]="this.controlMode == 'full' || this.controlMode == 'feeSetting'">
+          <td>{{data.departmentModel}}</td>
+          <td>{{data.manufacturer?.name}}</td>
+          <td>
+            {{data.listPrice}}
+          </td>
+          <td>{{data.minSizeUom.name}}</td>
+          <td><label nz-checkbox [(ngModel)]="data.allowAutoFee" (ngModelChange)="this.updateFeeSetting(data)"></label></td>
+          <td><label nz-checkbox [(ngModel)]="data.prescriptionRequired" (ngModelChange)="this.updateFeeSetting(data)"></label></td>
+        </ng-template>
+        <td>
+          <button
+            *ngIf="this.controlMode == 'full' || this.controlMode == 'setup'"
+            nz-button nzSize="small" nzType="primary" (click)="initItemDetailModal(data)">修改</button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="itemDetailModalVisible"
+  nzTitle=物品信息
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveItem()"
+  nzWidth="1000"
+  nzOkText="保存"
+  nzCancelText="关闭"
+  [nzOkLoading]="this.itemDetailComponent.isSaving"
+>
+  <!--  <app-medicine-detail (medicineSavedEvent)="onMedicineSaved($event)"></app-medicine-detail>-->
+  <app-item-detail (itemSavedEvent)="onItemSaved($event)"></app-item-detail>
+</nz-modal>

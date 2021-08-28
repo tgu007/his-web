@@ -1,0 +1,10 @@
+.-thead{
+  display:table-header-group;
+}
+
+table, td, th, thead {
+  border: 1px solid black;
+  color: black;
+  font-family: Arial, "Microsoft YaHei";
+}
+

@@ -1,0 +1,141 @@
+<ng-template #emptyResult></ng-template>
+<nz-table #basicTable [nzData]="drgRecordForm.get('operationList').controls" nzSize="small"
+          nzBordered
+          [nzShowPagination]="false"
+          [nzNoResult]=emptyResult>
+  <thead>
+  <tr>
+    <th style="width: 4%" rowspan="2">是否<br>主要</th>
+    <th style="width: 4%" rowspan="2">是否<br>医源<br>性</th>
+    <th style="width: 10%" rowspan="2">手术及<br>操作编码</th>
+    <th style="width: 10%" colspan="2">手术及操作</th>
+    <th style="width: 6%" rowspan="2">手术<br>级别</th>
+    <th style="width: 23%" rowspan="2">手术及操作名称</th>
+    <th style="width: 24%" colspan="3">手术及操作医师</th>
+    <th style="width: 4%" rowspan="2">切口<br>类别</th>
+    <th style="width: 4%" rowspan="2">切口<br>愈合<br>等级</th>
+    <th style="width: 5%" rowspan="2">麻醉<br>方式</th>
+    <th style="width: 4%" rowspan="2">麻醉<br>医师</th>
+    <th style="width: 2%"></th>
+  </tr>
+
+  <tr>
+    <th>开始时间</th>
+    <th>结束时间</th>
+    <th>术者</th>
+    <th>I助</th>
+    <th>II助</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let lineControl of drgRecordForm.get('operationList').controls; let i=index" [formGroup]="lineControl">
+    <td>
+      <nz-form-control>
+        <label nz-checkbox
+               formControlName="chkMain"
+        ></label>
+      </nz-form-control>
+    </td>
+    <td>
+      <nz-form-control>
+        <label nz-checkbox
+               formControlName="chkYYX"
+        ></label>
+      </nz-form-control>
+    </td>
+    <td>
+      <nz-form-control>
+        <input
+          nz-input
+          formControlName="txtICD9Code"
+          style="width: 100%"
+        />
+      </nz-form-control>
+    </td>
+    <td>
+      <nz-form-control>
+        <nz-date-picker
+          nzShowTime
+          nzFormat="MM-dd HH:mm"
+          nzPlaceHolder="选择日期时间"
+          formControlName="operationStartDate"
+          nzSize="small"
+        ></nz-date-picker>
+      </nz-form-control>
+    </td>
+    <td>
+      <nz-form-control>
+        <nz-date-picker
+          nzShowTime
+          nzFormat="MM-dd HH:mm"
+          nzPlaceHolder="选择日期时间"
+          formControlName="operationEndDate"
+          nzSize="small"
+        ></nz-date-picker>
+      </nz-form-control>
+    </td>
+    <td>
+      <nz-form-control>
+        <nz-select
+          formControlName="selectOperationLevel"
+        >
+          <ng-template [ngIf]="this.operationLevelList">
+            <nz-option *ngFor="let operationLevel of this.operationLevelList"
+                       [nzValue]="operationLevel.uuid"
+                       [nzLabel]="operationLevel.code"></nz-option>
+          </ng-template>
+        </nz-select>
+      </nz-form-control>
+    </td>
+    <td>
+      <app-common-dynamic-select
+        (onSelectedItemChangedEvent)="this.selectionChanged(lineControl)"
+        (onSearchEvent)="searchIcd9($event, i)"
+        formControlName="selectICD9"
+        [dataList]="this.editCache[i].rowSelectionList.dataList"
+        [totalDataCount]="this.editCache[i].rowSelectionList.dataCount"
+        [dataColumns]="['编码','名称']"
+        [pageCount]="this.editCache[i].rowSelectionList.pageCount"
+        [selectionWidth]="'100%'"
+        placeHolder=""
+      >
+      </app-common-dynamic-select>
+    </td>
+    <td>
+      <nz-form-control>
+        <nz-select
+          formControlName="selectOperator"
+        >
+          <ng-template [ngIf]="this.operatorList">
+            <nz-option *ngFor="let operator of this.operatorList"
+                       [nzValue]="operator.uuid"
+                       [nzLabel]="operator.name"></nz-option>
+          </ng-template>
+        </nz-select>
+      </nz-form-control>
+    </td>
+    <td>
+
+    </td>
+    <td>
+
+    </td>
+    <td>
+
+    </td>
+    <td>
+
+    </td>
+    <td>
+
+    </td>
+    <td>
+
+    </td>
+    <td>
+      <button nz-button nzType="primary" (click)="removeLineControl(i)"><i nz-icon nzType="delete"></i></button>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>
+

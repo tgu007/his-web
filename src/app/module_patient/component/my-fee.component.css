@@ -1,0 +1,11 @@
+tabbar {
+  height: 86% !important;
+}
+
+/*TabBarItem {*/
+/*  font-size: 18px !important;*/
+/*}*/
+
+am-tab-bar-tab-title {
+  font-size: 18px !important;
+}

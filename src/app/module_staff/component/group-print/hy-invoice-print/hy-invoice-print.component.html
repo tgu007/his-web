@@ -1,0 +1,223 @@
+<div class="page">
+  <div id="hospitalName" style="width: 70mm; height: 5mm; margin-top: 18mm; margin-left: 16mm">
+    <span>衡阳新安康复医院</span>
+  </div>
+  <div id="selfPayInfo" style="width: 35mm; height: 5mm; margin-top: 0mm;margin-left: 16mm">
+    <span>个人支付{{this.printData.feeTotalSelf}}元</span>
+  </div>
+
+  <div nz-row style="height:5mm;margin-top: 2mm; margin-left: 16mm;font-size: x-small;" >
+    <div id="name" style="width: 17mm; height: 5mm; margin-top: 0mm; margin-left: 0mm;float: left">
+      <span>{{this.printData.patientName}}</span>
+    </div>
+    <div id="gender" style="width: 12mm; height: 5mm; margin-top: 0mm; margin-left:  9mm; float: left">
+      <span>{{this.printData.gender}}</span>
+    </div>
+    <div id="department" style="width: 17mm; height: 5mm; margin-top: 0mm; margin-left: 80mm; float: left">
+      <span>{{this.printData.departmentName}}</span>
+    </div>
+    <div id="signInNumber" style="width: 28mm; height: 5mm; margin-top: 0mm; margin-left: 15mm; float: left">
+      <span> {{this.printData.signInNumber}}</span>
+    </div>
+  </div>
+
+  <div nz-row style="height:5mm;margin-top: 0mm; margin-left: 10mm;font-size: x-small;" >
+    <div id="signInYear" style="width: 11mm; height: 5mm; margin-top: 0mm; margin-left: 0mm;float: left">
+      <span>{{this.printData.signInYear}}</span>
+    </div>
+    <div id="signInMonth" style="width: 8mm; height: 5mm; margin-top: 0mm; margin-left:  4mm; float: left">
+      <span>{{this.printData.signInMonth}}</span>
+    </div>
+    <div id="signInDay" style="width: 8mm; height: 5mm; margin-top: 0mm; margin-left: 4mm; float: left">
+      <span>{{this.printData.signInDay}}</span>
+    </div>
+    <div id="signOutYear" style="width: 11mm; height: 5mm; margin-top: 0mm; margin-left: 23mm; float: left">
+      <span> {{this.printData.signOutYear}}</span>
+    </div>
+    <div id="signOutMonth" style="width: 8mm; height: 5mm; margin-top: 0mm; margin-left: 4mm; float: left">
+      <span> {{this.printData.signOutMonth}}</span>
+    </div>
+    <div id="signOutDay" style="width: 8mm; height: 5mm; margin-top: 0mm; margin-left: 4mm; float: left">
+      <span> {{this.printData.signOutDay}}</span>
+    </div>
+    <div id="totalSignInDays" style="width: 8mm; height: 5mm; margin-top: 0mm; margin-left: 23mm; float: left">
+      <span> {{this.printData.totalSignInDays}}</span>
+    </div>
+    <div id="invoiceYear" style="width: 11mm; height: 5mm; margin-top: 0mm; margin-left: 26mm; float: left">
+      <span> {{this.printData.invoiceYear}}</span>
+    </div>
+    <div id="invoiceMonth" style="width: 8mm; height: 5mm; margin-top: 0mm; margin-left: 5mm; float: left">
+      <span> {{this.printData.invoiceMonth}}</span>
+    </div>
+    <div id="invoiceDay" style="width: 8mm; height: 5mm; margin-top: 0mm; margin-left: 5mm; float: left">
+      <span> {{this.printData.invoiceDay}}</span>
+    </div>
+  </div>
+
+  <div nz-row class="row" style="font-size: x-small; margin-top: 8mm;">
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 16mm; float: left">
+      <span> {{this.printData.feeXY}}</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 23mm; float: left">
+      <span> {{this.printData.feeZL}}</span>
+    </div>
+  </div>
+
+  <div nz-row class="row" style="font-size: x-small; margin-top: 0mm;">
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 16mm; float: left">
+      <span> {{this.printData.feeZCY}}</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+    <div style="width: 16mm; height: 6.1mm; margin-top: 0mm; margin-left: 2mm; float: left">
+      <span>中成药</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 5mm; float: left">
+      <span> {{this.printData.feeZC}}</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+      <span> {{this.printData.totalPayment}}</span>
+    </div>
+  </div>
+
+  <div nz-row class="row" style="font-size: x-small; margin-top: 0mm;">
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 16mm; float: left">
+      <span> {{this.printData.feeCW}}</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+      <span> {{this.printData.feeHL}}</span>
+    </div>
+
+    <div style="width: 16mm; height: 6.1mm; margin-top: 0mm; margin-left: 2mm; float: left">
+      <span>诊查费</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 5mm; float: left">
+      <span> {{this.printData.feeZhenCha}}</span>
+    </div>
+  </div>
+
+  <div nz-row class="row" style="font-size: x-small; margin-top: 0mm;">
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 16mm; float: left">
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+
+    <div style="width: 16mm; height: 6.1mm; margin-top: 0mm; margin-left: 2mm; float: left">
+      <span>治疗费</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 5mm; float: left">
+      <span> {{this.printData.feeZL}}</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+      <span> {{this.printData.remainingPayment}}</span>
+    </div>
+  </div>
+
+  <div nz-row class="row" style="font-size: x-small; margin-top: 1mm;">
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 16mm; float: left">
+
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+      <span> {{this.printData.feeHY}}</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+
+    <div style="width: 16mm; height: 6.1mm; margin-top: 0mm; margin-left: 2mm; float: left">
+      <span>耗材费</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 5mm; float: left">
+      <span> {{this.printData.feeHC}}</span>
+    </div>
+  </div>
+
+  <div nz-row class="row" style="font-size: x-small; margin-top: 1mm;">
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 16mm; float: left">
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+
+    <div style="width: 16mm; height: 6.1mm; margin-top: 0mm; margin-left: 2mm; float: left">
+      <span>诊疗费</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 5mm; float: left">
+      <span> {{this.printData.feeZhenliao}}</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+      <span> {{this.printData.refund}}</span>
+    </div>
+  </div>
+
+  <div nz-row class="row" style="font-size: x-small; margin-top: 1mm;">
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 16mm; float: left">
+
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+      <span> {{this.printData.feeShuYang}}</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 18mm; float: left">
+    </div>
+
+
+    <div style="width: 16mm; height: 6.1mm; margin-top: 0mm; margin-left: 2mm; float: left">
+      <span>其他</span>
+    </div>
+
+    <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 5mm; float: left">
+      <span> {{this.printData.feeQT}}</span>
+    </div>
+  </div>
+
+  <div nz-row  style="font-size: x-small; margin-top: 6.3mm; width: 171mm; height: 9mm;margin-left: 16mm;">
+    <div style="width: 100mm; height: 9mm; margin-top: 0mm; margin-left: 17mm; float: left">
+      <span> {{this.printData.totalAmountChinese}} ({{this.printData.feeTotalSelf}})</span>
+    </div>
+
+  </div>
+
+  <div nz-row  style="font-size: x-small; margin-top: 0mm; width: 171mm;margin-left: 16mm;">
+    <div style="width: 45mm; height: 6.1mm; margin-top: 0mm; margin-left: 72mm; float: left">
+      <span> {{this.sessionService.loginUser.name}}</span>
+    </div>
+
+  </div>
+</div>

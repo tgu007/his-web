@@ -1,0 +1,9 @@
+.dataRow {
+  padding: 0 !important;
+}
+
+th, td {
+  padding: 0 !important;
+  font-weight: bold !important;
+  text-align: center !important;
+}

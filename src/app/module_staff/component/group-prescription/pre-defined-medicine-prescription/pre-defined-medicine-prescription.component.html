@@ -1,0 +1,145 @@
+<div nz-row>
+  <div style="float: left">
+    <app-common-dynamic-select
+      (onSearchEvent)="searchPredefinedGroup($event)"
+      [(ngModel)]="this.preDefinedGroup"
+      [dataList]="this.preDefinedGroupList"
+      [totalDataCount]="this.preDefinedGroupListTotalCount"
+      [dataColumns]="['预设组名称', '创建人']"
+      (onSelectedItemChangedEvent)="this.selectedGroupChanged()"
+      [pageCount]=this.preDefinedGroupListPageCount
+      [allowKeyBoardControl]="true"
+      [showAddNew]="true"
+      [addNewItemLabel]="'添加新预设组'"
+      [addNewPlaceHolder]="'填写新预设组名称并按添加'"
+      (onAddNewItemEnvent)="this.addNewGroup($event)"
+      style="float: left"
+    >
+    </app-common-dynamic-select>
+
+    <nz-input-number
+      nz-input
+      [(ngModel)]=this.totalFixedQuantity
+      [nzStep]="1"
+      [nzMin]="1"
+      nzPlaceHolder="帖数"
+      style="float: left; margin-left: 10px"
+    ></nz-input-number>
+
+    <button nz-button nzType="primary" type="button"
+            (click)="this.generatePrescription()"
+            class="ant-btn"
+            style="float: left; margin-left: 10px"
+            [disabled]="!this.preDefinedGroup || this.hasUserChange || this.lineArray.controls.length == 0"
+            [nzLoading]="this.generatingPrescription"
+    >
+      生成医嘱
+    </button>
+  </div>
+
+
+</div>
+<div nz-row style="margin-top: 10px">
+  <button nz-button nzType="primary" type="button" (click)="this.addLineControl()" class="ant-btn"
+          style="float: left"
+          [disabled]="!this.preDefinedGroup"
+  >
+    {{'添加新的药品'}}
+  </button>
+
+  <button nz-button nzType="primary" type="button"
+          (click)="this.saveEntityLineList()"
+          [disabled]="!this.hasUserChange"
+          class="ant-btn"
+          style="margin-left: 10px; float: left"
+  >
+    保存修改
+  </button>
+</div>
+
+<div nz-row style="margin-top: 10px">
+  <nz-spin [nzSpinning]="this.lineBusy">
+    <nz-table #treatmentTable [nzData]="this.lineArray.controls" nzSize="small"
+    >
+      <thead>
+      <tr>
+        <th hidden></th>
+        <th>名称</th>
+        <th>每次剂量</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody *ngFor="let lineControl of this.lineArray.controls; let i= index">
+      <tr [formGroup]="lineControl">
+        <td [hidden]="true">
+          {{lineControl.value.txtLineId}}
+        </td>
+        <td>
+          <ng-container *ngIf="!editCache[i].inEdit ; else entitySelect">
+            {{lineControl.value.selectMedicine?.name}}
+          </ng-container>
+          <ng-template #entitySelect>
+            <nz-form-control>
+              <app-common-dynamic-select
+                (onSearchEvent)="this.searchEntity($event, i)"
+                formControlName="selectMedicine"
+                [dataList]="this.editCache[i].rowSelectionList.entityList"
+                [totalDataCount]="this.editCache[i].rowSelectionList.dataListTotalCount"
+                [dataColumns]="['名称', '价格']"
+                [pageCount]=this.editCache[i].rowSelectionList.dataListPageCount
+              >
+              </app-common-dynamic-select>
+            </nz-form-control>
+          </ng-template>
+        </td>
+<!--        <td>-->
+<!--          <ng-container *ngIf="!editCache[i].inEdit ; else frequencySelection">-->
+<!--            {{this.findFrequencyCode(lineControl.value.selectFrequency)}}-->
+<!--          </ng-container>-->
+<!--          <ng-template #frequencySelection>-->
+<!--            <nz-form-control>-->
+<!--              <nz-select-->
+<!--                nzShowSearch-->
+<!--                nzPlaceHolder="选择频次"-->
+<!--                formControlName="selectFrequency"-->
+<!--                style="width: 100px"-->
+<!--              >-->
+<!--                <nz-option *ngFor="let frequency of this.prescriptionService.frequencyList" [nzValue]="frequency.id"-->
+<!--                           [nzLabel]="frequency.code"></nz-option>-->
+<!--              </nz-select>-->
+<!--            </nz-form-control>-->
+<!--          </ng-template>-->
+<!--        </td>-->
+        <td>
+          <ng-container *ngIf="!editCache[i].inEdit ; else quantityInput">
+            {{lineControl.value.numberQuantity}}
+          </ng-container>
+          <ng-template #quantityInput>
+            <nz-form-control>
+              <nz-input-number
+                nz-input
+                formControlName="numberQuantity"
+                [nzStep]="1"
+                [nzMin]="1"
+              ></nz-input-number>
+            </nz-form-control>
+          </ng-template>
+        </td>
+        <td>
+          <ng-container *ngIf="!editCache[i].inEdit;">
+            <button nz-button nzType="primary" (click)="editLineControl(i)"
+            ><i nz-icon nzType="edit"></i></button>
+          </ng-container>
+          <!--          <ng-template #inEdit>-->
+          <!--            <button nz-button nzType="primary" (click)="commitLineControl(i)"-->
+          <!--            ><i nz-icon nzType="save"></i></button>-->
+          <!--          </ng-template>-->
+          <button nz-button nzType="primary" (click)="removeLineControl(i)"
+          ><i nz-icon nzType="delete"></i></button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>

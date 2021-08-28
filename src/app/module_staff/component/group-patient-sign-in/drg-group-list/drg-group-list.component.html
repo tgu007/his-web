@@ -1,0 +1,58 @@
+<div nz-row>
+  <button nz-button nzType="primary" (click)="newDrgGroupClicked()"
+          style=" float: left; margin-left: 10px; ">新病组
+  </button>
+
+  <button nz-button nzSize="small" nzType="primary" nzShape="circle" (click)="this.loadDrgGroupList()"
+          style=" float: left; margin-left: 10px;">
+    <i nz-icon nzType="reload"></i>
+  </button>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.loading">
+    <div nz-row>
+      <nz-table #tblDrgGroupList
+                [nzData]="this.drgGroupList" nzSize="small"
+      >
+        <thead>
+        <tr>
+          <th>病组名称</th>
+          <th>病组类型</th>
+          <th>上限额度</th>
+          <th>下限额度</th>
+          <th>停用</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let group of tblDrgGroupList.data">
+          <td>{{group.name}}</td>
+          <td>{{group.groupType}}</td>
+          <td>{{group.upperLimit}}</td>
+          <td>{{group.lowerLimit}}</td>
+          <td><label nz-checkbox [(ngModel)]="!group.enabled" nzDisabled></label></td>
+          <td>
+            <button nz-button nzSize="small" nzType="primary" (click)="this.editGroup(group)">修改</button>
+          </td>
+
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-spin>
+
+</div>
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="drgGroupDetailModalVisible"
+  nzTitle=病组详情
+  nzWidth="1000"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="this.drgGroupDetailComponent.save()"
+  nzOkText="保存"
+  nzCancelText="关闭"
+  [nzOkLoading]=this.drgGroupDetailComponent.saving
+>
+  <app-drg-group-detail (drgGroupSavedEvent)="this.loadDrgGroupList()"></app-drg-group-detail>
+</nz-modal>

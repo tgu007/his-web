@@ -1,0 +1,43 @@
+<div class="page" *ngFor="let page of this.pages; let pi=index">
+  <div nz-row class="row" *ngFor="let row of this.rows; let ri=index">
+    <div nz-col nzSpan="6" class="cardBorder" *ngFor="let col of this.columns; let ci=index">
+      <ng-template [ngIf]="this.data[pi.toString() + ri.toString() + ci.toString()]">
+        <div nz-row class="cardRow">
+          <div nz-col nzSpan="8">
+            <span>{{this.data[pi.toString() + ri.toString() + ci.toString()].patientName}}</span>
+          </div>
+          <div nz-col nzSpan="8">
+            <span>{{this.data[pi.toString() + ri.toString() + ci.toString()].signInCode}}</span>
+          </div>
+          <div nz-col nzSpan="8">
+            <span>{{this.printData.cardDate}}</span>
+          </div>
+        </div>
+        <div nz-row class="cardRow">
+          <div nz-col nzSpan="8">
+            <span>{{this.data[pi.toString() + ri.toString() + ci.toString()].bottleColour}}</span>
+          </div>
+
+          <div nz-col nzSpan="16">
+            <span>{{this.data[pi.toString() + ri.toString() + ci.toString()].sampleType}}</span>
+          </div>
+        </div>
+
+        <div nz-row>
+          <ng-template ngFor let-data
+                       [ngForOf]="this.data[pi.toString() + ri.toString() + ci.toString()].nursingCardRespDtoList">
+            <div nz-row class="cardRow">
+              <div nz-col nzSpan="24">
+                <span>{{data.entityName}}</span>
+              </div>
+            </div>
+
+          </ng-template>
+        </div>
+
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+

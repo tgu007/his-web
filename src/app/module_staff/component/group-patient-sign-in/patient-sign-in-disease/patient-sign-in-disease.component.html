@@ -1,0 +1,42 @@
+<nz-table #basicTable [nzData]="patientSignInForm.get('diseaseList').controls" nzSize="small">
+  <thead>
+  <tr>
+    <th>编码</th>
+    <th>名称</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody *ngFor="let lineControl of patientSignInForm.get('diseaseList').controls; let i=index">
+  <tr [formGroup]="lineControl">
+    <td>{{lineControl.value.selectDisease ? lineControl.value.selectDisease.code : undefined}}</td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else diseaseSelect">
+        {{lineControl.value.selectDisease.name ? lineControl.value.selectDisease.name : undefined}}
+      </ng-container>
+      <ng-template #diseaseSelect>
+        <nz-form-control>
+          <app-common-dynamic-select
+            (onSearchEvent)="searchDisease($event, i)"
+            formControlName="selectDisease"
+            [dataList]="this.editCache[i].rowSelectionList.diseaseList"
+            [totalDataCount]="this.editCache[i].rowSelectionList.diseaseListTotalCount"
+            [dataColumns]="['编码','名称', '类别']"
+            [pageCount]="this.editCache[i].rowSelectionList.diseaseListPageCount"
+          >
+          </app-common-dynamic-select>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else inEdit">
+        <button nz-button nzType="primary" (click)="editLineControl(i)"><i nz-icon nzType="edit"></i></button>
+        <button nz-button nzType="primary" (click)="removeLineControl(i)"><i nz-icon nzType="delete"></i></button>
+      </ng-container>
+      <ng-template #inEdit>
+        <button nz-button nzType="primary" (click)="commitLineControl(i)"><i nz-icon nzType="save"></i></button>
+        <button nz-button nzType="primary" (click)="removeLineControl(i)"><i nz-icon nzType="delete"></i></button>
+      </ng-template>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

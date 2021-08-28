@@ -1,0 +1,68 @@
+<div nz-row>
+
+
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   style="float: left;margin-right: 10px;"
+  ></nz-range-picker>
+
+
+  <nz-select
+    nzPlaceHolder="费用科室"
+    style="float: left;margin-right: 10px; width:160pt;"
+    [(ngModel)]="this.selectedDepartment"
+    (ngModelChange)="this.selectedDepartmentChanged()"
+  >
+    <nz-option *ngFor="let feeDepartment of feeDepartmentList" [nzValue]="feeDepartment.uuid"
+               [nzLabel]="feeDepartment.department.name"></nz-option>
+  </nz-select>
+
+  <ng-template #tagPlaceHolder let-selectedList> 其余{{ selectedList.length }}个 </ng-template>
+  <nz-select
+    nzMode="multiple"
+    nzPlaceHolder="费用类型"
+    style="float: left;margin-right: 10px; width:160pt;"
+    [(ngModel)]="listOfSelectedFeeType"
+    [nzMaxTagCount]="3"
+   [nzMaxTagPlaceholder]="tagPlaceHolder"
+  >
+    <nz-option *ngFor="let feeType of feeTypeList" [nzValue]="feeType"
+               [nzLabel]="feeType"></nz-option>
+  </nz-select>
+
+  <input nz-input [(ngModel)]="filterFeeName"
+         placeholder="项目名称"
+         style="float: left;margin-right: 10px; width:250px"
+  />
+
+
+  <button nz-button (click)="this.reload()"
+          style="float: left;margin-right: 10px;"
+  >检索
+  </button>
+
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #tblFeeListByType [nzData]="feeListByType" nzSize="small"
+              nzPageSize="9999">
+      <thead>
+      <tr>
+        <th>项目类型</th>
+        <th>项目名称</th>
+        <th>数量</th>
+        <th>单价</th>
+        <th>总价</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let fee of tblFeeListByType.data">
+        <td>{{fee.feeType}}</td>
+        <td>{{fee.name}}</td>
+        <td>{{fee.displayQuantityInfo}}</td>
+        <td>{{fee.displayUnitAmount}}</td>
+        <td>{{fee.totalAmount}}元</td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>

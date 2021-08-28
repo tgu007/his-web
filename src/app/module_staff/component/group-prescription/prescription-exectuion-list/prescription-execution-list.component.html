@@ -1,0 +1,172 @@
+<nz-layout>
+  <nz-sider nzCollapsible
+            [(nzCollapsed)]="this.collapsed"
+            nzTheme="light"
+            [nzCollapsedWidth]="30"
+            [nzTrigger]="null"
+  >
+
+    <app-patient-select [hidden]="this.collapsed" [selectAll]="true" [loadAllOnInit]="false"></app-patient-select>
+  </nz-sider>
+  <i
+    nz-icon
+    [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+    (click)="this.collapsed = !this.collapsed"
+  ></i>
+  <nz-layout class="inner-layout">
+    <div nz-row>
+      <!--      <nz-select-->
+      <!--        nzShowSearch-->
+      <!--        nzPlaceHolder="选择执行科室"-->
+      <!--        [(ngModel)]="selectDepartment"-->
+      <!--        (ngModelChange)="selectDepartmentChanged()"-->
+      <!--      >-->
+      <!--        <nz-option *ngFor="let department of this.departmentList" [nzValue]="department"-->
+      <!--                   [nzLabel]="department.department.name"-->
+      <!--        ></nz-option>-->
+      <!--      </nz-select>-->
+      <!--      -->
+      <button nz-button nzType="primary"
+              (click)="this.executePrescription()"
+              [disabled]="chkTemplateIncludeExecuted.nzChecked"
+      >
+        执行
+      </button>
+      <label nz-checkbox #chkTemplateCatchUpExecution
+             [(ngModel)]="chkCatchUpExecution"
+             (nzCheckedChange)="this.loadPendingExecutionPrescriptionList()"
+             style="margin-left: 10px"
+      >调整执行日期</label>
+      <nz-date-picker
+        [hidden]="!chkTemplateCatchUpExecution.nzChecked"
+        nzShowTime
+        nzFormat="yyyy-MM-dd HH:mm:ss"
+        nzPlaceHolder="选择日期"
+        [(ngModel)]="dateFeeDate"
+        [nzDisabledDate]="disabledDate"
+        (nzOnOk)="this.loadPendingExecutionPrescriptionList()"
+        style="margin-left: 10px"
+      ></nz-date-picker>
+
+      <label nz-checkbox #chkTemplateIncludeExecuted
+             [(ngModel)]="chkIncludeExecuted"
+             (nzCheckedChange)="this.loadPendingExecutionPrescriptionList()"
+             style="margin-left: 10px"
+      >查看已执行</label>
+
+      <button nz-button nzSize="small" nzType="primary" nzShape="circle"
+              (click)="this.loadPendingExecutionPrescriptionList()"><i
+        nz-icon nzType="reload"></i>
+      </button>
+    </div>
+    <nz-alert *ngIf="this.anyComboPrescription()" nzType="warning" nzMessage="存在组套项目，请正确勾选所执行的组套子项目"
+              nzShowIcon></nz-alert>
+    <div nz-row>
+      <nz-spin [nzSpinning]="this.busy">
+        <nz-table #basicTable [nzData]="prescriptionExecutionList" nzSize="small"
+                  [nzPageSize]="pageSize"
+                  [nzShowPagination]="false"
+        >
+          <thead>
+          <tr>
+            <th
+              nzWidth="20"
+              [(nzChecked)]="allChecked"
+              [nzIndeterminate]="false"
+              (nzCheckedChange)="checkAll($event)"
+              nzShowCheckbox
+            ></th>
+            <th *ngIf="this.sessionService.loginUser.userRole.userRoleType == '检验员'"></th>
+            <th>病区</th>
+            <th>病房</th>
+            <th>病人</th>
+            <th
+              nzWidth="20"
+            ></th>
+            <th>名称</th>
+            <th>备注</th>
+            <th>长期<br>医嘱</th>
+            <th>频次</th>
+            <th>每次<br>数量</th>
+            <th>首日</th>
+            <th>可执行<br>次数</th>
+            <th>已执行<br>次数</th>
+            <th>上次<br>执行</th>
+            <th>开嘱<br>医生</th>
+          </tr>
+          </thead>
+          <tbody>
+          <ng-template ngFor let-data [ngForOf]="basicTable.data">
+            <tr>
+              <td
+                (nzCheckedChange)="checkChildAll(data, $event)"
+                [(nzChecked)]="mapOfCheckedId[data.listRespDto.uuid]"
+                [(nzExpand)]="mapOfExpandData[data.listRespDto.uuid]"
+                [nzShowExpand]="data.childTreatmentList && data.childTreatmentList.length > 0"
+                nzShowCheckbox
+              >
+              </td>
+
+              <td *ngIf="this.sessionService.loginUser.userRole.userRoleType == '检验员'">
+                <button nzSize="small" nz-button nzType="primary" (click)="this.printClicked(data)"
+
+                >
+                  打印
+                </button>
+              </td>
+              <td>{{basicTable.data.indexOf(data) % pageSize == 0 || data.patientGroupIndex == 0 ? data.ward : undefined}}</td>
+              <td>{{basicTable.data.indexOf(data) % pageSize == 0 || data.patientGroupIndex == 0 ? data.wardRoom : undefined}}</td>
+              <td>{{basicTable.data.indexOf(data) % pageSize == 0 || data.patientGroupIndex == 0 ? data.patientName : undefined}}</td>
+              <td
+
+              >
+              </td>
+              <td>{{data.listRespDto.description}}</td>
+              <td>{{data.listRespDto.reference}}</td>
+              <td><label nz-checkbox [(ngModel)]="!data.listRespDto.oneOff" nzDisabled></label></td>
+              <td>{{data.listRespDto.frequency}}</td>
+              <td>{{data.listRespDto.quantityInfo}}</td>
+              <td>{{data.listRespDto.firstDayQuantityInfo}}</td>
+              <td>
+<!--                <span>-->
+<!--                  {{data.allowedExecutionCount}}-->
+<!--                </span>-->
+                <nz-input-number
+                  nz-input
+                  [(ngModel)]="data.allowedExecutionCount"
+                  [nzStep]="1"
+                  [nzMin]="0"
+                  nzSize="small"
+                  nzPrecision=0
+                  [ngStyle]="{'color':data.allowedExecutionCount == 0 ?'red':undefined}"
+                ></nz-input-number>
+              </td>
+              <td>{{data.executedCount}}</td>
+              <td>{{data.listRespDto.lastExecutionTime}}</td>
+              <td>{{data.listRespDto.whoCreated}}</td>
+            </tr>
+            <tr [nzExpand]="mapOfExpandData[data.listRespDto.uuid]">
+              <th></th>
+              <th colspan="3"></th>
+              <th></th>
+              <th colspan="2">项目名称</th>
+            </tr>
+            <tr [nzExpand]="mapOfExpandData[data.listRespDto.uuid]" *ngFor="let treatment of data.childTreatmentList">
+              <td></td>
+              <td colspan="3"></td>
+              <td
+                nzShowCheckbox
+                [(nzChecked)]="mapOfChildCheckedId[data.listRespDto.uuid +':'+treatment.uuid]"
+                (nzCheckedChange)="refreshPrescriptionCheckStatus(data)"
+              ></td>
+              <td colspan="2">
+                {{treatment.name}}
+              </td>
+            </tr>
+          </ng-template>
+          </tbody>
+        </nz-table>
+      </nz-spin>
+    </div>
+  </nz-layout>
+</nz-layout>

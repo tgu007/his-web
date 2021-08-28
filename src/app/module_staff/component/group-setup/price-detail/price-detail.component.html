@@ -1,0 +1,128 @@
+<div nz-row>
+  <ng-template [ngIf]="this.entityType == 'medicine'">
+    <div nz-col nzSpan="4">
+      <nz-form-label
+        style=" float: left;margin-left: 10px;"
+      >药品种类
+      </nz-form-label>
+      <nz-select nzShowSearch [(ngModel)]="this.selectMedicineType"
+                 (ngModelChange)="this.reloadEntityClicked()"
+                 nzAllowClear
+                 style="width:150px; float: left; "
+      >
+        <nz-option *ngFor="let medicineType of this.medicineTypeList"
+                   [nzLabel]="medicineType.name"
+                   [nzValue]="medicineType.id"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div nz-col nzSpan="2">
+      <label nz-checkbox [(ngModel)]="chekYBPrice"
+             (ngModelChange)="this.loadEntityList()"
+             style=" float: left; margin-left: 10px;">和医保价格不同</label>
+    </div>
+
+
+  </ng-template>
+  <div nz-col nzSpan="2">
+    <label nz-checkbox [(ngModel)]="pendingPriceUpdate"
+           (ngModelChange)="this.loadEntityList()"
+           style=" float: left; margin-left: 10px;">待审核价格</label>
+  </div>
+
+  <div nz-col nzSpan="6">
+    <input nz-input [(ngModel)]="filterEntityName"
+           placeholder="输入拼音代码搜索"/>
+  </div>
+  <div nz-col nzSpan="2">
+    <button nz-button nzType="primary" (click)="searchEntity()"><i nz-icon nzType="search"></i>查询</button>
+  </div>
+
+
+  <div nz-col nzSpan="2">
+    <button nz-button nzSize="small" nzType="primary" nzShape="circle" (click)="reloadEntityClicked()"><i nz-icon
+                                                                                                          nzType="reload"></i>
+    </button>
+  </div>
+</div>
+<div nz-row>
+  <nz-table #basicTable [nzData]="entityList" nzSize="small" style="background-color:white"
+            [nzTotal]="totalDataCount"
+            [nzFrontPagination]=false
+            [(nzPageIndex)]="currentPageIndex"
+            [nzPageSize]="tablePageSize"
+            (nzPageIndexChange)=loadEntityList()
+  >
+    <thead>
+    <tr>
+      <th>名称</th>
+      <ng-template [ngIf]="this.entityType != 'treatment'">
+        <th>仓库规格</th>
+        <th>科室规格</th>
+      </ng-template>
+      <th>医保名称</th>
+      <th>医保编码</th>
+      <th *ngIf="this.entityType == 'medicine'">医保价格</th>
+      <th>待审核价格</th>
+      <th>价格</th>
+      <th>单位</th>
+      <ng-template [ngIf]="this.entityType != 'treatment'">
+        <th>产地</th>
+      </ng-template>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data" nzShowRowSelection>
+      <td>{{data.name}}</td>
+      <ng-template [ngIf]="this.entityType != 'treatment'">
+        <td>{{data.warehouseModel}}</td>
+        <td>
+          {{data.departmentModel}}
+        </td>
+      </ng-template>
+      <td>{{data.centerName}}</td>
+      <td>{{data.centerCode}}</td>
+      <td *ngIf="this.entityType == 'medicine'">{{data.centerPrice}}</td>
+      <td>
+        <ng-container *ngIf="!data.inEdit; else newPriceInput">
+          {{data.pendingListPrice}}
+        </ng-container>
+        <ng-template #newPriceInput>
+          <nz-form-control>
+            <nz-input-number
+              nz-input
+              [nzStep]="1"
+              [nzMin]=0
+              [(ngModel)]="data.pendingListPrice"
+              nzPrecision="4"
+            ></nz-input-number>
+          </nz-form-control>
+        </ng-template>
+        <button nz-button nzSize="small" nzType="primary" (click)="cancelEditPrice(data)" [hidden]="!data.inEdit">取消
+        </button>
+        <button [nzLoading]="this.loading" nz-button nzSize="small" nzType="primary" (click)="submitNewPrice(data)"
+                [hidden]="!data.inEdit">提交
+        </button>
+        <button
+          *ngIf="data.pendingListPrice >0 && this.sessionService.loginUser.uiPermission.commonComponent.priceDetail.allowConfirm"
+          [hidden]="data.inEdit"
+          nz-button nzSize="small" nzType="primary"
+          (click)="confirmPendingPrice(data)">确认
+        </button>
+      </td>
+      <td>
+        {{data.listPrice}}
+      </td>
+      <td>{{this.entityType == 'medicine' ? data.departmentUom.name : data.minSizeUom.name}}</td>
+      <ng-template [ngIf]="this.entityType != 'treatment'">
+        <td>  {{data.manufacturer.name}}</td>
+      </ng-template>
+      <td>
+        <button nz-button nzSize="small" nzType="primary" (click)="editPrice(data)" [hidden]="data.inEdit">修改</button>
+
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

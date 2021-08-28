@@ -1,0 +1,872 @@
+<router-outlet name='error'></router-outlet>
+
+<nz-layout>
+  <nz-header class="noPrint" style="height: 48px">
+    <div class="logo"></div>
+    <div nz-col nzSpan="18">
+      <ul nz-menu nzTheme="dark" nzMode="horizontal" class="header-menu">
+        <ng-template [ngIf]="this.uiPermission.patientSignIn">
+          <ng-container *ngIf="!this.uiPermission.expandSubMenu; else patientSignInMenuList">
+            <li
+              nz-submenu nzTitle="住院部">
+              <ul>
+                <li nz-menu-item (click)="newTab('住院管理', 'signInList')">住院管理</li>
+                <li nz-menu-item (click)="newTab('病人档案', 'patientList')">病人档案</li>
+                <li nz-menu-item (click)="newTab('收费项目设置', 'chargeableItemList')">收费项目设置</li>
+                <li nz-menu-item (click)="newTab('欠费报告', 'hisInternalFeePaymentSummary')">非医疗项目欠费报告</li>
+              </ul>
+            </li>
+          </ng-container>
+          <ng-template #patientSignInMenuList>
+            <li nz-menu-item (click)="newTab('住院管理', 'signInList')">住院管理</li>
+            <li nz-menu-item (click)="newTab('病人档案', 'patientList')">病人档案</li>
+            <li nz-menu-item (click)="newTab('收费项目设置', 'chargeableItemList')">收费项目设置</li>
+<!--            <li nz-menu-item (click)="newTab('欠费报告', 'hisInternalFeePaymentSummary')">非医疗项目欠费报告</li>-->
+            <li nz-menu-item (click)="newTab('缴费汇总报告', 'paymentSummary')">缴费汇总报告</li>
+            <li nz-menu-item (click)="newTab('缴费明细报告', 'allPaymentList')">缴费明细报告</li>
+          </ng-template>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.nurseStation">
+          <ng-container *ngIf="!this.uiPermission.expandSubMenu; else nurseStationMenuList">
+            <li nz-submenu nzTitle="护士站">
+              <ul>
+                <li nz-submenu nzTitle="医嘱">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('医嘱执行', 'executePrescriptionList')">项目医嘱执行</li>
+                    <li nz-menu-item (click)="newTab('药品医嘱提交', 'prescriptionMedicineOrderList')">药品医嘱提交</li>
+                    <li nz-menu-item (click)="newTab('退药', 'prescriptionProcessedPatientMedicineOrderList')">退药</li>
+                    <li nz-menu-item (click)="newTab('变更医嘱', 'changedPrescriptionLog')">变更医嘱</li>
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="护理">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('体温单', 'tempRecordListBatch')">体温单</li>
+                    <li nz-menu-item (click)="newTab('卡片', 'nursingCardList')">卡片</li>
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="病区库房">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('药品申领', 'wardMedicineTransferRequest')">药品申领</li>
+                    <li nz-menu-item (click)="newTab('物品申领', 'wardItemTransferRequest')">物品申领</li>
+                    <li nz-menu-item (click)="newTab('药品调拨', 'wardMedicineTransferOut')">药品调拨</li>
+                    <li nz-menu-item (click)="newTab('物品调拨', 'wardItemTransferOut')">物品调拨</li>
+                    <li nz-menu-item (click)="newTab('当前库存', 'departmentStock')">病区库存</li>
+                  </ul>
+                </li>
+
+                <li nz-menu-item (click)="newTab('病区列表', 'wardList')">病区列表</li>
+                <li nz-menu-item (click)="newTab('住院记录', 'signInList')">住院记录</li>
+                <li nz-submenu nzTitle="发药查询">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('已提交发药单', 'prescriptionMedicineOrder')">已提交发药单</li>
+                    <li nz-menu-item (click)="newTab('已提交退药单', 'prescriptionMedicineReturnOrderList')">已提交退药单</li>
+                    <li nz-menu-item (click)="newTab('所有发药记录', 'prescriptionProcessedMedicineOrderList')">所有发药记录</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ng-container>
+
+          <ng-template #nurseStationMenuList>
+            <li nz-submenu nzTitle="医嘱">
+              <ul>
+                <li nz-menu-item (click)="newTab('医嘱执行', 'executePrescriptionList')">项目医嘱执行</li>
+                <li nz-menu-item (click)="newTab('药品医嘱提交', 'prescriptionMedicineOrderList')">药品医嘱提交</li>
+                <li nz-menu-item (click)="newTab('退药', 'prescriptionProcessedPatientMedicineOrderList')">退药</li>
+                <li nz-menu-item (click)="newTab('变更医嘱', 'changedPrescriptionLog')">变更医嘱</li>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="护理">
+              <ul>
+                <li nz-menu-item (click)="newTab('体温单', 'tempRecordListBatch')">体温单</li>
+                <li nz-menu-item (click)="newTab('卡片', 'nursingCardList')">卡片</li>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="病区库房">
+              <ul>
+                <li nz-submenu nzTitle="入库">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('药品申领', 'wardMedicineTransferRequest')">药品申领</li>
+                    <li nz-menu-item (click)="newTab('物品申领', 'wardItemTransferRequest')">物品申领</li>
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="出库">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('药品调拨', 'wardMedicineTransferOut')">药品调拨</li>
+                    <li nz-menu-item (click)="newTab('物品调拨', 'wardItemTransferOut')">物品调拨</li>
+                  </ul>
+                </li>
+                <li nz-menu-item (click)="newTab('当前库存', 'departmentStock')">病区库存</li>
+              </ul>
+            </li>
+
+            <li nz-menu-item (click)="newTab('病区列表', 'wardList')">病区列表</li>
+            <li nz-menu-item (click)="newTab('病区费用', 'departmentFeeSummary')">病区费用</li>
+            <li nz-menu-item (click)="newTab('住院记录', 'signInList')">住院记录</li>
+            <li nz-submenu nzTitle="发药查询">
+              <ul>
+                <li nz-menu-item (click)="newTab('已提交发药单', 'prescriptionMedicineOrder')">已提交发药单</li>
+                <li nz-menu-item (click)="newTab('已提交退药单', 'prescriptionMedicineReturnOrderList')">已提交退药单</li>
+                <li nz-menu-item (click)="newTab('所有发药记录', 'prescriptionProcessedMedicineOrderList')">所有发药记录</li>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="计费设置">
+              <ul>
+                <li nz-menu-item (click)="newTab('耗材', 'itemList', 'feeSetting')">耗材</li>
+                <li nz-menu-item (click)="newTab('诊疗', 'treatmentList', 'feeSetting')">诊疗</li>
+                <li nz-menu-item (click)="newTab('收费项目设置', 'chargeableItemList')">非医疗收费项目设置</li>
+              </ul>
+            </li>
+            <li nz-menu-item (click)="newTab('用户管理', 'userManagement')">用户管理</li>
+          </ng-template>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.doctorStation">
+          <ng-container *ngIf="!this.uiPermission.expandSubMenu; else doctorStationMenuList">
+            <li nz-submenu nzTitle="医生站">
+              <ul>
+                <li nz-menu-item (click)="newTab('病区列表', 'wardList')">病区列表</li>
+                <li nz-menu-item (click)="newTab('病人信息', 'patientList')">病人信息</li>
+                <li nz-menu-item (click)="newTab('所有病人', 'signInList')">所有病人</li>
+                <li nz-menu-item (click)="newTab('发药记录', 'prescriptionProcessedMedicineOrderList')">发药记录</li>
+                <li nz-menu-item (click)="newTab('模板管理', 'templateList')">模板管理</li>
+                <li nz-menu-item (click)="newTab('诊疗项目', 'treatmentList', 'full')">诊疗项目</li>
+                <li nz-menu-item (click)="newTab('病组设置', 'drgGroupList')">DRG病组设置</li>
+              </ul>
+            </li>
+          </ng-container>
+
+          <ng-template #doctorStationMenuList>
+            <li nz-menu-item (click)="newTab('病区列表', 'wardList')">病区列表</li>
+            <li nz-menu-item (click)="newTab('病人信息', 'patientList')">病人基本信息</li>
+            <li nz-menu-item (click)="newTab('住院记录', 'signInList')">住院记录</li>
+            <li nz-submenu nzTitle="设置">
+              <ul>
+                <li nz-menu-item (click)="newTab('模板管理', 'templateList')">模板管理</li>
+                <li nz-menu-item (click)="newTab('病组设置', 'drgGroupList')">DRG病组设置</li>
+                <li nz-menu-item (click)="newTab('用户管理', 'userManagement')">用户管理</li>
+              </ul>
+            </li>
+
+          </ng-template>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.pharmacy">
+          <ng-container *ngIf="!this.uiPermission.expandSubMenu; else pharmacyMenuList">
+            <li
+              nz-submenu nzTitle="药房管理">
+              <ul>
+                <li nz-submenu nzTitle="出库">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('科室领药', 'medicineTransferOut')">科室领药</li>
+                    <li nz-menu-item (click)="newTab('药品退货', 'medicineReturnOrder')">药品退货</li>
+                    <li nz-menu-item (click)="newTab('医嘱发药', 'prescriptionMedicineOrder')">医嘱发药</li>
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="入库">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('药品采购申请', 'medicineOrderRequest')">药品采购申请</li>
+                    <li nz-menu-item (click)="newTab('药品采购单', 'medicineOrder')">药品采购单</li>
+                    <li nz-menu-item (click)="newTab('药品采购入库', 'medicinePartialOrder')">药品采购入库</li>
+                    <li nz-menu-item (click)="newTab('医嘱退药', 'prescriptionMedicineReturnOrderList')">医嘱退药</li>
+                    <li nz-menu-item (click)="newTab('科室退药', 'medicineTransferIn')">科室退药</li>
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="报表">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('发药明细', 'prescriptionProcessedMedicineOrderList')">发药记录</li>
+                    <li nz-menu-item (click)="newTab('发药汇总', 'prescriptionProcessedMedicineUsage')">发药汇总</li>
+                  </ul>
+                </li>
+                <li nz-menu-item (click)="newTab('药品基本信息', 'medicineList', 'full')">药品基本信息</li>
+                <li nz-menu-item (click)="newTab('当前库存', 'departmentStock')">当前库存</li>
+              </ul>
+            </li>
+          </ng-container>
+          <ng-template #pharmacyMenuList>
+            <li nz-submenu nzTitle="出库">
+              <ul>
+                <li nz-menu-item (click)="newTab('医嘱发药', 'prescriptionMedicineOrder')">医嘱发药</li>
+                <li nz-menu-item (click)="newTab('科室领药', 'pharmacyMedicineTransferOut')">科室领药</li>
+                <li nz-menu-item (click)="newTab('退货出库', 'medicineReturnOrder')">退货出库</li>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="入库">
+              <ul>
+                <li nz-submenu nzTitle="采购">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('采购申请', 'medicineOrderRequest')">采购申请</li>
+                    <li nz-menu-item (click)="newTab('采购单', 'medicineOrder')">采购单</li>
+                    <li nz-menu-item (click)="newTab('采购入库', 'medicinePartialOrder')">采购入库</li>
+                  </ul>
+                </li>
+                <li nz-menu-item (click)="newTab('科室退药', 'pharmacyMedicineTransferIn')">科室退药</li>
+                <li nz-menu-item (click)="newTab('医嘱退药', 'prescriptionMedicineReturnOrderList')">医嘱退药</li>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="报表">
+              <ul>
+                <li nz-menu-item (click)="newTab('发药明细', 'prescriptionProcessedMedicineOrderList')">发药记录</li>
+                <li nz-menu-item (click)="newTab('发药汇总', 'prescriptionProcessedMedicineUsage')">发药汇总</li>
+              </ul>
+            </li>
+            <li nz-menu-item (click)="newTab('当前库存', 'departmentStock')">当前库存</li>
+            <li nz-menu-item (click)="newTab('药品基本信息', 'medicineList', 'setup')">药品基本信息</li>
+            <li nz-menu-item (click)="newTab('药品价格', 'medicinePrice')">药品价格</li>
+            <li nz-submenu nzTitle="医保">
+              <ul>
+                <nz-spin [nzSpinning]="this.isLoading">
+                  <li nz-menu-item (click)="downloadCenterMedicine()">中心药品下载</li>
+                  <li nz-menu-item (click)="this.matchEntity('medicine')">匹配药品</li>
+                  <li nz-menu-item (click)="this.uploadMedicine('medicine')">上传所有药品</li>
+                  <li nz-menu-item (click)="this.uploadPrescriptionOrder()">上传发药记录</li>
+                </nz-spin>
+              </ul>
+            </li>
+          </ng-template>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.warehouse">
+          <ng-container *ngIf="!this.uiPermission.expandSubMenu; else warehouseMenuList">
+            <li nz-submenu nzTitle="药库管理">
+              <ul>
+                <li nz-submenu nzTitle="入库">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('物品采购申请', 'itemOrderRequest')">物品采购申请</li>
+                    <li nz-menu-item (click)="newTab('物品采购单', 'itemOrder')">物品采购单</li>
+                    <li nz-menu-item (click)="newTab('物品采购入库', 'itemPartialOrder')">物品采购入库</li>
+                    <li nz-menu-item (click)="newTab('物品退还', 'itemTransferIn')">物品退还</li>
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="出库">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('物品领用', 'itemTransferOut')">物品领用</li>
+                    <li nz-menu-item (click)="newTab('物品退货', 'itemReturnOrder')">物品退货</li>
+                  </ul>
+                </li>
+                <li nz-menu-item (click)="newTab('物品基本信息', 'itemList', 'full')">物品基本信息</li>
+                <li nz-menu-item (click)="newTab('当前库存', 'departmentStock')">当前库存</li>
+              </ul>
+            </li>
+          </ng-container>
+
+          <ng-template #warehouseMenuList>
+            <li nz-submenu nzTitle="入库">
+              <ul>
+                <li nz-submenu nzTitle="采购">
+                  <ul>
+                    <li nz-menu-item (click)="newTab('采购申请', 'itemOrderRequest')">采购申请</li>
+                    <li nz-menu-item (click)="newTab('采购单', 'itemOrder')">采购单查询</li>
+                    <li nz-menu-item (click)="newTab('采购入库', 'itemPartialOrder')">采购入库</li>
+                  </ul>
+                </li>
+                <li nz-menu-item (click)="newTab('领用退还入库', 'itemTransferIn')">领用退还入库</li>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="出库">
+              <ul>
+                <li nz-menu-item (click)="newTab('退货出库', 'itemReturnOrder')">退货出库</li>
+                <li nz-menu-item (click)="newTab('领用出库', 'itemTransferOut')">领用出库</li>
+              </ul>
+            </li>
+            <li nz-menu-item (click)="newTab('当前库存', 'departmentStock')">当前库存</li>
+            <li nz-menu-item (click)="newTab('物品基本信息', 'itemList', 'setup')">物品基本信息</li>
+          </ng-template>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.system">
+          <ng-container *ngIf="!this.uiPermission.expandSubMenu; else systemMenuList">
+            <li nz-submenu nzTitle="系统设置">
+              <ul>
+                <ng-template *ngIf="true; then systemMenuList">
+                </ng-template>
+              </ul>
+            </li>
+          </ng-container>
+
+          <ng-template #systemMenuList>
+            <li nz-menu-item (click)="newTab('用户管理', 'userManagement')">用户管理</li>
+            <li nz-menu-item (click)="this.rebuildMessageList()">刷新消息缓存</li>
+            <li nz-menu-item (click)="this.rebuildEntitySearchCode()">自动生成搜索码</li>
+            <li nz-submenu nzTitle="测试数据">
+              <ul>
+                <li nz-menu-item (click)="this.mockMedicineOrder()">药品库存初始化</li>
+                <li nz-menu-item (click)="this.mockItemOrder()">物品库存初始化</li>
+              </ul>
+            </li>
+            <li nz-menu-item (click)="this.nightlyJobManualRun()">执行晚间自动滚费操作</li>
+          </ng-template>
+
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.treatmentDepartment">
+          <li nz-menu-item (click)="newTab('病区列表', 'wardList')">病区列表</li>
+          <li nz-menu-item (click)="newTab('住院记录', 'signInList')">住院记录</li>
+          <li nz-menu-item (click)="newTab('医嘱执行', 'executePrescriptionList')">医嘱执行</li>
+          <li nz-menu-item (click)="newTab('模板管理', 'templateList')">模板管理</li>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.recover_manger">
+          <li nz-menu-item (click)="newTab('病区列表', 'wardList')">病区列表</li>
+          <li nz-menu-item (click)="newTab('住院记录', 'signInList')">住院记录</li>
+          <li nz-menu-item (click)="newTab('医嘱执行', 'executePrescriptionList')">医嘱执行</li>
+          <li nz-menu-item (click)="newTab('模板管理', 'templateList')">模板管理</li>
+          <li nz-submenu nzTitle="科室库房">
+            <ul>
+              <li nz-menu-item (click)="newTab('物品申领', 'wardItemTransferRequest')">物品申领</li>
+              <li nz-menu-item (click)="newTab('物品调拨', 'wardItemTransferOut')">物品调拨</li>
+              <li nz-menu-item (click)="newTab('当前库存', 'departmentStock')">科室库存</li>
+            </ul>
+          </li>
+          <li nz-menu-item (click)="newTab('用户管理', 'userManagement')">用户管理</li>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.accountant">
+          <ng-container *ngIf="!this.uiPermission.expandSubMenu; else accountantMenuList">
+            <li nz-submenu nzTitle="收费项目定价">
+              <ul>
+                <li nz-menu-item (click)="newTab('药品价格', 'medicinePrice')">药品</li>
+                <li nz-menu-item (click)="newTab('诊疗价格', 'treatmentPrice')">诊疗</li>
+                <li nz-menu-item (click)="newTab('耗材价格', 'itemPrice')">耗材</li>
+              </ul>
+            </li>
+          </ng-container>
+          <ng-template #accountantMenuList>
+            <li nz-submenu nzTitle="采购申请">
+              <ul>
+                <li nz-menu-item (click)="newTab('药品采购申请', 'medicineOrderRequest')">药品采购申请</li>
+                <li nz-menu-item (click)="newTab('物品采购申请', 'itemOrderRequest')">物品采购申请</li>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="采购单">
+              <ul>
+                <li nz-menu-item (click)="newTab('药品采购单', 'medicineOrder')">药品采购单</li>
+                <li nz-menu-item (click)="newTab('物品采购单', 'itemOrder')">物品采购单</li>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="入库">
+              <ul>
+                <li nz-menu-item (click)="newTab('药品采购入库', 'medicinePartialOrder')">药品采购入库</li>
+                <li nz-menu-item (click)="newTab('物品采购入库', 'itemPartialOrder')">物品采购入库</li>
+              </ul>
+            </li>
+            <li nz-submenu nzTitle="退货单查询">
+              <ul>
+                <li nz-menu-item (click)="newTab('药品退货', 'medicineReturnOrder')">药品退货</li>
+                <li nz-menu-item (click)="newTab('物品退货', 'itemReturnOrder')">物品退货</li>
+              </ul>
+            </li>
+            <li nz-menu-item (click)="newTab('当前库存', 'departmentStock')">当前库存</li>
+            <li nz-submenu nzTitle="收费项目定价">
+              <ul>
+                <li nz-menu-item (click)="newTab('药品价格', 'medicinePrice')">药品</li>
+                <li nz-menu-item (click)="newTab('诊疗价格', 'treatmentPrice')">诊疗</li>
+                <li nz-menu-item (click)="newTab('耗材价格', 'itemPrice')">耗材</li>
+              </ul>
+            </li>
+            <li nz-menu-item (click)="newTab('缴费汇总报告', 'paymentSummary')">缴费汇总报告</li>
+          </ng-template>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.purchaser">
+          <li nz-submenu nzTitle="基础字典">
+            <ul>
+              <li nz-menu-item (click)="newTab('药品基本信息', 'medicineList', 'setup')">药品基本信息</li>
+              <li nz-menu-item (click)="newTab('物品基本信息', 'itemList', 'setup')">物品基本信息</li>
+            </ul>
+          </li>
+          <li nz-submenu nzTitle="采购申请">
+            <ul>
+              <li nz-menu-item (click)="newTab('药品采购申请', 'medicineOrderRequest')">药品采购申请</li>
+              <li nz-menu-item (click)="newTab('物品采购申请', 'itemOrderRequest')">物品采购申请</li>
+            </ul>
+          </li>
+          <li nz-submenu nzTitle="采购单">
+            <ul>
+              <li nz-menu-item (click)="newTab('药品采购单', 'medicineOrder')">药品采购单</li>
+              <li nz-menu-item (click)="newTab('物品采购单', 'itemOrder')">物品采购单</li>
+            </ul>
+          </li>
+          <li nz-submenu nzTitle="退货单">
+            <ul>
+              <li nz-menu-item (click)="newTab('药品退货', 'medicineReturnOrder')">药品退货</li>
+              <li nz-menu-item (click)="newTab('物品退货', 'itemReturnOrder')">物品退货</li>
+            </ul>
+          </li>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.yb">
+          <li
+            nz-submenu nzTitle="医保">
+            <ul>
+              <nz-spin [nzSpinning]="this.isLoading">
+                <li nz-submenu nzTitle="医保目录">
+                  <ul>
+                    <li nz-menu-item (click)="downloadCenterMedicine()">中心药品下载</li>
+                    <li nz-menu-item (click)="downloadCenterTreatment()">中心诊疗下载</li>
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="诊疗初始化数据">
+                  <ul>
+                    <li nz-menu-item (click)="this.uploadAllTreatment()">上传所有诊疗项目</li>
+                    <li nz-menu-item (click)="this.rebuildUploadedTreatmentCache()">已上传诊疗下载</li>
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="药品初始化数据">
+                  <ul>
+                    <li nz-menu-item (click)="this.initializeManufacture('medicine')">初始化药品供应商</li>
+                    <li nz-menu-item (click)="this.initializeManufacture('item')">初始化物品供应商</li>
+                    <li nz-menu-item (click)="this.uploadMedicine('medicine')">上传所有药品</li>
+                    <li nz-menu-item (click)="this.uploadMedicine('item')">上传所有耗材</li>
+                    <li nz-menu-item (click)="this.rebuildUploadedMedicineCache()">已上传药品下载</li>
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="匹配">
+                  <ul>
+                    <li nz-menu-item (click)="this.matchEntity('medicine')">药品匹配</li>
+                    <li nz-menu-item (click)="this.matchEntity('item')">物品匹配</li>
+                    <li nz-menu-item (click)="this.matchEntity('treatment')">诊疗匹配</li>
+                  </ul>
+                </li>
+                <li nz-menu-item (click)="this.uploadAllPendingFee()">上传所有费用</li>
+                <li nz-menu-item (click)="this.initializeWarehouse()">库房初始化</li>
+              </nz-spin>
+            </ul>
+          </li>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.lab">
+          <li nz-menu-item (click)="newTab('医嘱执行', 'executePrescriptionList')">医嘱执行</li>
+          <li nz-menu-item (click)="newTab('诊疗项目', 'treatmentList', 'setup')">化验项目</li>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.radiology">
+          <li nz-menu-item (click)="newTab('医嘱执行', 'executePrescriptionList')">医嘱执行</li>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.internalAccount">
+          <li nz-menu-item (click)="newTab('收费项目设置', 'chargeableItemList')">收费项目设置</li>
+          <li nz-menu-item (click)="newTab('自动滚费设置', 'internalAutoFeeList')">自动滚费设置</li>
+          <li nz-menu-item (click)="newTab('计费列表', 'internalFeeList')">计费列表</li>
+          <li nz-menu-item (click)="newTab('缴费列表', 'internalPaymentList')">缴费列表</li>
+          <li nz-menu-item (click)="newTab('欠费报告', 'internalFeePaymentSummary')">欠费报告</li>
+        </ng-template>
+        <ng-template [ngIf]="this.uiPermission.insuranceOfficer">
+          <li nz-menu-item (click)="newTab('诊疗项目', 'treatmentList', 'setup')">诊疗项目</li>
+          <li nz-submenu nzTitle="收费项目定价">
+            <ul>
+              <li nz-menu-item (click)="newTab('药品价格', 'medicinePrice')">药品</li>
+              <li nz-menu-item (click)="newTab('诊疗价格', 'treatmentPrice')">诊疗</li>
+              <li nz-menu-item (click)="newTab('耗材价格', 'itemPrice')">耗材</li>
+            </ul>
+          </li>
+          <li nz-menu-item (click)="newTab('库存信息', 'departmentStock')">库存信息</li>
+          <li nz-menu-item (click)="newTab('医保结算', 'settlementPaymentRequest')">医保结算</li>
+          <li nz-menu-item (click)="newTab('住院管理', 'signInList')">住院管理</li>
+          <li nz-menu-item (click)="newTab('病人档案', 'patientList')">病人档案</li>
+        </ng-template>
+      </ul>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <ul nz-menu nzTheme="dark" nzMode="horizontal" class="header-menu">
+        <nz-badge *ngIf="this.hasNewNotification" [nzDot]="true" nzTitle="新的待处理项目">
+        </nz-badge>
+        <nz-badge [nzCount]="this.notificationList.length" [nzTitle]="this.notificationList.length + '项待处理'">
+          <li *ngIf="this.notificationList.length > 0"
+              nz-menu-item
+              nz-popover [nzPopoverTitle]="notificationTitleTemplate" [nzPopoverContent]="notificationTemplate"
+              nzPopoverTrigger="hover"
+              nzPopoverPlacement="bottomLeft"
+              (mouseenter)="this.newMessageRead()"
+          >待处理任务
+          </li>
+        </nz-badge>
+        <li nz-submenu [nzTitle]="'当前用户：' + this.getCurrentUser()">
+          <ul>
+            <li nz-menu-item (click)="this.logOut()">注销</li>
+            <li nz-menu-item (click)="this.showResetPasswordModal()">重置密码</li>
+            <li nz-menu-item (click)="this.updatePersonalProfile()">更新个人信息</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+  </nz-header>
+  <nz-layout class="noPrint">
+    <!--    <nz-sider nzCollapsible [(nzCollapsed)]="isHidden" [nzTrigger]="trigger" nzCollapsedWidth=1>-->
+
+    <!--    </nz-sider>-->
+    <!--    <ng-template #trigger>-->
+    <!--      <i-->
+    <!--        nz-icon-->
+    <!--        [nzType]="isHidden ? 'menu-unfold' : 'menu-fold'"-->
+    <!--        (click)="isHidden = !isHidden"-->
+    <!--      ></i>-->
+    <!--    </ng-template>-->
+
+
+    <nz-layout class="inner-layout">
+      <!--        <nz-breadcrumb>-->
+      <!--          <nz-breadcrumb-item>Home</nz-breadcrumb-item>-->
+      <!--          <nz-breadcrumb-item>List</nz-breadcrumb-item>-->
+      <!--          <nz-breadcrumb-item>App</nz-breadcrumb-item>-->
+      <!--        </nz-breadcrumb>-->
+
+      <nz-tabset [nzType]="'card'" [(nzSelectedIndex)]="activeTabIndex" nzSize="small" nzTabPosition="top"
+      >
+        <nz-tab *ngFor="let tab of tabs" [nzTitle]="titleTemplate" (nzClick)=tabClicked(tab)>
+          <ng-template #titleTemplate>
+            <div>{{ tab.tabName }}<i nz-icon nzType="close" class="ant-tabs-close-x"
+                                     (click)="closeTab(tab)"></i></div>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'departmentFeeSummary'">
+            <app-department-fee-summary></app-department-fee-summary>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'paymentSummary'">
+            <app-payment-summary></app-payment-summary>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'allPaymentList'">
+            <app-payment-list-all></app-payment-list-all>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'settlementPaymentRequest'">
+            <app-settlement-payment-request></app-settlement-payment-request>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'signInList'">
+            <app-patient-sign-in-list
+              (prePaymentClickedEvent)="onPaymentClickedEvent($event)"
+              (prescriptionClickedEvent)="onPrescriptionClickedEvent($event)"
+              (feeListClickedEvent)="onFeeListClickedEvent($event)"
+              (nursingRecordListClickedEvent)="onNursingRecordListClickedEvent($event)"
+              (tempRecordListClickedEvent)="onTempRecordListClickedEvent($event)"
+              (medicalRecordClickedEvent)="onMedicalRecordClickedEvent($event)"
+              (feeCheckClickedEvent)="onFeeCheckClickedEvent($event)"
+              (internalChargeAutoFeeListClickedEvent)="onInternalChargeAutoFeeListClickedEvent($event)"
+              (internalChargePaymentListClickedEvent)="onInternalChargePaymentListClickedEvent($event)"
+              (internalChargeFeeListClickedEvent)="onInternalChargeFeeListClickedEvent($event)"
+              (centerFeeValidationClickedEvent)="onCenterFeeValidationClickedEvent($event)"
+              (settlementClickedEvent)="onSettlementClickedEvent($event)"
+              (drgRecordClickedEvent)="onDrgRecordClickedEvent($event)"
+            >
+            </app-patient-sign-in-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'drgGroupList'">
+            <app-drg-group-list></app-drg-group-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'settlement'">
+            <app-patient-sign-in-settle [patientSignIn]="tab.pram"></app-patient-sign-in-settle>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'drgRecord'">
+            <app-drg-record [patientSignIn]="tab.pram"></app-drg-record>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'patientList'">
+            <app-patient-list></app-patient-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'assignBed'">
+            <app-ward-list></app-ward-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'nursingCardList'">
+            <app-prescription-nursing-card-list></app-prescription-nursing-card-list>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'wardList'">
+            <app-ward-list
+              (prescriptionClickedEvent)="onPrescriptionClickedEvent($event)"
+              (feeListClickedEvent)="onFeeListClickedEvent($event)"
+              (autoFeeListClickedEvent)="onAutoFeeListClickedEvent($event)"
+              (nursingRecordListClickedEvent)="onNursingRecordListClickedEvent($event)"
+              (tempRecordListClickedEvent)="onTempRecordListClickedEvent($event)"
+              (medicalRecordClickedEvent)="onMedicalRecordClickedEvent($event)"
+              (internalChargeAutoFeeListClickedEvent)="onInternalChargeAutoFeeListClickedEvent($event)"
+              (internalChargeFeeListClickedEvent)="onInternalChargeFeeListClickedEvent($event)"
+              (feeCheckClickedEvent)="onFeeCheckClickedEvent($event)"
+              (centerFeeValidationClickedEvent)="onCenterFeeValidationClickedEvent($event)"
+              (drgRecordClickedEvent)="onDrgRecordClickedEvent($event)"
+            >
+            </app-ward-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'patientPrescription'">
+            <app-prescription [patientSignIn]="tab.pram"
+                              (patientChangedEvent)="this.patientChanged(tab, $event, '医嘱')"
+            ></app-prescription>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'patientFeeList'">
+            <app-patient-fee-list [patientSignIn]="tab.pram"
+                                  (patientChangedEvent)="patientChanged(tab, $event, '费用清单')"
+            ></app-patient-fee-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'autoPatientFeeList'">
+            <app-patient-auto-fee-list [patientSignIn]="tab.pram"></app-patient-auto-fee-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'feeCheck'">
+            <app-fee-check [patientSignIn]="tab.pram"></app-fee-check>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'nursingRecordList'">
+            <app-nursing-record-list (patientChangedEvent)="patientChanged(tab, $event, '护理记录')"
+                                     [patientSignIn]="tab.pram"
+            ></app-nursing-record-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'tempRecordList'">
+            <app-temp-record-list [patientSignIn]="tab.pram"></app-temp-record-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'paymentList'">
+            <app-payment-list [patientSignIn]="tab.pram"></app-payment-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'changedPrescriptionLog'">
+            <app-prescription-changed-list></app-prescription-changed-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'executePrescriptionList'">
+            <app-prescription-execution-list></app-prescription-execution-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'prescriptionMedicineOrderList'">
+            <app-prescription-medicine-pending-order-list></app-prescription-medicine-pending-order-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'prescriptionMedicineOrder'">
+            <app-prescription-medicine-order-list></app-prescription-medicine-order-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'prescriptionProcessedMedicineOrderList'">
+            <app-prescription-medicine-order-processed-list></app-prescription-medicine-order-processed-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'centerFeeValidation'">
+            <app-center-fee-validation [patientSignIn]="tab.pram"></app-center-fee-validation>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'prescriptionProcessedMedicineUsage'">
+            <app-prescription-medicine-usage></app-prescription-medicine-usage>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'prescriptionProcessedPatientMedicineOrderList'">
+            <app-prescription-medicine-order-processed-list-summary></app-prescription-medicine-order-processed-list-summary>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'prescriptionMedicineReturnOrderList'">
+            <app-prescription-medicine-return-order-list></app-prescription-medicine-return-order-list>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'medicineList'">
+            <app-medicine-list [controlMode]="tab.pram"></app-medicine-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'treatmentList'">
+            <app-treatment-list [controlMode]="tab.pram"></app-treatment-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'itemList'">
+            <app-item-list [controlMode]="tab.pram"></app-item-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'medicineOrder'">
+            <app-order-list [orderType]="'medicine'"></app-order-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'itemOrder'">
+            <app-order-list [orderType]="'item'"></app-order-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'medicinePartialOrder'">
+            <app-partial-order-list [orderType]="'medicine'"></app-partial-order-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'itemPartialOrder'">
+            <app-partial-order-list [orderType]="'item'"></app-partial-order-list>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'medicineTransferOut'">
+            <app-transfer-list [fromWarehouseType]="['药库']"
+                               [toWarehouseType]="['药房']"
+                               [transferType]="'out'"
+                               [orderType]="'medicine'">
+
+            </app-transfer-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'itemTransferOut'">
+            <app-transfer-list [fromWarehouseType]="['药库']" [toWarehouseType]="['病区库房','后勤库房', '科室库房']"
+                               [transferType]="'out'" [orderType]="'item'">
+
+            </app-transfer-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'wardMedicineTransferOut'">
+            <app-transfer-list [fromWarehouseType]="['病区库房']"
+                               [toWarehouseType]="['药房', '病区库房']"
+                               [transferType]="'out'"
+                               [orderType]="'medicine'">
+
+            </app-transfer-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'wardItemTransferOut'">
+            <app-transfer-list [fromWarehouseType]="['病区库房', '科室库房']" [toWarehouseType]="['药库','病区库房', '科室库房']"
+                               [transferType]="'out'" [orderType]="'item'">
+
+            </app-transfer-list>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'medicineReturnOrder'">
+            <app-order-list [isReturnOrder]=true [orderType]="'medicine'"></app-order-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'itemReturnOrder'">
+            <app-order-list [isReturnOrder]=true [orderType]="'item'"></app-order-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'medicineTransferIn'">
+            <app-transfer-list [fromWarehouseType]="['药房']"
+                               [toWarehouseType]="['药库']"
+                               [transferType]="'in'"
+                               [orderType]="'medicine'">
+
+            </app-transfer-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'itemTransferIn'">
+            <app-transfer-list [fromWarehouseType]="['病区库房','后勤库房', '科室库房']" [toWarehouseType]="['药库']"
+                               [transferType]="'in'" [orderType]="'item'"></app-transfer-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'departmentStock'">
+            <app-stock-list></app-stock-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'medicinePrice'">
+            <app-price-detail [entityType]="'medicine'"></app-price-detail>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'itemPrice'">
+            <app-price-detail [entityType]="'item'"></app-price-detail>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'treatmentPrice'">
+            <app-price-detail [entityType]="'treatment'"></app-price-detail>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'pharmacyMedicineTransferOut'">
+            <app-transfer-list [fromWarehouseType]="['药房']"
+                               [toWarehouseType]="['病区库房']"
+                               [transferType]="'out'"
+                               [orderType]="'medicine'">
+
+            </app-transfer-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'pharmacyMedicineTransferIn'">
+            <app-transfer-list [fromWarehouseType]="['病区库房']"
+                               [toWarehouseType]="['药房']"
+                               [transferType]="'in'"
+                               [orderType]="'medicine'">
+
+            </app-transfer-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'wardMedicineTransferRequest'">
+            <app-transfer-list [fromWarehouseType]="['药房']"
+                               [toWarehouseType]="['病区库房']"
+                               [transferType]="'in'"
+                               [orderType]="'medicine'">
+
+            </app-transfer-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'wardItemTransferRequest'">
+            <app-transfer-list [fromWarehouseType]="['药库']"
+                               [toWarehouseType]="['病区库房', '科室库房']"
+                               [transferType]="'in'"
+                               [orderType]="'item'">
+
+            </app-transfer-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'tempRecordListBatch'">
+            <app-temp-record-list [showBatchInputTab]="true"></app-temp-record-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'medicalRecord'">
+            <app-medical-record [patientSignIn]="tab.pram"></app-medical-record>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'userManagement'">
+            <app-user-list></app-user-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'templateList'">
+            <app-medical-record-template-list></app-medical-record-template-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'itemOrderRequest'">
+            <app-order-request-list [orderType]="'item'"></app-order-request-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'medicineOrderRequest'">
+            <app-order-request-list [orderType]="'medicine'"></app-order-request-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'medicineMatch'">
+            <app-medicine-match></app-medicine-match>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'chargeableItemList'">
+            <app-chargeable-item-list></app-chargeable-item-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'internalAutoFeeList'">
+            <app-internal-auto-fee-list></app-internal-auto-fee-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'internalFeeList'">
+            <app-internal-fee-list></app-internal-fee-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'internalPaymentList'">
+            <app-internal-payment-list></app-internal-payment-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'internalFeePaymentSummary'">
+            <app-fee-payment-summary></app-fee-payment-summary>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'hisInternalFeePaymentSummary'">
+            <app-his-fee-payment-summary></app-his-fee-payment-summary>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'internalChargeAutoFeeList'">
+            <app-his-internal-auto-fee-list
+              [patientSignIn]="tab.pram"
+            ></app-his-internal-auto-fee-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'internalChargeFeeList'">
+            <app-his-internal-fee-list [patientSignIn]="tab.pram"></app-his-internal-fee-list>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'internalChargePaymentList'">
+            <app-his-internal-payment-list [patientSignIn]="tab.pram"></app-his-internal-payment-list>
+          </ng-template>
+
+        </nz-tab>
+      </nz-tabset>
+    </nz-layout>
+  </nz-layout>
+
+</nz-layout>
+
+<div>
+  <app-print-wrapper></app-print-wrapper>
+</div>
+
+<ng-template [ngIf]="this.resetPasswordModalInitialized">
+  <nz-modal
+    [nzMaskClosable]=false
+    [(nzVisible)]="resetPasswordModalVisible"
+    nzTitle=重置密码
+    (nzOnCancel)="handleModalCancel()"
+    (nzOnOk)="this.resetPassword()"
+    nzWidth="500"
+    nzOkText="重置"
+    nzCancelText="关闭"
+  >
+    <app-user-password-reset (onPasswordResetEvent)="passwordResetComplete()"></app-user-password-reset>
+  </nz-modal>
+</ng-template>
+
+<ng-template #notificationTemplate>
+  <div style="width:400px">
+    <nz-table #basicTable [nzData]="this.notificationList" nzSize="small" style="background-color:white"
+    >
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{data.notificationMessageType}}</td>
+        <td
+          nz-popover
+          [nzPopoverContent]="data.detailInfo"
+        >{{data.message}}</td>
+        <td>
+          <button *ngIf="data.tabName" nz-button nzSize="small" nzType="primary" (click)="processMessage(data)">处理
+          </button>
+        </td>
+        <td>
+          <button nz-button nzSize="small" (click)="removeMessage(data)">删除</button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+
+</ng-template>
+<ng-template #notificationTitleTemplate>
+  <nz-alert nzType="info" nzMessage="任务处理完成后提示消息会在一分钟内消失"></nz-alert>
+</ng-template>
+<!--<div class = "printComponent">-->
+<!--  -->
+<!--</div>-->
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="personalProfileModalVisible"
+  nzTitle="个人信息"
+  (nzOnCancel)="handleModalCancel()"
+  (nzOnOk)="this.employeeProfileComponent.update()"
+  nzWidth="500"
+  nzOkText="保存"
+  nzCancelText="关闭"
+>
+  <app-employee-profile></app-employee-profile>
+</nz-modal>
+
+
+

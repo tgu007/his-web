@@ -1,0 +1,170 @@
+<div nz-row>
+  <button
+    *ngIf="this.template.uuid"
+    [disabled]="!this.template.modified"
+    (click)="this.saveTemplateClicked(template.permissionType)"
+    nz-button
+    style="float: left; margin-left: 365px"
+  >保存模板
+  </button>
+  <button
+    *ngIf="!this.template.uuid "
+    [nzDisabled]="!this.template.modified"
+    [nzDropdownMenu]="menu"
+    nz-button
+    nz-dropdown
+    style="float: left; margin-left: 365px"
+
+  >新建为
+    <i nz-icon nzType="down"></i>
+  </button>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <ul nz-menu nzMode="horizontal">
+      <li nz-menu-item
+          (click)="this.saveTemplateClicked('个人模板')">个人模板
+      </li>
+      <li nz-menu-item (click)="this.saveTemplateClicked('科室模板')">科室模板
+      </li>
+      <li nz-menu-item (click)="this.saveTemplateClicked('公开模板')">公开模板
+      </li>
+    </ul>
+  </nz-dropdown-menu>
+  <nz-select
+    nzPlaceHolder="模板类型"
+    style="float: left;margin-right: 10px; width:200pt;"
+    [(ngModel)]="this.selectTemplateType"
+    *ngIf="!template.uuid"
+  >
+    <nz-option *ngFor="let templateType of templateTypeList" [nzValue]="templateType"
+               [nzLabel]="templateType.name"></nz-option>
+  </nz-select>
+  <input
+    nz-input
+    [(ngModel)]="this.template.name"
+    style="width: 300px; float: left;"
+    placeholder="请输入模板名称"
+  />
+
+</div>
+<div nz-row>
+  <nz-select
+    *ngIf="this.sessionService.loginUser.userRole.userRoleType == '系统管理员'"
+    nzMode="multiple"
+    nzPlaceHolder="科室选择，仅管理员可见"
+    style="float: left;margin-left: 365px; width:200pt;"
+    [(ngModel)]="this.selectDepartment"
+  >
+    <nz-option *ngFor="let department of departmentList" [nzValue]="department.uuid"
+               [nzLabel]="department.department.name"></nz-option>
+  </nz-select>
+
+  <nz-select
+    *ngIf="this.sessionService.loginUser.userRole.userRoleType == '系统管理员'"
+    nzPlaceHolder="医生选择，仅管理员可见"
+    style="float: left;margin-right: 10px; width:200pt;"
+    [(ngModel)]="this.selectDoctor"
+  >
+    <nz-option *ngFor="let doctor of doctorList" [nzValue]="doctor.uuid"
+               [nzLabel]="doctor.name"></nz-option>
+  </nz-select>
+
+</div>
+
+<nz-layout>
+  <nz-sider nzCollapsible
+            [(nzCollapsed)]="this.collapsed"
+            nzTheme="light"
+            [nzCollapsedWidth]="30"
+            [nzTrigger]="null"
+            [nzWidth]="350"
+  >
+    <nz-spin [nzSpinning]="this.isSiderLoading">
+      <div style="overflow-y: scroll; height:700px;">
+        <nz-alert nzType="info" nzMessage="双击插入，列表类数据将鼠标移到选项上查看选项" nzShowIcon></nz-alert>
+        <!--        <nz-tree-->
+        <!--          [nzData]="tagNodes"-->
+        <!--          nzShowLine-->
+        <!--          (nzDblClick)=this.nodeDoubleClicked($event)-->
+        <!--        >-->
+        <!--        </nz-tree>-->
+
+        <nz-tree
+          [nzData]="tagNodes"
+          (nzDblClick)="this.nodeDoubleClicked($event)"
+          [nzTreeTemplate]="nzTreeTemplate"
+          (nzClick)="nodeClicked($event)"
+        ></nz-tree>
+        <ng-template #nzTreeTemplate let-node>
+      <span class="custom-node" [class.active]="this.activeNode?.key === node.key">
+        <span *ngIf="!node.isLeaf">
+          <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'" (click)="openFolder(node)"></i>
+          <span class="folder-name">{{ node.title }}</span>
+        </span>
+        <button *ngIf="!node.isLeaf && node.origin.allowEditChildren" (click)="this.newTag(node)"
+                nz-button nzSize="small" nzType="primary"
+                style="margin-left: 10px">
+            新增快捷
+            <i nz-icon nzType="file-add"></i>
+          </button>
+        <span *ngIf="node.isLeaf">
+            <i nz-icon [nzType]="node.origin.tagType == '单选下拉框'?'ordered-list':'file'"></i>
+          <span class="file-name" nz-popover
+                [title]="node.origin.description" nzPlacement="topCenter" nz-tooltip
+          ><strong>{{ node.title }}</strong>
+          </span>
+           <span *ngIf="node.origin.tagType != '单选下拉框'"
+                 style="margin-left: 10px;color: lightgrey;"
+           >{{ node.origin.description }}</span>
+
+          <!--          <i *ngIf="node.origin.tagType == '单选下拉框'" nz-icon nzType='edit' (click)="editTag(node)"-->
+          <!--             style="margin-left: 5px"></i>-->
+          <!--         <i *ngIf="node.origin.tagType == '单选下拉框'" nz-icon nzType='delete' (click)="deleteTag(node)"></i>-->
+          <!--          &lt;!&ndash;          <span class="file-desc" *ngIf="node.origin.tagType != '单选下拉框'">{{ node.origin.description | lowercase }}</span>&ndash;&gt;-->
+        </span>
+      </span>
+          <a nz-dropdown *ngIf="node.isLeaf && node.origin.tagType == '单选下拉框'" (click)="this.editTag(node)"
+             style="margin-left: 10px">
+            编辑
+            <i nz-icon nzType="edit"></i>
+          </a>
+          <!--          <a nz-dropdown *ngIf="node.isLeaf && node.origin.tagType == '单选下拉框'" (click)="this.deleteTag(node)"-->
+          <!--             style="margin-left: 10px">-->
+          <!--            删除-->
+          <!--            <i nz-icon nzType="delete"></i>-->
+          <!--          </a>-->
+        </ng-template>
+      </div>
+    </nz-spin>
+
+
+  </nz-sider>
+  <i
+    nz-icon
+    [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+    (click)="this.collapsed = !this.collapsed"
+  ></i>
+  <nz-layout class="inner-layout">
+    <nz-spin [nzSpinning]="this.isBusy">
+      <div nz-row>
+        <ueditor
+          [loadingTip]="'加载中……'"
+          [config]="this.basicService.ueditor_config"
+          (onReady)="this.editorReady()"
+        ></ueditor>
+      </div>
+    </nz-spin>
+  </nz-layout>
+</nz-layout>
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="tagOptionModalVisible"
+  nzTitle=自定义快捷选项
+  (nzOnCancel)="closeModal()"
+  (nzOnOk)="saveTagDescription()"
+  nzWidth="800"
+  nzOkText="保存"
+  nzCancelText="关闭"
+>
+  <app-medical-record-template-tag (onTagSavedEvent)="this.tagSaved($event)"></app-medical-record-template-tag>
+</nz-modal>
+

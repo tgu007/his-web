@@ -1,0 +1,251 @@
+<nz-table #orderLineTable [nzData]="orderForm.get('orderLines').controls" nzSize="small"
+          nzShowPagination="false"
+>
+  <thead>
+  <tr>
+    <th [hidden]="true"></th>
+    <th>发票号</th>
+    <th>名称</th>
+    <th>规格</th>
+    <th>数量</th>
+    <th>单位</th>
+    <th>进价</th>
+    <th>金额</th>
+    <th>批次号</th>
+    <th>制造商</th>
+    <ng-template [ngIf]="this.orderType == 'item'">
+      <th>品牌</th>
+    </ng-template>
+    <ng-template [ngIf]="this.orderType == 'medicine'">
+      <th>批准文号</th>
+      <th>失效日期</th>
+    </ng-template>
+    <th *ngIf="!this.isReturnOrder && this.order && this.order.orderStatus == '已批准'">已入库</th>
+
+    <th *ngIf="this.sessionService.getUserPermission().commonComponent.orderpermission.allowEdit"></th>
+  </tr>
+  </thead>
+  <tbody *ngFor="let lineControl of orderForm.get('orderLines').controls; let i= index">
+
+  <td [hidden]="true">
+    {{lineControl.value.line ? lineControl.value.line.uuid : undefined}}
+  </td>
+  <tr [formGroup]="lineControl">
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit || this.isReturnOrder; else invoiceNumberInput">
+        {{lineControl.value.txtInvoiceNumber}}
+      </ng-container>
+      <ng-template #invoiceNumberInput>
+        <nz-form-control>
+          <input type="text" nz-input formControlName="txtInvoiceNumber"/>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container
+        *ngIf="!(editCache[i].inEdit && this.order && (this.order.orderStatus == '已创建'|| this.order.uuid == undefined)); else itemSelect">
+        {{this.getRowSelectedItemProperty(i, "name")}}
+        <nz-tag [nzColor]="'red'"
+                *ngIf="this.order && this.order.orderStatus != '已批准' && lineControl.value.line && lineControl.value.line.uuid && !lineControl.value.line.inRequest"
+        >非申请
+        </nz-tag>
+      </ng-container>
+      <ng-template #itemSelect>
+        <nz-form-control>
+          <app-common-dynamic-select
+            (onSearchEvent)="searchOrderEntity($event, i)"
+            formControlName="selectEntity"
+            [dataList]="this.isReturnOrder ? this.editCache[i].rowSelectionList.originOrderLineList:this.editCache[i].rowSelectionList.entityList"
+            [totalDataCount]="this.editCache[i].rowSelectionList.dataListTotalCount"
+            [dataColumns]="this.dropDownColumnList"
+            (onSelectedItemChangedEvent)="this.selectedItemChanged($event, i)"
+            [pageCount]=this.editCache[i].rowSelectionList.dataListPageCount
+          >
+          </app-common-dynamic-select>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      {{ this.getRowSelectedItemProperty(i, "warehouseModel")}}
+    </td>
+    <td>
+      <ng-container
+        *ngIf="!(editCache[i].inEdit && this.order && (this.order.orderStatus == '已创建'|| this.order.uuid == undefined)); else quantityInput">
+        {{lineControl.value.numberQuantity}}
+        <nz-tag [nzColor]="'red'"
+                *ngIf="this.order && this.order.orderStatus != '已批准' && lineControl.value.line && lineControl.value.line.uuid && lineControl.value.line.exceedRequestQuantity"
+        >超量
+        </nz-tag>
+      </ng-container>
+      <ng-template #quantityInput>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberQuantity"
+            [nzStep]="1"
+            [nzMin]=0.001
+          ></nz-input-number>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container
+        *ngIf="!(editCache[i].inEdit && this.order && (this.order.orderStatus == '已创建'|| this.order.uuid == undefined)); else uomSelect">
+        {{lineControl.value.selectUom ? lineControl.value.selectUom.code : undefined}}
+
+      </ng-container>
+      <ng-template #uomSelect>
+        <nz-form-control>
+          <nz-select
+            nzShowSearch
+            nzServerSearch
+            formControlName="selectUom"
+            [nzShowArrow]="false"
+            [nzFilterOption]="nzFilterOption"
+            [nzDropdownMatchSelectWidth]=false
+            style="width:50px;"
+          >
+            <nz-option *ngFor="let uom of this.editCache[i].rowSelectionList.uomList"
+                       [nzLabel]="uom.code"
+                       [nzValue]="uom"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else costPriceInput">
+        {{lineControl.value.numberCostPrice}}
+      </ng-container>
+      <ng-template #costPriceInput>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberCostPrice"
+            [nzMin]=0
+            [nzStep]="1"
+            [nzFormatter]="formatterDollar"
+            [nzParser]="parserDollar"
+            nzPrecision="4"
+          ></nz-input-number>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      {{(lineControl.value.numberCostPrice * lineControl.value.numberQuantity).toFixed(2)}}
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit || this.isReturnOrder; else batchNumberInput">
+        {{lineControl.value.txtBatchNumber}}
+      </ng-container>
+      <ng-template #batchNumberInput>
+        <nz-form-control>
+          <input type="text" nz-input formControlName="txtBatchNumber"/>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit || this.isReturnOrder; else manufacturerSelect">
+        {{lineControl.value.selectManufacturer ? lineControl.value.selectManufacturer.name : undefined}}
+      </ng-container>
+      <ng-template #manufacturerSelect>
+        <nz-form-control>
+          <nz-select
+            nzShowSearch
+            formControlName="selectManufacturer"
+            [nzShowArrow]="false"
+            [nzFilterOption]="nzFilterOption"
+            [nzDropdownMatchSelectWidth]=false
+            style="width:100px;"
+          >
+            <nz-option *ngFor="let manufacturer of this.editCache[i].rowSelectionList.manufactureList"
+                       [nzLabel]="manufacturer.name"
+                       [nzValue]="manufacturer"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <ng-template [ngIf]="this.orderType == 'item'">
+      <td>
+        <ng-container *ngIf="!editCache[i].inEdit || this.isReturnOrder; else brandSelect">
+          {{lineControl.value.selectBrand ? lineControl.value.selectBrand.name : undefined}}
+        </ng-container>
+        <ng-template #brandSelect>
+          <nz-form-control>
+            <nz-select
+              nzShowSearch
+              formControlName="selectBrand"
+              [nzShowArrow]="false"
+              [nzDropdownMatchSelectWidth]=false
+              (nzOnSearch)="searchBrand($event, i)"
+              [nzDropdownRender]="renderTemplate"
+              style="width:100px;"
+            >
+              <nz-option *ngFor="let brand of this.editCache[i].rowSelectionList.brandList"
+                         [nzLabel]="brand.name"
+                         [nzValue]="brand"></nz-option>
+              <ng-template #renderTemplate>
+                <nz-divider></nz-divider>
+                <div class="container">
+                  <input type="text" nz-input placeHolder='品牌名称' #inputElement/>
+                  <button nz-button nzSize="small" (click)="addBrand(inputElement, i)"
+                          [disabled]="inputElement.value == ''">添加品牌
+                  </button>
+                  <!--              <a class="add-item" (click)="addManufacturer(inputElement, control)"><i nz-icon nzType="plus"></i> 添加产地</a>-->
+                </div>
+              </ng-template>
+            </nz-select>
+          </nz-form-control>
+        </ng-template>
+      </td>
+    </ng-template>
+    <ng-template [ngIf]="this.orderType == 'medicine'">
+      <td>
+        <ng-container *ngIf="!editCache[i].inEdit || this.isReturnOrder; else batchTextInput">
+          {{lineControl.value.txtBatchText}}
+        </ng-container>
+        <ng-template #batchTextInput>
+          <nz-form-control>
+            <input type="text" nz-input formControlName="txtBatchText"/>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[i].inEdit || this.isReturnOrder; else expireDateInput">
+          {{formattedDate(lineControl.value.dateExpireDate)}}
+        </ng-container>
+        <ng-template #expireDateInput>
+          <nz-form-control>
+            <nz-form-control [nzSm]="16" [nzXs]="24">
+              <nz-date-picker
+                nzShowTime
+                nzFormat="yyyy-MM-dd"
+                nzPlaceHolder="选择日期"
+                formControlName="dateExpireDate"
+                nzSize="small"
+                [nzShowTime]=false
+                style="width:100px;"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-control>
+        </ng-template>
+      </td>
+    </ng-template>
+    <td *ngIf="!this.isReturnOrder && this.order && this.order.orderStatus == '已批准'">
+      {{lineControl.value.line ? lineControl.value.line.totalPartialLineQuantity : undefined}}
+    </td>
+    <td *ngIf="this.allowEdit()">
+      <ng-container *ngIf="!editCache[i].inEdit; else inEdit">
+        <button nz-button nzType="primary" (click)="editLineControl(i)"
+        ><i nz-icon nzType="edit"></i></button>
+      </ng-container>
+      <ng-template #inEdit>
+        <button nz-button nzType="primary" (click)="commitLineControl(i)"
+        ><i nz-icon nzType="save"></i></button>
+      </ng-template>
+      <button nz-button nzType="primary" (click)="removeLineControl(i)"
+              [disabled]="this.order.orderStatus  =='已批准'"
+      ><i nz-icon nzType="delete"></i></button>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

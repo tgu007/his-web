@@ -1,0 +1,76 @@
+<nz-table #patientContactTable [nzData]="patientDetailForm.get('patientContacts').controls" nzSize="small">
+  <thead>
+  <tr>
+    <th [hidden]="true"></th>
+    <th>姓名</th>
+    <th>与病人关系</th>
+    <th>联系电话</th>
+    <th>住址</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody *ngFor="let control of patientDetailForm.get('patientContacts').controls; let i=index">
+  <tr [formGroup]="control">
+    <td [hidden]="true">
+      {{control.value.txtId}}
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else nameInput">
+        {{control.value.txtContactName}}
+      </ng-container>
+      <ng-template #nameInput>
+        <nz-form-control>
+          <input type="text" nz-input formControlName="txtContactName"/>
+          <!--          <div *ngIf="formErrors['txtContactName']">{{ formErrors['txtContactName'] }}</div>-->
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else relInput">
+        {{control.value.txtContactRelationship}}
+      </ng-container>
+      <ng-template #relInput>
+        <nz-form-control>
+          <input type="text" nz-input formControlName="txtContactRelationship"/>
+          <!--          <div *ngIf="formErrors['txtContactRelationship']">{{ formErrors['txtContactRelationship'] }}</div>-->
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else phoneNumberInput">
+        {{control.value.txtContactPhoneNumber}}
+      </ng-container>
+      <ng-template #phoneNumberInput>
+        <nz-form-control>
+          <input type="text" nz-input formControlName="txtContactPhoneNumber"/>
+          <!--          <div *ngIf="formErrors['txtContactPhoneNumber']">{{ formErrors['txtContactPhoneNumber'] }}</div>-->
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else addressInput">
+        {{control.value.txtContactAddress}}
+      </ng-container>
+      <ng-template #addressInput>
+        <nz-form-control>
+          <input type="text" nz-input formControlName="txtContactAddress"/>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else inEdit">
+        <button nz-button nzType="primary" nzSize="small" (click)="editLineControl(i)"><i nz-icon nzType="edit"></i>
+        </button>
+        <button nz-button nzType="primary" nzSize="small" (click)="removeLineControl(i)"><i nz-icon nzType="delete"></i>
+        </button>
+      </ng-container>
+      <ng-template #inEdit>
+        <button nz-button nzType="primary" nzSize="small" (click)="commitLineControl(i)"><i nz-icon nzType="save"></i>
+        </button>
+        <button nz-button nzType="primary" nzSize="small" (click)="removeLineControl(i)"><i nz-icon nzType="delete"></i>
+        </button>
+      </ng-template>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

@@ -1,0 +1,109 @@
+<table style="border: none">
+  <THEAD style="border:none;">
+  <div nz-row>
+   <span class="hospitalName">
+    {{this.hospitalName}}
+  </span>
+  </div>
+  <div nz-row>
+    <h2 class="title">
+      护理记录单
+    </h2>
+  </div>
+  <div nz-row>
+    <nz-descriptions [nzColumn]="{ xxl: 5, xl: 5, lg: 5, md: 1, sm: 1, xs: 1 }"
+                     style="width: 994px; margin-left: 40px"
+    >
+      <nz-descriptions-item
+        nzTitle="姓名">{{this.printData.patientSignIn ? this.printData.patientSignIn.patient.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="科室">{{this.printData.patientSignIn ? this.printData.patientSignIn.departmentTreatment.department.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="住院号">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInNumberCode : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="入院日期">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInDate : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="诊断">{{this.printData.patientSignIn ? this.printData.patientSignIn.diagnoseString : undefined}}</nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+  </THEAD>
+  <nz-table #basicTable [nzData]="this.printData.nursingRecordList" nzSize="small"
+            [nzPageSize]="30"
+            [nzShowPagination]="false"
+            nzPageSize="999999"
+            nzBordered
+  >
+    <thead>
+    <tr>
+      <th rowspan="3">时间</th>
+      <th colspan="4">生命体征</th>
+      <th rowspan="2">Spo2</th>
+      <th rowspan="2">吸氧</th>
+      <th rowspan="3">意识</th>
+      <th rowspan="2" colspan="2">瞳孔大小</th>
+      <th rowspan="2" colspan="2">入量</th>
+      <th rowspan="2" colspan="3">出量</th>
+      <th rowspan="3">管路<br>情况</th>
+      <th rowspan="3">皮肤情况</th>
+      <th colspan="3">风险评估评分</th>
+      <th rowspan="3" width="100px">护士</th>
+    </tr>
+    <tr>
+      <th>体温</th>
+      <th>脉搏</th>
+      <th>呼吸</th>
+      <th>血压</th>
+      <th rowspan="2">压疮</th>
+      <th rowspan="2">跌倒<br>坠床</th>
+      <th rowspan="2">自理<br>能力</th>
+    </tr>
+    <tr>
+      <th>C</th>
+      <th>次/分</th>
+      <th>次/分</th>
+      <th>mmHg</th>
+      <th>%</th>
+      <th>L/min</th>
+      <th>左</th>
+      <th>右</th>
+      <th>名称</th>
+      <th>ml</th>
+      <th>名称</th>
+      <th>ml</th>
+      <th>性状</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-data [ngForOf]="basicTable.data">
+      <tr>
+        <td>{{data.recordDate}}</td>
+        <td>{{data.bodyTemp}}</td>
+        <td>{{data.pulse}}</td>
+        <td>{{data.breath}}</td>
+        <td>{{data.bloodPressureLow != undefined && data.bloodPressureHigh != undefined ? data.bloodPressureLow + '/' + data.bloodPressureHigh : undefined}}</td>
+        <td>{{data.spo2}}</td>
+        <td>{{data.oxygen}}</td>
+        <td>{{data.consciousness}}</td>
+        <td>{{data.leftPupilDescription}}</td>
+        <td>{{data.rightPupilDescription}}</td>
+        <td>{{data.inName}}</td>
+        <td>{{data.inVolume}}</td>
+        <td>{{data.outName}}</td>
+        <td>{{data.outVolume}}</td>
+        <td>{{data.outCondition}}</td>
+        <td>{{data.pipingCondition}}</td>
+        <td>{{data.skinCondition}}</td>
+        <td>{{data.pressureSoreScore}}</td>
+        <td>{{data.fallScore}}</td>
+        <td>{{data.careOneselfScore}}</td>
+        <td>{{data.whoCreatedName}}</td>
+      </tr>
+      <tr *ngIf="data.description">
+        <td colspan="20">{{data.description}}</td>
+      </tr>
+    </ng-template>
+    </tbody>
+  </nz-table>
+</table>
+
+

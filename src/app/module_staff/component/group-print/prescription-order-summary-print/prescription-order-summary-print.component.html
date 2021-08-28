@@ -1,0 +1,43 @@
+<div class="page">
+  <ng-template #emptyResult></ng-template>
+  <div nz-row>
+    <p style="margin-left: 20px; float:left;">发药单号：{{this.printData.order.origin.title}}</p>
+    <p style="margin-left: 20px; float:left;">{{this.printData.order.origin.wardName}}</p>
+  </div>
+  <div nz-row>
+
+    <nz-table #tblOrderSummaryLine
+              [nzData]="this.printData.prescriptionOrderList"
+              nzSize="small"
+              [nzShowPagination]="false"
+              nzPageSize="999999"
+              nzBordered
+              [nzNoResult]=emptyResult
+    >
+      <ng-template ngFor let-data [ngForOf]="tblOrderSummaryLine.data">
+        <thead>
+        <tr>
+          <th style="width: 200px">药品名称</th>
+          <th>规格</th>
+          <th>厂家</th>
+          <th>价格</th>
+          <th>应发数量</th>
+          <th [hidden]="data.status == '待处理'">发药</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+          <td>{{data.orderLineCommon.medicineName}}</td>
+          <td>{{data.orderLineCommon.pharmacyModel}}</td>
+          <td>{{data.orderLineCommon.manufacturer}}</td>
+          <td>{{data.orderLineCommon.priceInfo}}</td>
+          <td>{{data.orderQuantityInfo}}</td>
+          <td [hidden]="data.status == '待处理'">{{data.status}}</td>
+        </tr>
+        </tbody>
+      </ng-template>
+    </nz-table>
+  </div>
+</div>
+

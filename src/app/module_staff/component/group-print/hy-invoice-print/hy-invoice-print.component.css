@@ -1,0 +1,27 @@
+.page {
+  width: 250mm;
+  height: 102mm;
+  /*border: 1px solid #00ff00;*/
+  float: left;
+}
+
+span {
+  size: 4mm;
+  margin-bottom: 0.5mm;
+  color: black;
+  font-family: Arial, "Microsoft YaHei";
+  font-size: medium;
+}
+
+
+.row {
+  /*width: 100mm;*/
+  width: 200mm;
+  height: 6.1mm;
+  margin-top: 0;
+  margin-left: 16mm;
+}
+
+table, td, th, thead {
+  border: 1px solid black;
+}

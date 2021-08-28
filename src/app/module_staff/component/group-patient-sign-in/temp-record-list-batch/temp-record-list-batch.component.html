@@ -1,0 +1,315 @@
+<div nz-row>
+  <button nz-button nzType="primary"
+          (click)="this.save()"
+         [nzLoading]="this.isSaving"
+  >
+    保存批量录入
+  </button>
+
+  <nz-select
+    [(ngModel)]="this.selectShowColumn"
+
+    nzMode="multiple"
+  >
+    <nz-option *ngFor="let columnName of this.columnNameList" [nzValue]="columnName"
+               [nzLabel]="columnName"></nz-option>
+  </nz-select>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table [nzData]="tempRecordBatchForm.get('tempRecordList').controls" nzSize="small"
+              [nzShowPagination]=false
+              [nzPageSize]="500"
+    >
+      <thead>
+      <tr>
+        <th [hidden]="true"></th>
+        <th [hidden]="true"></th>
+        <th>床位</th>
+        <th>病人</th>
+        <th>时间</th>
+        <th [hidden]="!this.selectShowColumn.includes('脉搏')">脉搏</th>
+        <th [hidden]="!this.selectShowColumn.includes('心率')">心率</th>
+        <th [hidden]="!this.selectShowColumn.includes('呼吸')">呼吸</th>
+        <th [hidden]="!this.selectShowColumn.includes('腋温')">腋温</th>
+        <th [hidden]="!this.selectShowColumn.includes('血压')" colspan="2">血压（mmHg）</th>
+        <th [hidden]="!this.selectShowColumn.includes('大便')">大便</th>
+        <th [hidden]="!this.selectShowColumn.includes('口温')">口温</th>
+        <th [hidden]="!this.selectShowColumn.includes('耳温')">耳温</th>
+        <th [hidden]="!this.selectShowColumn.includes('肛温')">肛温</th>
+        <th [hidden]="!this.selectShowColumn.includes('降温')">降温</th>
+        <th [hidden]="!this.selectShowColumn.includes('入量')">入量</th>
+        <th [hidden]="!this.selectShowColumn.includes('出量')">出量</th>
+        <th [hidden]="!this.selectShowColumn.includes('尿量')" colspan="2">尿量</th>
+        <th [hidden]="!this.selectShowColumn.includes('身高')">身高</th>
+        <th [hidden]="!this.selectShowColumn.includes('体重')">体重</th>
+        <th [hidden]="!this.selectShowColumn.includes('卧床')">卧床</th>
+        <th [hidden]="!this.selectShowColumn.includes('药物过敏')">药物过敏</th>
+        <th [hidden]="!this.selectShowColumn.includes('备注')">备注</th>
+      </tr>
+      </thead>
+      <tbody *ngFor="let lineControl of tempRecordBatchForm.get('tempRecordList').controls; let i= index">
+      <tr [formGroup]="lineControl">
+        <td [hidden]="true">
+          {{lineControl.value.lineId}}
+        </td>
+        <td [hidden]="true">
+          {{lineControl.value.wardBed.currentSignIn.uuid}}
+        </td>
+        <td>
+          {{lineControl.value.wardBed.name}}
+        </td>
+        <td>
+          {{lineControl.value.wardBed.currentSignIn.patient.name}}
+        </td>
+        <td>
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-date-picker
+              nzShowTime
+              nzFormat="yyyy-MM-dd HH:mm:ss"
+              nzPlaceHolder="选择日期时间"
+              formControlName="dateRecordDate"
+              nzSize="small"
+              [nzFormat]="dateFormat"
+            ></nz-date-picker>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('脉搏')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberPulse"
+              [nzStep]="1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+        <td [hidden]="!this.selectShowColumn.includes('心率')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberHeartbeat"
+              [nzStep]="1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+        <td [hidden]="!this.selectShowColumn.includes('呼吸')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberBreath"
+              [nzStep]="1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('腋温')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberArmpitTemp"
+              [nzStep]="0.1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('血压')">
+          <nz-form-control [nzSm]="6" [nzXs]="12">
+            <nz-input-number
+              nz-input
+              formControlName="numberBloodPressureLow"
+              [nzStep]="0.1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('血压')">
+          <nz-form-control [nzSm]="6" [nzXs]="12">
+            <nz-input-number
+              nz-input
+              formControlName="numberBloodPressureHigh"
+              [nzStep]="0.1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+        <td [hidden]="!this.selectShowColumn.includes('大便')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberBowels"
+              [nzStep]="0.1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+
+        <td [hidden]="!this.selectShowColumn.includes('口温')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberMouthTemp"
+              [nzStep]="0.1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('耳温')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberEarTemp"
+              [nzStep]="0.1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('肛温')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberRectalTemp"
+              [nzStep]="0.1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('降温')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberAdjustTemp"
+              [nzStep]="0.1"
+              nzSize="small"
+
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('入量')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberIn"
+              [nzStep]="1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('出量')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberOut"
+              [nzStep]="1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+
+        <td [hidden]="!this.selectShowColumn.includes('尿量')">
+          <nz-form-control [nzSm]="6" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberUrine"
+              [nzStep]="1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('尿量')">
+          <nz-form-control [nzSm]="6" [nzXs]="24">
+            <nz-select formControlName="selectUrineVolume"
+                       nzSize="small"
+                       nzAllowClear
+                       style="width:80pt;">
+              <nz-option nzLabel="+" nzValue="+"></nz-option>
+              <nz-option nzLabel="*" nzValue="*"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('身高')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberHeight"
+              [nzStep]="1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('体重')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="numberWeight"
+              [nzStep]="1"
+              nzSize="small"
+              style="width: 80px"
+            ></nz-input-number>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('卧床')">
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <label nz-checkbox
+                   formControlName="chkCanNotStand"
+            ></label>
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('药物过敏')">
+          <nz-form-control [nzSm]="18" [nzXs]="12">
+            <input
+              nz-input
+              formControlName="txtAllergy"
+              nzSize="small"
+              style="width: 150px"
+            />
+          </nz-form-control>
+        </td>
+
+        <td [hidden]="!this.selectShowColumn.includes('备注')">
+          <nz-form-control [nzSm]="18" [nzXs]="12">
+            <input
+              nz-input
+              formControlName="txtReference"
+              nzSize="small"
+              style="width: 150px"
+            />
+          </nz-form-control>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>

@@ -1,0 +1,55 @@
+<nz-spin [nzSpinning]="this.isBusy">
+  <form nz-form [formGroup]="templateTagForm">
+    <div nz-row>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectTagAppliedTo">适用</nz-form-label>
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-select formControlName="selectTagAppliedTo">
+              <nz-option nzLabel="所有人" nzValue="everyone"></nz-option>
+              <nz-option nzLabel="我自己" nzValue="myself"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-control [nzSm]="8" [nzXs]="24">
+            <nz-form-label [nzSm]="12" [nzXs]="24" nzFor="switchTagStatus">是否启用</nz-form-label>
+            <nz-switch formControlName="switchTagStatus" [nzCheckedChildren]="checkedTemplate"
+                       [nzUnCheckedChildren]="unCheckedTemplate"></nz-switch>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtName">名称</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="txtName"
+                   placeholder="快捷方式名称"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row>
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <textarea formControlName="txtOptionList" rows="10" nz-input placeholder="快捷方式选项，一行一个"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <ng-template #checkedTemplate><i nz-icon nzType="check"></i></ng-template>
+    <ng-template #unCheckedTemplate><i nz-icon nzType="close"></i></ng-template>
+  </form>
+</nz-spin>
+
+

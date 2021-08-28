@@ -1,0 +1,71 @@
+<div nz-row>
+  <button
+    *ngIf="!this.patientSignIn.settlement && this.patientSignIn.selfPay"
+    (click)="this.selfHisSettle()"
+    nz-button nzType="primary"
+    [nzLoading]=this.isSaving
+    class="ant-btn ant-btn-primary"
+    style="float: left; margin-left: 10px"
+  >结算
+  </button>
+
+  <button
+    *ngIf="!this.patientSignIn.settlement && !this.patientSignIn.selfPay && this.patientSignIn.preSettlement"
+    (click)="this.settle()"
+    nz-button nzType="primary"
+    [nzLoading]=this.isSaving
+    class="ant-btn ant-btn-primary"
+    style="float: left; margin-left: 10px"
+  >结算
+  </button>
+
+  <button
+    *ngIf="this.allowSignOut()"
+    (click)="this.confirmSignOutClicked()"
+    nz-button nzType="primary"
+    [nzLoading]=this.isSaving
+    class="ant-btn ant-btn-primary"
+    style="float: left; margin-left: 10px"
+  >确认出院
+  </button>
+
+  <button
+    *ngIf="this.patientSignIn.settlement"
+    (click)="this.printInvoiceClicked()"
+    nz-button nzType="primary"
+    [nzLoading]=this.isSaving
+    class="ant-btn ant-btn-primary"
+    style="float: left; margin-left: 10px"
+  >发票打印
+  </button>
+</div>
+
+<div nz-row style="width: 100%">
+  <app-settlement-summary [patientSignIn]="this.patientSignIn"
+                          [isFinalSettle]="true"></app-settlement-summary>
+</div>
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="printInvoiceModalVisible"
+  nzTitle=确认当前发票号码
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="this.generateInvoice()"
+  nzWidth="500"
+  nzOkText="打印发票"
+  nzCancelText="取消"
+  [nzOkLoading]=this.generatingInvoice
+>
+  <nz-alert nzType="info" nzMessage="确认当前发票号是否准确，如不准确请先修改在按打印发票" nzShowIcon></nz-alert>
+  <div nz-row style="margin-top: 10px">
+    <nz-form-label
+      style="float: left;"
+    >当前发票号码
+    </nz-form-label>
+    <input
+      nz-input
+      [(ngModel)]="this.currentInvoiceNumber"
+      style="float: left;margin-left: 10px;width: 200px"
+    />
+  </div>
+</nz-modal>

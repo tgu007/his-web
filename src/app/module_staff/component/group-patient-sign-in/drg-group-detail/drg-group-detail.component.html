@@ -1,0 +1,62 @@
+<form nz-form [formGroup]="drgGroupDetailForm">
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtName">名称</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="txtName"
+                 placeholder="病组名称"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectGroupType" nzRequired>病组类别</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-select
+            formControlName="selectGroupType">
+            <nz-option nzLabel="日均" nzValue="日均"></nz-option>
+            <nz-option nzLabel="总额" nzValue="总额"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="4">
+      <nz-form-item>
+        <nz-form-control [nzSm]="20" [nzXs]="24">
+          <label nz-checkbox formControlName="chkDisabled">停用</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberUpperLimit" nzRequired>上限提醒额度</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberUpperLimit"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberLowerLimit">下限提醒额度</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberLowerLimit"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>

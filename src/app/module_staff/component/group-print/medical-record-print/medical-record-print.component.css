@@ -1,0 +1,148 @@
+/*可以在这里添加你自己的css*/
+header {
+  border-bottom: 1px solid #777;
+  display: block;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+
+p {
+  padding: 0;
+  margin: 0;
+  line-height: 3em;
+  font-size: 14px;
+  font-family: SimSun;
+  word-break: break-all;
+}
+
+p.yymc {
+  font-family: "楷体";
+  font-size: 14px;
+  text-align: center;
+  color: #777;
+}
+
+p.blmc {
+  font-family: "黑体";
+  font-size: 20px;
+  text-align: center;
+  color: #777;
+}
+
+p.brxx {
+  font-family: SimSun, "宋体", Arial;
+  font-size: 14px;
+  text-align: center;
+  color: #777;
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+table > tbody > tr > td {
+  border: 1px solid #888;
+}
+
+table.noborder {
+  width: 100%;
+  margin: 1.5em auto;
+}
+
+table.noborder > thead > tr > th {
+  text-align: left;
+  font-weight: normal;
+  border: 1px dotted #aaa;
+}
+
+table.noborder > thead > tr > th:nth-child(1) {
+  width: 100px;
+}
+
+table.noborder > thead > tr > th:nth-child(2) {
+  width: 160px;
+}
+
+table.noborder > thead > tr > th:nth-child(3) {
+  width: 100px;
+}
+
+table.noborder > tbody > tr > td {
+  border: 1px dotted #aaa;
+}
+
+table.xzt {
+  margin: 0 auto;
+}
+
+table.center {
+  margin: 0 auto;
+}
+
+table.right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+
+select.selectbox {
+
+  border: 0;
+  display: inline;
+  position: relative;
+  min-height: 1.146667rem;
+  line-height: 1.146667rem;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-right: .6rem;
+  background-color: #eee;
+  background: transparent;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  color: blue;
+}
+
+
+input.Ryjl_label {
+  width: fit-content;
+  /* height: max-content; */
+  background: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.4em;
+  padding: 0;
+  border: none;
+  font-family: SimSun, "宋体", Arial;
+}
+
+input.replace {
+  /* width: max-content;
+  height: max-content; */
+  width: 100%;
+  background: none;
+  border-radius: 3px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.4em;
+  padding: 0;
+  border: none;
+  font-family: SimSun, "宋体", Arial;
+}
+
+timeStamp{
+  color: red;
+}
+
+firstRow{
+  display:table-header-group;
+}
+
+.-thead{
+  display:table-header-group;
+}
+
+

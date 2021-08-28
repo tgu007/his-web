@@ -1,0 +1,66 @@
+<div nz-row>
+  <input nz-input [(ngModel)]="filterItemName"
+         placeholder="输入名字"
+         style=" float: left; margin-left: 10px; width:300px"/>
+  <button nz-button nzType="primary" (click)="searchItem()"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询
+  </button>
+
+
+  <button
+    nz-button nzType="primary" (click)="initItemDetailModal()"
+    style=" float: left; margin-left: 10px;">添加物品
+  </button>
+
+  <button nz-button nzType="primary" nzShape="circle" (click)="reloadItemClicked()"
+          style=" float: left; margin-left: 10px;"><i nz-icon nzType="reload"></i>
+  </button>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="itemList" nzSize="small" style="background-color:white"
+              [nzTotal]="totalDataCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=this.loadItemList()
+    >
+      <thead>
+      <tr>
+        <th>名称</th>
+        <th>价格</th>
+        <th>单位</th>
+        <th>启用</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data" nzShowRowSelection>
+        <td>{{data.name}}</td>
+        <td>{{data.listPrice}}</td>
+        <td>{{data.uom}}</td>
+        <td><label nz-checkbox [(ngModel)]="data.enabled" nzDisabled></label></td>
+        <td>
+          <button
+            nz-button nzSize="small" nzType="primary" (click)="initItemDetailModal(data)">修改</button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="itemDetailModalVisible"
+  nzTitle=收费项目信息
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveChargeableItem()"
+  nzWidth="1000"
+  nzOkText="保存"
+  nzCancelText="关闭"
+  [nzOkLoading]="this.itemDetailComponent.isSaving"
+>
+  <app-chargeable-item-detail (itemSavedEvent) = "onItemSaved($event)"></app-chargeable-item-detail>
+</nz-modal>

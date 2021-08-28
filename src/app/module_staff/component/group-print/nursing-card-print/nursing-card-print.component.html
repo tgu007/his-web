@@ -1,0 +1,70 @@
+<div style="float: left;">
+  <span>{{this.printData.cardDate}}</span>
+  <nz-table #basicTable [nzData]="this.printData.cardList" nzSize="small"
+            [nzShowPagination]=false
+
+  >
+    <thead>
+    <tr>
+      <th nzWidth="30px"></th>
+      <th>病人</th>
+      <th>床位</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-patientCard [ngForOf]="basicTable.data">
+      <tr>
+        <td
+          [nzShowExpand]="true"
+          nzExpand
+        ></td>
+        <td>{{patientCard.patientName}}</td>
+        <td>{{patientCard.bedInfo}}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      <tr nzExpand
+      >
+        <th></th>
+        <th>名称</th>
+        <th [hidden]="patientCard.hideServeInfo">每次剂量</th>
+        <th [hidden]="patientCard.hideQuantityInfo">数量</th>
+        <th>频次</th>
+        <th [hidden]="patientCard.hideSelfMedicine">自备药</th>
+        <th>备注</th>
+        <th>签名</th>
+        <th>签名</th>
+        <th>签名</th>
+        <th>签名</th>
+      </tr>
+      <tr nzExpand
+          *ngFor="let detail of patientCard.nursingCardRespDtoList">
+        <td></td>
+        <td>
+          <nz-tag *ngIf="detail.groupId" [nzColor]="detail.groupColour"
+          >组{{detail.groupIndex}}
+          </nz-tag>
+          {{detail.entityName}}</td>
+        <td [hidden]="patientCard.hideServeInfo">{{detail.serveInfo}}</td>
+        <td [hidden]="patientCard.hideQuantityInfo">{{detail.quantityInfo}}</td>
+        <td [rowSpan]="detail.rowSpan" [hidden]="detail.hideColumn">{{detail.frequency}}</td>
+        <td [hidden]="patientCard.hideSelfMedicine"><label nz-checkbox [(ngModel)]="detail.selfMedicine"
+                                                           nzDisabled></label></td>
+        <td>{{detail.reference}}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </ng-template>
+    </tbody>
+  </nz-table>
+</div>

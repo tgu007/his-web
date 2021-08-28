@@ -1,0 +1,59 @@
+<div nz-row>
+  <nz-select
+    nzPlaceHolder="选择库房"
+    [(ngModel)]="selectWarehouse"
+    (ngModelChange)="this.loadUsageList()"
+    style="width: 100px; float: left;margin-right: 10px;"
+  >
+    <nz-option *ngFor="let warehouse of warehouseList" [nzValue]="warehouse.uuid"
+               [nzLabel]="warehouse.department.name"></nz-option>
+  </nz-select>
+
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   nzFormat="yyyy-MM-dd"
+                   [nzAllowClear]=false
+                   style="width: 300px; float: left;margin-right: 10px;"></nz-range-picker>
+
+  <input nz-input placeholder="病人姓名/住院号" [(ngModel)]="searchCode"
+         style="width: 150px; float: left;
+  margin-right: 10px;">
+
+  <input nz-input placeholder="药品名称/搜索码" [(ngModel)]="medicineSearchCode"
+         style="width: 250px; float: left;
+  margin-right: 10px;">
+
+  <nz-select [(ngModel)]="filterOrderLineStatus"
+             #listFormat
+             style="width:80pt; float: left;margin-left: 10px;">
+    <nz-option nzLabel="已发药" nzValue="已发药"></nz-option>
+    <nz-option nzLabel="待确认" nzValue="待确认"></nz-option>
+  </nz-select>
+
+  <button nz-button (click)="loadUsageList()"style="float: left;margin-left: 10px;">检索</button>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="usageList"
+              nzSize="small"
+    >
+      <thead>
+      <tr>
+        <th>药品名称</th>
+        <th>规格</th>
+        <th>产地</th>
+        <th>发药数量</th>
+        <th>当前库存</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let usageLine of basicTable.data">
+        <td>{{usageLine.medicine.name}}</td>
+        <td>{{usageLine.medicine.departmentModel}}</td>
+        <td>{{usageLine.medicine.manufacturer?.name}}</td>
+        <td>{{usageLine.usageQuantityInfo}}</td>
+        <td>{{usageLine.stockQuantityInfo}}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>

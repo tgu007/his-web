@@ -1,0 +1,301 @@
+<div class="page">
+  <div id="invoiceNumber" style="width: 28mm; height: 5mm; margin-top: 15mm; margin-left: 0mm">
+    <span style="font-size: x-small">发票号{{this.printData.invoiceNumber}}</span>
+  </div>
+  <div id="jsbh" style="width: 40mm; height: 5mm; margin-top: 0mm; margin-left: 0mm">
+    <span style="font-size: x-small" *ngIf="!this.printData.selfPay">结算号{{this.printData.ybjsh}}</span>
+  </div>
+
+
+  <div nz-row style="width: 95mm; height:5mm;margin-top: 10mm; font-size: x-small">
+    <div id="ybType" style="width: 28mm; height: 5mm; margin-top: 0mm; margin-left: 17mm;float: left">
+      <span>{{this.printData.ybType}}</span>
+    </div>
+    <div id="year" style="width: 14mm; height: 5mm; margin-top: 0mm; margin-left:  16mm; float: left">
+      <span>{{this.printData.invoiceYear}}</span>
+    </div>
+    <div id="month" style="width: 5mm; height: 5mm; margin-top: 0mm; margin-left: 4mm; float: left">
+      <span>{{this.printData.invoiceMonth}}</span>
+    </div>
+    <div id="day" style="width: 5mm; height: 5mm; margin-top: 0mm; margin-left: 4mm; float: left">
+      <span> {{this.printData.invoiceDay}}</span>
+    </div>
+  </div>
+
+  <div class="row" style="font-size: x-small">
+    <div id="patientName" style="width: 22mm; height: 6mm; margin-top: 0mm; margin-left: 11mm; float: left">
+      <span> {{this.printData.wardInfo}}{{this.printData.patientName}}</span>
+    </div>
+
+    <div id="wokUnit" style="width: 43mm; height: 6mm; margin-top: 0mm; margin-left: 19mm; float: left">
+      <span> {{this.printData.workUnit}}</span>
+    </div>
+  </div>
+
+  <div style="font-size: x-small" class="row">
+    <div id="signInNumber" style="width: 19mm; height: 6mm; margin-top: 0mm; margin-left: 14mm; float: left">
+      <span> {{this.printData.signInNumber}}</span>
+    </div>
+
+    <div id="signInDate" style="width: 43mm; height: 6mm; margin-top: 0mm; margin-left: 19mm; float: left">
+      <span> {{this.printData.signInDate + '至' + this.printData.signOutDate}} </span>
+    </div>
+  </div>
+
+  <div class="row">
+  </div>
+
+  <div class="row">
+    <div id="medicineXY" class="feeCell">
+      <span> {{this.printData.feeXY}}</span>
+    </div>
+
+    <div id="medicineXYSelf" class="feeCellSelf">
+      <span> {{this.printData.feeXYSelf}}</span>
+    </div>
+
+
+  </div>
+
+  <div class="row">
+    <div id="feeZC" class="feeCell">
+      <span> {{this.printData.feeZC}}</span>
+    </div>
+
+    <div id="feeZCSelf" class="feeCellSelf">
+      <span> {{this.printData.feeZCSelf}}</span>
+    </div>
+
+    <div class="feeCellThree">
+      <span *ngIf="!this.printData.selfPay">
+        {{this.printData.cashAmount}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="feeZCY" class="feeCell">
+      <span> {{this.printData.feeZCY}}</span>
+    </div>
+
+    <div id="feeZCYSelf" class="feeCellSelf">
+      <span> {{this.printData.feeZCYSelf}}</span>
+    </div>
+
+    <div class="feeCellThree">
+      <span *ngIf="!this.printData.selfPay">
+        {{this.printData.fromBalanceThisYear}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="feeCW" class="feeCell">
+      <span> {{this.printData.feeCW}}</span>
+    </div>
+
+    <div id="feeCWSelf" class="feeCellSelf">
+      <span> {{this.printData.feeCWSelf}}</span>
+    </div>
+
+    <div class="feeCellThree">
+      <span *ngIf="!this.printData.selfPay">
+        {{this.printData.fromBalancePreviousYear}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="feeZhenCha" class="feeCell">
+      <span> {{this.printData.feeZhenCha}}</span>
+    </div>
+
+    <div id="feeZhenChaSelf" class="feeCellSelf">
+      <span> {{this.printData.feeZhenChaSelf}}</span>
+    </div>
+
+    <div class="feeCellThree">
+
+    </div>
+  </div>
+
+
+  <!--检查费-->
+  <div class="row">
+    <div class="feeCell">
+    </div>
+
+    <div class="feeCellSelf">
+    </div>
+
+    <div class="feeCellColumnThree">
+      <span *ngIf="!this.printData.selfPay" style="font-size: x-small">
+       公务员补助:{{this.printData.civilSubsidy}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="feeItem">
+      <span style="font-size: x-small"> 诊疗费：</span>
+    </div>
+
+    <div id="feeZhenliao" style="margin-left: 0" class="feeCell">
+      <span> {{this.printData.feeZhenliao}}</span>
+    </div>
+
+    <div id="feeZhenliaoSelf" class="feeCellSelf">
+      <span> {{this.printData.feeZhenliaoSelf}}</span>
+    </div>
+
+    <div class="feeCellColumnThree">
+      <span *ngIf="!this.printData.selfPay" style="font-size: x-small">
+       大病补助:{{this.printData.seriousDiseaseSubsidy}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="feeItem">
+      <span style="font-size: x-small"> 输氧费：</span>
+    </div>
+
+    <div id="feeShuYang" style="margin-left: 0" class="feeCell">
+      <span> {{this.printData.feeShuYang}}</span>
+    </div>
+
+    <div id="feeShuYangSelf" class="feeCellSelf">
+      <span> {{this.printData.feeShuYangSelf}}</span>
+    </div>
+
+    <div class="feeCellColumnThree">
+      <span *ngIf="!this.printData.selfPay" style="font-size: x-small">
+       统筹支付:{{this.printData.overallPayment}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="feeHY" class="feeCell">
+      <span> {{this.printData.feeHY}}</span>
+    </div>
+
+    <div id="feeHYSelf" class="feeCellSelf">
+      <span> {{this.printData.feeHYSelf}}</span>
+    </div>
+
+    <div class="feeCellThree">
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="feeZL" class="feeCell">
+      <span> {{this.printData.feeZL}}</span>
+    </div>
+
+    <div id="feeZLSelf" class="feeCellSelf">
+      <span> {{this.printData.feeZLSelf}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="feeCell">
+    </div>
+
+    <div class="feeCellSelf">
+    </div>
+
+    <div class="feeCellThree">
+      <span> {{this.printData.totalPayment}}</span>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="feeCell">
+    </div>
+
+    <div class="feeCellSelf">
+    </div>
+
+    <div class="feeCellThree">
+      <span> {{this.printData.remainingPayment}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+  </div>
+
+  <div class="row">
+    <div id="feeHL" class="feeCell">
+      <span> {{this.printData.feeHL}}</span>
+    </div>
+
+    <div id="feeHLSelf" class="feeCellSelf">
+      <span> {{this.printData.feeHLSelf}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="feeHC" class="feeCell">
+      <span> {{this.printData.feeHC}}</span>
+    </div>
+
+    <div id="feeHCSelf" class="feeCellSelf">
+      <span> {{this.printData.feeHCSelf}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="feeQT" class="feeCell">
+      <span> {{this.printData.feeQT}}</span>
+    </div>
+
+    <div id="feeQTSelf" class="feeCellSelf">
+      <span> {{this.printData.feeQTSelf}}</span>
+    </div>
+
+    <div class="feeCellThree">
+      <span> {{this.printData.refund}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+  </div>
+
+  <div class="row">
+  </div>
+
+  <div class="row">
+    <div id="feeTotal" class="feeCell">
+      <span> {{this.printData.feeTotal}}</span>
+    </div>
+
+    <div id="feeTotalSelf" class="feeCellSelf">
+      <span> {{this.printData.feeTotalSelf}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="totalInChinese" style="width: 65mm; height: 5.9mm; margin-top: 0mm; margin-left: 30mm; float: left">
+      <span> {{this.printData.totalAmountChinese}}</span>
+    </div>
+  </div>
+
+  <div class="row" style="width: 85mm; height: 4.5mm; margin-top: 0mm; margin-left: 10mm; float: left">
+       <span *ngIf="!this.printData.selfPay" style="font-size: xx-small">
+         {{this.getInfo1()}}
+       </span>
+  </div>
+
+  <div class="row" style="width: 95mm; height: 4.5mm; margin-top: 0mm; margin-left: 0mm; float: left">
+       <span *ngIf="!this.printData.selfPay" style="font-size: xx-small">
+         {{this.getInfo2()}}
+       </span>
+  </div>
+
+  <div class="row" style="margin-top: 0.5mm">
+    <div style="width: 50mm; height: 4.5mm; margin-top: 0mm; margin-left: 15mm; float: left">
+      <span *ngIf="!this.printData.selfPay" style="font-size: xx-small"> {{this.getInfo3()}}</span>
+    </div>
+
+    <div id="cashier" style="width: 25mm; height: 4.5mm; margin-top: 0mm; margin-left: 0mm; float: left">
+      <span style="font-size: xx-small"> {{this.sessionService.loginUser.name}}</span>
+    </div>
+  </div>
+</div>

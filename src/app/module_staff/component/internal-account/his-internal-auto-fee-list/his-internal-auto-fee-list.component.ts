@@ -1,0 +1,76 @@
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import * as globals from "../../../../../globals";
+import {InternalAutoFeeDetailComponent} from "../temp/internal-auto-fee-detail/internal-auto-fee-detail.component";
+import {InternalAccountService} from "../../../../service/internal-account.service";
+import {NzMessageService} from "ng-zorro-antd";
+import {HisInternalAutoFeeDetailComponent} from "../his-internal-auto-fee-detail/his-internal-auto-fee-detail.component";
+
+@Component({
+  selector: 'app-his-internal-auto-fee-list',
+  templateUrl: './his-internal-auto-fee-list.component.html',
+  styleUrls: ['./his-internal-auto-fee-list.component.css']
+})
+export class HisInternalAutoFeeListComponent implements OnInit {
+  isLoading: any = false;
+  autoFeeList: any;
+  currentPageIndex: any = 1;
+  tablePageSize = globals.tablePageSize;
+  totalDataCount: any;
+  autoFeeDetailModalVisible: any = false;
+  @ViewChild(HisInternalAutoFeeDetailComponent, {static: true}) autoFeeDetailComponent: HisInternalAutoFeeDetailComponent;
+  @Input() patientSignIn:any;
+
+  constructor(private internalAccountService: InternalAccountService,
+              private message: NzMessageService,
+  ) {
+  }
+
+  ngOnInit() {
+    this.loadAutoFeeList();
+  }
+
+  searchAutoFee() {
+    this.currentPageIndex = 1
+    this.loadAutoFeeList();
+  }
+
+  initAutoFeeDetailModal(autoFee = undefined) {
+    this.autoFeeDetailComponent.resetUI(autoFee);
+    this.autoFeeDetailModalVisible = true;
+  }
+
+  reloadAutoFeeClicked() {
+    this.loadAutoFeeList();
+  }
+
+  loadAutoFeeList() {
+    this.isLoading = true;
+
+    this.internalAccountService.getHisPagedAutoFeeList(this.patientSignIn.uuid, this.currentPageIndex)
+      .subscribe(response => {
+          if (response) {
+            this.autoFeeList = response.content;
+            this.totalDataCount = response.totalCount;
+          }
+          this.isLoading = false;
+        },
+        error => {
+          this.message.create("error", error.error.message);
+          this.isLoading = false;
+        });
+  }
+
+  handleCancel() {
+    this.autoFeeDetailModalVisible = false;
+  }
+
+  saveAutoFee() {
+    this.autoFeeDetailComponent.saveAutoFee();
+  }
+
+  onAutoFeeSaved($event: any) {
+    this.autoFeeDetailModalVisible = false;
+    this.loadAutoFeeList();
+  }
+
+}

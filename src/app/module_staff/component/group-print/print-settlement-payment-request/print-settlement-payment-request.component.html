@@ -1,0 +1,342 @@
+<div nz-row class="title">
+  <span>台州市基本医疗保险定点机构 - 普通住院费用申请拨付表</span>
+</div>
+<div nz-row style="text-align: center" class="headerInfo">
+  <span>统筹区域：市级（椒黄路）</span>
+</div>
+<div nz-row style="margin-top: 15px; text-align: center" class="headerInfo">
+  <span>{{this.printData.dateRange}}</span>
+</div>
+<div nz-row style="margin-top: 15px;" class="headerInfo">
+  <span style="float: left">定点医疗机构（盖章）：黄岩新安康复医院（01291）</span>
+  <span style="float: right">普通</span>
+</div>
+
+<div nz-row class="container">
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="12">
+      <div nz-row>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 6mm">
+            单位性质
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 6mm">
+            人员性质
+          </p>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <p style="margin-top: 6mm">
+            机关事业团体
+          </p>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <p style="margin-top: 6mm">
+            企业
+          </p>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <p style="margin-top: 6mm">
+            其他
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <div nz-row>
+        <div nz-col nzSpan="6" class="cell">
+          <p style="margin-top: 6mm">
+            申请拨付金额
+          </p>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <p style="margin-top: 6mm">
+            申请拨付小计
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 2.75mm">
+            审核剔除<br>金额
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 2.75mm">
+            审核剔除<br>小计
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 2.75mm">
+            核定拨付<br>金额
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 2.75mm">
+            核定拨付<br>小计
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--  开始-->
+  <div nz-row *ngFor="let account of this.printData.settlementSummary?.accountList">
+    <div nz-col nzSpan="12">
+      <div nz-row>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 3.5mm">
+            {{account.accountName}}
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              在职
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              退休
+            </p>
+          </div>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(account.workingPayment.civilTypePayment
+              + account.workingPayment.civilAdjustment).toFixed(2)}}
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(account.retiredPayment.civilTypePayment
+              + account.retiredPayment.civilAdjustment).toFixed(2)}}
+            </p>
+          </div>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(account.workingPayment.companyTypePayment
+              + account.workingPayment.companyAdjustment).toFixed(2)}}
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(account.retiredPayment.companyTypePayment
+              + account.retiredPayment.companyAdjustment).toFixed(2)}}
+            </p>
+          </div>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(account.workingPayment.otherTypePayment
+              + account.workingPayment.otherAdjustment).toFixed(2)}}
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(account.retiredPayment.otherTypePayment
+              + account.retiredPayment.otherAdjustment).toFixed(2)}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <div nz-row>
+        <div nz-col nzSpan="6" class="cell">
+          <div nz-row class="singleLineCell">
+
+            <p style="margin-top: 1mm">
+              {{
+              (this.toNumber(account.workingPayment.totalPayment)
+                + this.getTotalPaymentTypeAdjustment(account.workingPayment) ).toFixed(2)
+              }}
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{
+              (this.toNumber(account.retiredPayment.totalPayment)
+                + this.getTotalPaymentTypeAdjustment(account.retiredPayment) ).toFixed(2)}}
+            </p>
+          </div>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <p style="margin-top: 3.5mm">
+            {{
+            (this.toNumber(account.totalPayment)
+              + this.getTotalPaymentTypeAdjustment(account.workingPayment)
+              + this.getTotalPaymentTypeAdjustment(account.retiredPayment) ).toFixed(2)
+            }}
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <div nz-row class="singleLineCell">
+          </div>
+          <div nz-row class="singleLineCell">
+          </div>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <div nz-row class="singleLineCell">
+          </div>
+          <div nz-row class="singleLineCell">
+          </div>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="12">
+      <div nz-row>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 3.5mm">
+            合计
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              在职
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              退休
+            </p>
+          </div>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(this.toNumber(this.printData.settlementSummary?.totalWorkingCivilPayment)
+              + this.getTotalAccountAdjustment("workingPayment", "civilAdjustment") ).toFixed(2)
+              }}
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(this.toNumber(this.printData.settlementSummary?.totalRetireCivilPayment)
+              + this.getTotalAccountAdjustment("retiredPayment", "civilAdjustment") ).toFixed(2)}}
+            </p>
+          </div>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(this.toNumber(this.printData.settlementSummary?.totalWorkingCompanyPayment)
+              + this.getTotalAccountAdjustment("workingPayment", "companyAdjustment") ).toFixed(2)
+              }}
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(this.toNumber(this.printData.settlementSummary?.totalRetireCompanyPayment)
+              + this.getTotalAccountAdjustment("retiredPayment", "companyAdjustment") ).toFixed(2)
+              }}
+            </p>
+          </div>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(this.toNumber(this.printData.settlementSummary?.totalWorkingOtherPayment)
+              + this.getTotalAccountAdjustment("workingPayment", "otherAdjustment") ).toFixed(2)
+              }}
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(this.toNumber(this.printData.settlementSummary?.totalRetireOtherPayment)
+              + this.getTotalAccountAdjustment("retiredPayment", "otherAdjustment") ).toFixed(2)
+              }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <div nz-row>
+        <div nz-col nzSpan="6" class="cell">
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(this.toNumber(this.printData.settlementSummary?.totalWorkingPayment)
+              + this.getTotalAccountAdjustment("workingPayment", "civilAdjustment")
+              + this.getTotalAccountAdjustment("workingPayment", "companyAdjustment")
+              + this.getTotalAccountAdjustment("workingPayment", "otherAdjustment") ).toFixed(2)
+              }}
+            </p>
+          </div>
+          <div nz-row class="singleLineCell">
+            <p style="margin-top: 1mm">
+              {{(this.toNumber(this.printData.settlementSummary?.totalRetirePayment)
+              + this.getTotalAccountAdjustment("retiredPayment", "civilAdjustment")
+              + this.getTotalAccountAdjustment("retiredPayment", "companyAdjustment")
+              + this.getTotalAccountAdjustment("retiredPayment", "otherAdjustment") ).toFixed(2)
+              }}
+            </p>
+          </div>
+        </div>
+        <div nz-col nzSpan="6" class="cell">
+          <p style="margin-top: 3.5mm">
+            {{(this.toNumber(this.printData.settlementSummary?.totalPayment)
+            + this.getTotalAccountAdjustment("workingPayment", "civilAdjustment")
+            + this.getTotalAccountAdjustment("workingPayment", "companyAdjustment")
+            + this.getTotalAccountAdjustment("workingPayment", "otherAdjustment")
+            + this.getTotalAccountAdjustment("retiredPayment", "civilAdjustment")
+            + this.getTotalAccountAdjustment("retiredPayment", "companyAdjustment")
+            + this.getTotalAccountAdjustment("retiredPayment", "otherAdjustment") ).toFixed(2)
+            }}
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <div nz-row class="singleLineCell">
+          </div>
+          <div nz-row class="singleLineCell">
+          </div>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <div nz-row class="singleLineCell">
+          </div>
+          <div nz-row class="singleLineCell">
+          </div>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--结束-->
+  <div nz-row>
+    <div nz-col nzSpan="12" class="lastLineCell" style="text-align: left !important;">
+      <div nz-row>
+        定点医疗机构：
+      </div>
+
+      <div nz-row style="margin-top: 4mm; margin-bottom:4mm;text-align: left !important;">
+        制表人：
+      </div>
+    </div>
+
+    <div nz-col nzSpan="12" class="lastLineCell" style="text-align: left !important;">
+      <div nz-row>
+        社保机构：
+      </div>
+    </div>
+  </div>
+
+
+</div>

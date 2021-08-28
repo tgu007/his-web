@@ -1,0 +1,288 @@
+<form nz-form [formGroup]="itemDetailForm">
+  <div nz-row>
+    <div nz-col nzSpan="2">
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-control [nzSm]="20" [nzXs]="24">
+          <label nz-checkbox #chkSelfPay formControlName="chkSelfPay"
+                 (nzCheckedChange)="this.chkSelfPayChanged($event)">非医疗目录物品</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="8" [hidden]="chkSelfPay.nzChecked">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectCenterTreatment">医保目录药品</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <app-common-dynamic-select
+            (onSearchEvent)="searchCenterTreatment($event)"
+            formControlName="selectCenterTreatment"
+            [dataList]="this.centerTreatmentList"
+            [totalDataCount]="this.centerTreatmentListTotalCount"
+            [dataColumns]="this.dropDownColumnList"
+            [pageCount]=this.centerTreatmentListPageCount
+            (onSelectedItemChangedEvent)="this.selectedCenterTreatmentChanged($event)"
+          >
+          </app-common-dynamic-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtCode">编码</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtCode" [readOnly]="true"
+                 placeholder="自动生成"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtName">名称</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="txtName"
+                 placeholder="物品名称"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtSearchCode">拼音代码</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="txtSearchCode"
+                 placeholder="不填系统会自动生成"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectWarehouseType">仓库类别</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="仓库类别">
+          <nz-select
+            nzShowSearch
+            formControlName="selectWarehouseType"
+          >
+            <nz-option *ngFor="let type of this.wareHouseTypeList" [nzValue]="type.id"
+                       [nzLabel]="type.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectStorageType">保存类型</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="保存类型">
+          <nz-select
+            nzShowSearch
+            formControlName="selectStorageType"
+            nzAllowClear
+          >
+            <nz-option *ngFor="let storageType of this.storageTypeList" [nzValue]="storageType.id"
+                       [nzLabel]="storageType.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectFeeType">费用类型</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="青选择费用类型">
+          <nz-select
+            nzShowSearch
+            formControlName="selectFeeType"
+          >
+            <nz-option *ngFor="let feeType of this.feeTypeList" [nzValue]="feeType.id"
+                       [nzLabel]="feeType.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectMinUom" nzRequired>最小单位</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            formControlName="selectMinUom"
+            #selectMinUom
+            [nzDropdownRender]="minUomTemplate"
+          >
+            <nz-option *ngFor="let minUom of this.minUomList" [nzValue]="minUom.uuid"
+                       [nzLabel]="minUom.name"></nz-option>
+            <ng-template #minUomTemplate>
+              <nz-divider></nz-divider>
+              <div class="container">
+                <input type="text" nz-input #inputUom/>
+                <button nz-button nzType="primary" nzSize="small"
+                        (click)="addUOM(inputUom, '物品最小', this.minUomList, 'selectMinUom')">
+                  <i nz-icon nzType="plus"></i>
+                </button>
+              </div>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="4">
+      <nz-form-item>
+        <nz-form-control [nzSm]="20" [nzXs]="24">
+          <label nz-checkbox formControlName="chkEnabled">作废</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectWarehouseUOM" nzRequired>入库单位</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            formControlName="selectWarehouseUOM"
+            [nzDropdownRender]="warehouseTemplate"
+          >
+            <nz-option *ngFor="let warehouseUom of this.warehouseUomList" [nzValue]="warehouseUom.uuid"
+                       [nzLabel]="warehouseUom.name"></nz-option>
+            <ng-template #warehouseTemplate>
+              <nz-divider></nz-divider>
+              <div class="container">
+                <input type="text" nz-input #inputUom/>
+                <button nz-button nzType="primary" nzSize="small"
+                        (click)="addUOM(inputUom, '物品入库', this.warehouseUomList, 'selectWarehouseUOM')">
+                  <i nz-icon nzType="plus"></i>
+                </button>
+              </div>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+        <nz-form-label nzNoColon> {{this.getWarehouseConversionInfo()}}</nz-form-label>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberWarehouseSize" nzRequired>包装数量</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberWarehouseSize"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+        <nz-form-label [nzSm]="2" [nzXs]="24"
+                       [nzNoColon]=true>{{selectMinUom.value ? selectMinUom.value.code : ''}}</nz-form-label>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtWarehouseModel">仓库规格</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="txtWarehouseModel"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectDepartmentUOM" nzRequired>出库单位</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            formControlName="selectDepartmentUOM"
+            [nzDropdownRender]="departmentTemplate"
+          >
+            <nz-option *ngFor="let departmentUom of this.departmentUomList" [nzValue]="departmentUom.uuid"
+                       [nzLabel]="departmentUom.name"></nz-option>
+            <ng-template #departmentTemplate>
+              <nz-divider></nz-divider>
+              <div class="container">
+                <input type="text" nz-input #inputUom/>
+                <button nz-button nzType="primary" nzSize="small"
+                        (click)="addUOM(inputUom, '物品出库', this.departmentUomList, 'selectDepartmentUOM')">
+                  <i nz-icon nzType="plus"></i>
+                </button>
+              </div>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+        <nz-form-label nzNoColon> {{this.getDepartmentConversionInfo()}}</nz-form-label>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberDepartmentSize" nzRequired>包装数量</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberDepartmentSize"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+        <nz-form-label [nzSm]="2" [nzXs]="24"
+                       [nzNoColon]=true>{{selectMinUom.value ? selectMinUom.value.code : ''}}</nz-form-label>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtDepartmentModel">出库规格</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="txtDepartmentModel"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectManufacturer">产地</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            nzServerSearch
+            nzPlaceHolder="输入名字/拼音搜索"
+            [nzShowArrow]="false"
+            [nzFilterOption]="nzFilterOption"
+            (nzOnSearch)="searchManufacturer($event)"
+            formControlName="selectManufacturer"
+            [nzDropdownRender]="renderTemplate"
+            style="width: 200px;"
+          >
+            <nz-option *ngFor="let manufacturer of this.manufacturerList" [nzLabel]="manufacturer.name"
+                       [nzValue]="manufacturer.uuid"></nz-option>
+            <ng-template #renderTemplate>
+              <nz-divider></nz-divider>
+              <div class="container">
+                <input type="text" nz-input #inputElement/>
+                <button nz-button nzType="primary" nzSize="small" (click)="this.saveNewManufacture(inputElement)"
+                        [disabled]="inputElement.value == ''" [nzLoading]="this.addingManufacture">添加产地
+                </button>
+              </div>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>

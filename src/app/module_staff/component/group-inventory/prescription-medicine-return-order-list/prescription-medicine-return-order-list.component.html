@@ -1,0 +1,102 @@
+<nz-layout>
+  <nz-sider nzCollapsible
+            [(nzCollapsed)]="this.collapsed"
+            nzTheme="light"
+            [nzCollapsedWidth]="30"
+            [nzTrigger]="null"
+  >
+    <div nz-row>
+      <button nz-button nzType="primary" nzSize="small"
+              (click)="this.getReturnOrderList()"
+              style="margin-left: 20px"
+      >
+        刷新列表
+      </button>
+    </div>
+    <div nz-row>
+      <nz-tree
+          #nzTreeComponent
+          [nzData]="nodes"
+          (nzClick)="nzClick($event.node)"
+          [hidden]="this.collapsed"
+          [nzExpandAll]=true
+      >
+      </nz-tree>
+    </div>
+  </nz-sider>
+  <i
+    nz-icon
+    [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+    (click)="this.collapsed = !this.collapsed"
+  ></i>
+  <nz-layout class="inner-layout">
+    <div nz-row>
+      <button nz-button nzType="primary"
+              *ngIf="this.sessionService.getUserPermission().commonComponent.pendingMedicineReturnOrder.allowEdit"
+              (click)="this.processReturnOrder()"
+              [disabled]="!this.selectedNode || this.selectedNode.parentNode.key == '已退药'"
+              style=" float: left; margin-left: 10px;"
+      >
+        提交
+      </button>
+
+      <button nz-button
+              nzType="primary" nzSize="default"
+              (click)="this.printClicked()"
+              style=" float: left; margin-left: 10px;"
+      >打印
+      </button>
+    </div>
+    <div nz-row>
+      <nz-table #tblReturnOrderLineSummary [nzData]="pendingReturnOrderSummaryLineList" nzSize="small"
+                [nzPageSize]="pageSize">
+        <thead>
+        <tr>
+          <th nzWidth="30"
+              *ngIf="this.sessionService.getUserPermission().commonComponent.pendingMedicineReturnOrder.allowEdit"
+          ></th>
+          <th>药品名称</th>
+          <th>规格</th>
+          <th>退药数量</th>
+          <th></th>
+          <th></th>
+        </tr>
+        </thead>
+        <ng-template ngFor let-data [ngForOf]="tblReturnOrderLineSummary.data">
+
+          <tbody>
+          <tr>
+            <td
+              nzWidth="30"
+              [nzShowExpand]="true"
+              [(nzExpand)]="mapOfExpandData[data.medicineId]"
+              *ngIf="this.sessionService.getUserPermission().commonComponent.pendingMedicineReturnOrder.allowEdit"
+            ></td>
+            <td>{{data.medicineName}}</td>
+            <td>{{data.pharmacyModel}}</td>
+            <td>{{data.orderQuantityInfo}}</td>
+          </tr>
+          <tr [nzExpand]="mapOfExpandData[data.medicineId]">
+            <td
+            ></td>
+            <td>病人姓名</td>
+            <td>发药日期</td>
+            <td>发药数量</td>
+            <td>价格</td>
+            <td>发药单号</td>
+          </tr>
+          <tr [nzExpand]="mapOfExpandData[data.medicineId]" *ngFor="let orderLine of data.orderLineList">
+            <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[orderLine.uuid]"
+                [nzDisabled]="!this.selectedNode || this.selectedNode.parentNode.key == '已退药'"></td>
+            <td> {{orderLine.originOrderLine.patientName}}</td>
+            <td> {{orderLine.originOrderLine.processedDate}}</td>
+            <td>{{orderLine.originOrderLine.orderQuantityInfo}}</td>
+            <td>{{orderLine.originOrderLine.orderLineCommon.priceInfo}}</td>
+            <td>{{orderLine.originOrderLine.orderNumber}}</td>
+          </tr>
+          </tbody>
+        </ng-template>
+      </nz-table>
+    </div>
+  </nz-layout>
+</nz-layout>

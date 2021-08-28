@@ -1,0 +1,12 @@
+.page {
+  margin-top: 10px;
+  margin-right: 10px;
+  float: left;
+  alignment: center;
+}
+
+table, td, th, thead {
+  border: 1px solid black;
+  color: black;
+  font-family: Arial, "Microsoft YaHei";
+}

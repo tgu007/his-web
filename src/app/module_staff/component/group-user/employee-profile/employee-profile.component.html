@@ -1,0 +1,24 @@
+<form nz-form [formGroup]="personalProfileForm">
+  <div nz-row>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6">证书号</nz-form-label>
+      <nz-form-control [nzSpan]="12">
+        <input nz-input formControlName="certificationNumber"/>
+      </nz-form-control>
+    </nz-form-item>
+
+
+  </div>
+  <div nz-row>
+  <div nz-col nzSpan="2">
+  </div>
+  <div nz-col nzSpan="22">
+    <nz-form-item>
+      <nz-form-control [nzSm]="24" [nzXs]="24">
+        <label nz-checkbox formControlName="chkAllowSupervise">带教人</label>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  </div>
+</form>
+

@@ -1,0 +1,122 @@
+<nz-table #orderLineTable [nzData]="orderRequestForm.get('orderRequestLines').controls" nzSize="small"
+          nzShowPagination="false"
+>
+  <thead>
+  <tr>
+    <th [hidden]="true"></th>
+    <th>序号</th>
+    <th>名称</th>
+    <th>规格</th>
+    <th>产地</th>
+    <th>申购数量</th>
+    <th>申购单位</th>
+    <th>全院库存</th>
+    <th>{{this.orderType == 'item' ? '仓库库存' : '药房库存'}}</th>
+    <th *ngIf="this.orderType == 'medicine'"> 上月用量</th>
+    <th>备注</th>
+    <th *ngIf="this.orderRequestPermission.allowEdit"></th>
+  </tr>
+  </thead>
+  <tbody *ngFor="let lineControl of orderRequestForm.get('orderRequestLines').controls; let i= index">
+  <tr [formGroup]="lineControl">
+    <td [hidden]="true">
+      {{lineControl.value.lineId}}
+    </td>
+    <td>
+      {{i + 1}}
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit ; else itemSelect">
+        {{this.getRowSelectedItemProperty(lineControl.value.selectEntity, "name")}}
+      </ng-container>
+      <ng-template #itemSelect>
+        <nz-form-control>
+          <app-common-dynamic-select
+            (onSearchEvent)="searchOrderRequestEntity($event, i)"
+            formControlName="selectEntity"
+            [dataList]="this.editCache[i].rowSelectionList.entityList"
+            [totalDataCount]="this.editCache[i].rowSelectionList.dataListTotalCount"
+            [dataColumns]="this.dropDownColumnList"
+            (onSelectedItemChangedEvent)="this.selectedItemChanged($event, i)"
+            [pageCount]=this.editCache[i].rowSelectionList.dataListPageCount
+          >
+          </app-common-dynamic-select>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      {{ this.getRowSelectedItemProperty(lineControl.value.selectEntity, "warehouseModel")}}
+    </td>
+    <td>
+      {{lineControl.value.selectEntity?.stockEntity.manufacturer?.name}}
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit ; else quantityInput">
+        {{lineControl.value.numberRequestQuantity}}
+      </ng-container>
+      <ng-template #quantityInput>
+        <nz-form-control>
+          <nz-input-number
+            nz-input
+            formControlName="numberRequestQuantity"
+            [nzStep]="1"
+            [nzMin]=0.01
+          ></nz-input-number>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit ; else uomSelect">
+        {{lineControl.value.selectRequestUom ? lineControl.value.selectRequestUom.name : undefined}}
+      </ng-container>
+      <ng-template #uomSelect>
+        <nz-form-control>
+          <nz-select
+            nzShowSearch
+            nzServerSearch
+            formControlName="selectRequestUom"
+            [nzShowArrow]="false"
+            [nzDropdownMatchSelectWidth]=false
+            style="width:50px;"
+          >
+            <nz-option *ngFor="let uom of this.editCache[i].rowSelectionList.uomList"
+                       [nzLabel]="uom.code"
+                       [nzValue]="uom"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      {{this.getCurrentQuantity(lineControl.value.selectEntity, undefined)}}
+    </td>
+    <td>
+      {{this.getCurrentQuantity(lineControl.value.selectEntity, this.orderType == 'item' ? '药库' : '药房')}}
+    </td>
+    <td *ngIf="this.orderType == 'medicine'">
+      {{lineControl.value.txtLastPeriodUsage}}
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else referenceInput">
+        {{lineControl.value.txtReference}}
+      </ng-container>
+      <ng-template #referenceInput>
+        <nz-form-control>
+          <input type="text" nz-input formControlName="txtReference"/>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td *ngIf="this.allowLineEdit()">
+      <ng-container *ngIf="!editCache[i].inEdit; else inEdit">
+        <button nz-button nzType="primary" (click)="editLineControl(i)"
+        ><i nz-icon nzType="edit"></i></button>
+      </ng-container>
+      <ng-template #inEdit>
+        <button nz-button nzType="primary" (click)="commitLineControl(i)"
+        ><i nz-icon nzType="save"></i></button>
+      </ng-template>
+      <button nz-button nzType="primary" (click)="removeLineControl(i)"
+      ><i nz-icon nzType="delete"></i></button>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

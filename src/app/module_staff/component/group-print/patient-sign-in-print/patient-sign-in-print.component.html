@@ -1,0 +1,69 @@
+<div nz-row>
+   <span class="hospitalName">
+    {{this.hospitalName}}
+  </span>
+</div>
+<div nz-row class="title">
+  <h2>
+    住院许可证
+  </h2>
+</div>
+<nz-descriptions nzBordered>
+  <nz-descriptions-item nzTitle="姓名">{{this.printData.patient.name}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="性别">{{this.printData.patient.genderDto.name}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="年龄">{{this.printData.age}}</nz-descriptions-item>
+
+  <nz-descriptions-item nzTitle="病人性质">{{this.printData.insuranceType.name}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="门诊号"></nz-descriptions-item>
+  <nz-descriptions-item nzTitle="民族">{{this.printData.patient.ethnicDto?.name}}</nz-descriptions-item>
+
+  <nz-descriptions-item nzTitle="出生年月">{{this.printData.patient.birthday}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="婚姻状况">{{this.printData.patient.marriageStatusDto.name}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="职业">{{this.printData.patient.occupationDto?.name}}</nz-descriptions-item>
+
+  <nz-descriptions-item nzTitle="科室">{{this.printData.departmentTreatment?.department.name}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="病区">{{this.printData.departmentTreatment?.wardList[0].name}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="入院号">{{this.printData.signInNumberCode}}</nz-descriptions-item>
+
+  <nz-descriptions-item nzTitle="户籍地">{{this.printData.patient.domicile}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="工作单位" nzSpan=2>{{this.printData.patient.placeOfWork}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="现住址" nzSpan=3>{{this.printData.patient.address}}</nz-descriptions-item>
+
+  <nz-descriptions-item
+    nzTitle="联系人I姓名">{{this.printData.patient.patientContactDtoList[0]?.name}}</nz-descriptions-item>
+  <nz-descriptions-item
+    nzTitle="联系人I关系">{{this.printData.patient.patientContactDtoList[0]?.relationship}}</nz-descriptions-item>
+  <nz-descriptions-item
+    nzTitle="联系人I电话">{{this.printData.patient.patientContactDtoList[0]?.phoneNumber}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="联系人I地址"
+                        nzSpan=3>{{this.printData.patient.patientContactDtoList[0]?.address}}</nz-descriptions-item>
+
+  <nz-descriptions-item
+    nzTitle="联系人Ⅱ姓名">{{this.printData.patient.patientContactDtoList[1]?.name}}</nz-descriptions-item>
+  <nz-descriptions-item
+    nzTitle="联系人Ⅱ关系">{{this.printData.patient.patientContactDtoList[1]?.relationship}}</nz-descriptions-item>
+  <nz-descriptions-item
+    nzTitle="联系人Ⅱ电话">{{this.printData.patient.patientContactDtoList[1]?.phoneNumber}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="联系人Ⅱ地址"
+                        nzSpan=3>{{this.printData.patient.patientContactDtoList[1]?.address}}</nz-descriptions-item>
+
+
+  <nz-descriptions-item nzTitle="初步诊断" nzSpan=2>{{this.printData.diagnoseList[0]?.name}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="编码">{{this.printData.diagnoseList[0]?.code}}</nz-descriptions-item>
+
+  <nz-descriptions-item nzTitle="附加诊断" nzSpan=2>{{this.printData.diagnoseList[1]?.name}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="编码">{{this.printData.diagnoseList[1]?.code}}</nz-descriptions-item>
+
+  <nz-descriptions-item nzTitle="诊断医师">{{this.printData.doctor.name}}</nz-descriptions-item>
+  <nz-descriptions-item nzTitle="病种分类"></nz-descriptions-item>
+  <nz-descriptions-item nzTitle="入院方式">{{this.printData.signInMethod.name}}</nz-descriptions-item>
+
+  <!--  <nz-descriptions-item nzTitle="注意" nzSpan=3>-->
+  <!--    注意1<br>-->
+  <!--    注意2<br>-->
+  <!--    注意3<br>-->
+  <!--    注意4<br>-->
+  <!--  </nz-descriptions-item>-->
+</nz-descriptions>
+
+

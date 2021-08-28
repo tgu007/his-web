@@ -1,0 +1,225 @@
+<nz-layout>
+  <nz-sider nzCollapsible
+            [nzCollapsed]="false"
+            nzTheme="light"
+            [nzTrigger]="null"
+            [nzCollapsedWidth]="30"
+  >
+    <div nz-row>
+      <button
+        (click)="this.switchClicked()"
+        nz-button
+        nzType="primary"
+        nzSize="small"
+      >
+        {{this.collapsed ? '看病人信息' : '切换病人'}}
+      </button>
+    </div>
+    <div nz-row [hidden]="!this.collapsed">
+      <app-patient-select [selectAll]="false"
+                          [allowMultiple]="false"
+                          [checkable]="false"
+                          [loadAllOnInit]="false"
+      ></app-patient-select>
+    </div>
+    <div>
+      <app-patient-sign-in-Info [hidden]="this.collapsed"></app-patient-sign-in-Info>
+    </div>
+  </nz-sider>
+    <i
+      nz-icon
+      [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+      (click)="this.collapsed = !this.collapsed"
+    ></i>
+
+  <nz-layout class="inner-layout">
+    <nz-tabset nzSize="small" (nzSelectedIndexChange)=selectedTabChanged($event)
+               [(nzSelectedIndex)]="this.selectedTabIndex">
+      <nz-tab nzTitle="长期医嘱">
+        <div nz-row>
+          <app-prescription-list #longTerm [patientSignIn]="patientSignIn"
+                                 [isOneOff]="false"
+                                 (onNewPrescriptionEvent)="showPrescriptionDetailComponent($event)"
+                                 (onEditPrescriptionEvent)="showPrescriptionDetailComponent($event)"
+                                 (onResumeEditPrescriptionEvent)="resumePrescriptionEdit()"
+          >
+
+          </app-prescription-list>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="临时医嘱">
+        <div nz-row>
+          <app-prescription-list #OneOff [patientSignIn]="patientSignIn" [isOneOff]="true"
+                                 (onNewPrescriptionEvent)="showPrescriptionDetailComponent($event)"
+                                 (onEditPrescriptionEvent)="showPrescriptionDetailComponent($event)"
+                                 (onResumeEditPrescriptionEvent)="resumePrescriptionEdit()"
+          ></app-prescription-list>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </nz-layout>
+</nz-layout>
+
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="medicinePrescriptionDrawerVisible"
+  nzTitle="药品医嘱"
+  (nzOnClose)="closeDrawer('药品')"
+>
+  <app-prescription-medicine-detail [patientSignIn]="patientSignIn"
+                                    [isOneOff]=isOneOff></app-prescription-medicine-detail>
+  <div class="footer">
+    <button type="button" (click)="closeDrawer('药品')" class="ant-btn" style="margin-right: 8px;"><span>关闭</span>
+    </button>
+    <button nz-button type="button" (click)="this.saveNewPrescription(true, this.currentPrescriptionType)"
+            class="ant-btn ant-btn-primary"
+            nz-dropdown [nzDropdownMenu]="medicineMenu"
+            [nzLoading]=this.prescriptionMedicineDetailComponent.saving
+            style="margin-right: 8px;"
+    ><span>保存并继续添加</span>
+    </button>
+    <button nz-button type="button" (click)="this.saveNewPrescription(false, undefined)" class="ant-btn ant-btn-primary"
+            [nzLoading]=this.prescriptionMedicineDetailComponent.saving
+    ><span>保存并关闭</span>
+    </button>
+  </div>
+</nz-drawer>
+
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="medicineTextPrescriptionDrawerVisible"
+  nzTitle="文字药品医嘱"
+  (nzOnClose)="closeDrawer('药品文字')"
+>
+  <app-prescription-text-medicine-detail [patientSignIn]="patientSignIn"
+                                         [isOneOff]=isOneOff></app-prescription-text-medicine-detail>
+  <div class="footer">
+    <button type="button" (click)="closeDrawer('药品文字')" class="ant-btn" style="margin-right: 8px;"><span>关闭</span>
+    </button>
+    <button nz-button type="button" (click)="this.saveNewPrescription(true, this.currentPrescriptionType)"
+            class="ant-btn ant-btn-primary"
+            nz-dropdown [nzDropdownMenu]="medicineTextMenu"
+            [nzLoading]=this.prescriptionMedicineTextDetailComponent.saving
+            style="margin-right: 8px;"
+    ><span>保存并继续添加</span>
+    </button>
+    <button nz-button type="button" (click)="this.saveNewPrescription(false, undefined)" class="ant-btn ant-btn-primary"
+            [nzLoading]=this.prescriptionMedicineTextDetailComponent.saving
+    ><span>保存并关闭</span>
+    </button>
+  </div>
+</nz-drawer>
+
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="treatmentPrescriptionDrawerVisible"
+  nzTitle="诊疗医嘱"
+  (nzOnClose)="closeDrawer('诊疗')"
+>
+  <app-prescription-treatment-detail [patientSignIn]=patientSignIn
+                                     [isOneOff]=isOneOff></app-prescription-treatment-detail>
+  <div class="footer">
+    <button type="button" (click)="closeDrawer('诊疗')" class="ant-btn" style="margin-right: 8px;"><span>关闭</span>
+    </button>
+    <button nz-button type="button" (click)="this.saveNewPrescription(true, this.currentPrescriptionType)"
+            class="ant-btn ant-btn-primary"
+            nz-dropdown [nzDropdownMenu]="treatmentMenu"
+            [nzLoading]=this.prescriptionTreatmentDetailComponent.saving
+            style="margin-right: 8px;"
+    ><span>保存并继续添加</span>
+    </button>
+    <button nz-button type="button" (click)="this.saveNewPrescription(false, undefined)" class="ant-btn ant-btn-primary"
+            [nzLoading]=this.prescriptionTreatmentDetailComponent.saving
+    ><span>保存并关闭</span>
+    </button>
+  </div>
+</nz-drawer>
+
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="textPrescriptionDrawerVisible"
+  nzTitle="文字医嘱"
+  (nzOnClose)="closeDrawer('文字')"
+>
+  <app-prescription-text-detail [patientSignIn]=patientSignIn [isOneOff]=isOneOff></app-prescription-text-detail>
+  <div class="footer">
+    <button type="button" (click)="closeDrawer('文字')" class="ant-btn" style="margin-right: 8px;"><span>关闭</span>
+    </button>
+    <button nz-button type="button" (click)="this.saveNewPrescription(true, this.currentPrescriptionType)"
+            class="ant-btn ant-btn-primary"
+            nz-dropdown [nzDropdownMenu]="textMenu"
+            [nzLoading]=this.prescriptionTextDetailComponent.saving
+            style="margin-right: 8px;"
+    ><span>保存并继续添加</span>
+    </button>
+    <button nz-button type="button" (click)="this.saveNewPrescription(false, undefined)" class="ant-btn ant-btn-primary"
+            [nzLoading]=this.prescriptionTextDetailComponent.saving
+    ><span>保存并关闭</span>
+    </button>
+  </div>
+</nz-drawer>
+
+<nz-dropdown-menu #medicineMenu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '诊疗')">
+      <a>诊疗医嘱</a>
+    </li>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '文字')">
+      <a>文字医嘱</a>
+    </li>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '药品文字')">
+      <a>文字药品医嘱</a>
+    </li>
+  </ul>
+</nz-dropdown-menu>
+
+<nz-dropdown-menu #medicineTextMenu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '药品')">
+      <a>药品医嘱</a>
+    </li>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '诊疗')">
+      <a>诊疗医嘱</a>
+    </li>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '文字')">
+      <a>文字医嘱</a>
+    </li>
+  </ul>
+</nz-dropdown-menu>
+
+<nz-dropdown-menu #textMenu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '药品')">
+      <a>药品医嘱</a>
+    </li>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '诊疗')">
+      <a>诊疗医嘱</a>
+    </li>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '药品文字')">
+      <a>文字药品医嘱</a>
+    </li>
+  </ul>
+</nz-dropdown-menu>
+
+<nz-dropdown-menu #treatmentMenu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '药品')">
+      <a>药品医嘱</a>
+    </li>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '文字')">
+      <a>文字医嘱</a>
+    </li>
+    <li nz-menu-item (click)="this.saveNewPrescription(true, '药品文字')">
+      <a>文字药品医嘱</a>
+    </li>
+  </ul>
+</nz-dropdown-menu>
+

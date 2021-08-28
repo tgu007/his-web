@@ -1,0 +1,40 @@
+@media print {
+
+  .printComponent {
+    visibility: visible;
+    /*display: block;*/
+  }
+
+  @page {
+    /*A4: 210mm × 297mm，size: 794px × 1123px，0边距*/
+    /*171.9mm × 258.9mm，size：649px × 978px，19.05mm边距（ie浏览器默认打印边距） */
+    size: auto;
+    @bottom-left {
+      content: counter(page) "/" counter(pages);
+    }
+  }
+}
+
+:host /deep/ .hospitalName {
+  display: flex;
+  flex-direction: column;
+  /*margin-bottom: 1.5em;*/
+  padding-bottom: 10px;
+  text-align: center;
+  font-family: "楷体";
+  margin: 14px 0;
+  /*color: black;*/
+  font-size: 20px;
+}
+
+:host /deep/ .title {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin-bottom: 25px;
+  color: #000000;
+  font-family: Arial,"Microsoft YaHei";
+}
+
+
+

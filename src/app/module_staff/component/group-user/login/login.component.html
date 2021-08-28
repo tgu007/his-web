@@ -1,0 +1,53 @@
+<div nz-row nzAlign="middle">
+  <div nz-col nzSpan="8">
+  </div>
+  <div nz-col nzSpan="8">
+    <form nz-form [formGroup]="loginForm" class="login-form" (ngSubmit)="submitForm()" style="margin-top: 200px">
+      <nz-form-item>
+        <h1>His云系统登录</h1>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="请输入用户名!">
+          <nz-input-group nzPrefixIcon="user">
+            <input type="text" nz-input formControlName="userName" placeholder="用户名（手机号码）"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="请输入用户密码!">
+          <nz-input-group nzPrefixIcon="lock">
+            <input type="password" nz-input formControlName="password" placeholder="Password"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <div nz-row class="login-form-margin">
+        <div nz-col [nzSpan]="12">
+          <a (click)="newAccountClicked()">注册</a>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <a class="login-form-forgot">忘记密码</a>
+        </div>
+      </div>
+      <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">登录</button>
+    </form>
+  </div>
+  <div nz-col nzSpan="8">
+  </div>
+</div>
+
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="newUserModalVisible"
+  nzTitle=注册新用户
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveNewUser()"
+  nzWidth="500"
+  nzOkText="注册"
+  nzCancelText="关闭"
+>
+  <app-new-user (newEmployeeSaved)="this.handleCancel()"></app-new-user>
+</nz-modal>
+
+
+

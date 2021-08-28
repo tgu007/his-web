@@ -1,0 +1,86 @@
+<ng-template #cardTitle>
+  <div nz-row>
+    <span>
+{{this.getCardTitle()}}
+    </span>
+    <label
+      nz-checkbox
+      [(ngModel)]="this.patientCard.printCard"
+      style="float: right"
+    >打印</label>
+  </div>
+</ng-template>
+
+<nz-card [nzBordered]="false"
+         [nzTitle]=cardTitle>
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      {{this.datePipe.transform(this.cardDate, 'yyyy-MM-dd')}}
+    </div>
+    <div nz-col nzSpan="6">
+      {{this.patientCard.patientName}}
+    </div>
+    <div nz-col nzSpan="6">
+      {{this.patientCard.bedInfo}}
+    </div>
+    <div nz-col nzSpan="6">
+      {{this.patientCard.patientAge}}岁
+    </div>
+  </div>
+  <div nz-row>
+    <ng-template [ngIf]="this.patientCard.cardTypeName == '静滴瓶贴'">
+      <nz-table #tblPrescription [nzData]="this.patientCard.nursingCardRespDtoList" nzSize="small"
+                [nzShowPagination]="false"
+                nzBordered
+      >
+        <thead>
+        <tr>
+          <th>名称</th>
+          <th>每次剂量</th>
+          <th [hidden]="patientCard.hideQuantityInfo">数量</th>
+          <th [hidden]="patientCard.hideDropSpeed">滴速</th>
+          <th [hidden]="patientCard.hideUseMethod">途径</th>
+          <th>频次</th>
+          <th>备注</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let presciption of tblPrescription.data">
+          <td>{{presciption.entityName}}</td>
+          <td>{{presciption.serveInfo}}</td>
+          <td [hidden]="patientCard.hideQuantityInfo">{{presciption.quantityInfo}}</td>
+          <td [rowSpan]="presciption.rowSpan"
+              [hidden]="patientCard.hideDropSpeed || presciption.hideColumn">{{presciption.dropSpeed}}</td>
+          <td [rowSpan]="presciption.rowSpan"
+              [hidden]="patientCard.hideUseMethod || presciption.hideColumn">{{presciption.useMethod}}</td>
+          <td [rowSpan]="presciption.rowSpan" [hidden]="presciption.hideColumn">{{presciption.frequency}}</td>
+          <td>{{presciption.reference}}</td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </ng-template>
+    <ng-template [ngIf]="this.patientCard.cardTypeName == '化验瓶贴'">
+      <nz-table #tblPrescription [nzData]="this.patientCard.nursingCardRespDtoList" nzSize="small"
+                [nzShowPagination]="false"
+                nzBordered
+      >
+        <thead>
+        <tr>
+          <th>名称</th>
+          <th>颜色</th>
+          <th>样本</th>
+          <th>备注</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let prescription of tblPrescription.data">
+          <td>{{prescription.entityName}}</td>
+          <td>{{prescription.bottleColour}}</td>
+          <td>{{prescription.sampleType}}</td>
+          <td>{{prescription.reference}}</td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </ng-template>
+  </div>
+</nz-card>

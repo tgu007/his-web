@@ -1,0 +1,57 @@
+<div style="float: left;">
+  <span>{{this.printData.cardDate}}</span>
+  <nz-table #basicTable [nzData]="this.printData.cardList" nzSize="small"
+            [nzShowPagination]=false
+  >
+    <thead>
+    <tr>
+      <th nzWidth="30px"></th>
+      <th>项目名称</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-treatmentCard [ngForOf]="basicTable.data">
+      <tr>
+        <td
+          [nzShowExpand]="true"
+          nzExpand
+        ></td>
+        <td>  {{treatmentCard.treatmentName}}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      <tr nzExpand
+          *ngFor="let patientTreatmentCard of treatmentCard.patientList">
+        <td></td>
+        <td>
+          {{patientTreatmentCard.patientInfo}}
+        </td>
+        <td>
+          {{patientTreatmentCard.quantityInfo}}
+        </td>
+        <td>
+          {{patientTreatmentCard.frequency}}
+        </td>
+        <td>
+          <label nz-checkbox [(ngModel)]="patientTreatmentCard.firstDay" nzDisabled>
+            {{patientTreatmentCard.firstDay ? patientTreatmentCard.firstDayQuantityInfo + '次' : ''}}
+          </label>
+        </td>
+        <td>
+          {{patientTreatmentCard.reference}}
+        </td>
+      </tr>
+    </ng-template>
+    </tbody>
+  </nz-table>
+</div>
+

@@ -1,0 +1,11 @@
+<nz-tree
+    #nzTreeComponent
+    [nzData]="patientNodes"
+    nzCheckable
+    [nzExpandAll]=true
+    (nzCheckBoxChange)="nzCheck($event)"
+    [nzMultiple]=this.allowMultiple
+    [nzCheckable]=this.checkable
+    (nzClick)="nzClicked($event)"
+>
+</nz-tree>

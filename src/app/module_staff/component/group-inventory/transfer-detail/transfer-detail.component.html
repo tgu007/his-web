@@ -1,0 +1,129 @@
+<form nz-form [formGroup]="transferForm">
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24"
+                       nzFor="selectFromWarehouse">出库部门
+        </nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-select nzShowSearch formControlName="selectFromWarehouse"
+                     [nzDisabled]="this.disableSelectFromWarehouse()"
+                     style="width:150px"
+                     #selectFromWarehouse
+          >
+            <nz-option *ngFor="let warehouse of this.fromWarehouseList"
+                       [nzLabel]="warehouse.department.name"
+                       [nzValue]="warehouse.uuid"
+                       [nzDisabled]="warehouse.uuid == selectToWarehouse.value"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24"
+                       nzFor="selectToWarehouse">入库部门
+        </nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-select nzShowSearch formControlName="selectToWarehouse" #selectToWarehouse style="width:150px"
+                     [nzDropdownMatchSelectWidth]=false
+                     [nzDropdownRender]="renderTemplate">
+            <nz-option *ngFor="let warehouse of this.toWarehouseList"
+                       [nzLabel]="warehouse.department.name"
+                       [nzValue]="warehouse.uuid"
+                       [nzDisabled]="warehouse.uuid == selectFromWarehouse.value"
+            ></nz-option>
+            <ng-template #renderTemplate>
+              <ng-template
+                [ngIf]="this.orderType == 'item' && this.fromWarehouseType.includes('药库') && this.transferType == 'out'">
+                <nz-divider></nz-divider>
+                <div class="container">
+                  <input type="text" nz-input #inputElement/>
+                  <button nz-button nzSize="small" (click)="addLevelTwoWarehouse(inputElement)"
+                          [disabled]="inputElement.value == ''">添加后勤库房
+                  </button>
+                  <!--              <a class="add-item" (click)="addManufacturer(inputElement, control)"><i nz-icon nzType="plus"></i> 添加产地</a>-->
+                </div>
+              </ng-template>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="6" hidden>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24"
+                       nzFor="dateTransferDate">调拨日期
+        </nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24">
+          <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd"
+            nzPlaceHolder="选择日期"
+            formControlName="dateTransferDate"
+            nzSize="small"
+            [nzShowTime]=false
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtReference">备注</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtReference"/>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <button nz-button nzType="primary" (click)="btnNewLineClicked()"
+            *ngIf="this.transfer && (this.transfer.transferStatus == '已创建'|| this.transfer.uuid == undefined)"
+            style="float: left; margin-right: 10px;"
+    ><i nz-icon type="plus" theme="outline"></i>添加
+    </button>
+
+    <button nz-button nzType="primary" (click)="this.updateTransferStatus('transfer', '待确认')"
+            *ngIf="this.transfer && this.transfer.transferStatus == '已创建'
+              && this.sessionService.loginUser.warehouseIdList.includes(this.transferForm.value.selectFromWarehouse)"
+            [nzLoading]="this.statusUpdating"
+            style="float: left; margin-right: 10px;"
+    >调拨
+    </button>
+    <button nz-button nzType="primary"
+            nz-popconfirm
+            nzPopconfirmTitle="确认删除？"
+            (nzOnConfirm)="deleteTransfer()"
+            nzPopconfirmPlacement="rightBottom"
+            *ngIf="this.transfer && this.transfer.transferStatus == '已创建'"
+            [nzLoading]="this.deleting"
+            style="float: left; margin-right: 10px;"
+    >删除
+    </button>
+    <button nz-button nzType="primary" (click)="confirmTransfer()"
+            *ngIf="this.transfer && this.transfer.transferStatus == '待确认'
+              && this.sessionService.loginUser.warehouseIdList.includes(this.transferForm.value.selectToWarehouse)"
+            [nzLoading]="this.updatingInventory"
+            style="float: left; margin-right: 10px;"
+    >确认
+    </button>
+    <button nz-button nzType="primary" (click)="updateTransferStatus('cancel', '已创建')"
+            *ngIf="this.transfer && this.transfer.transferStatus == '待确认'
+            && this.sessionService.loginUser.warehouseIdList.includes(this.transferForm.value.selectFromWarehouse)"
+            [nzLoading]="this.statusUpdating"
+            style="float: left; margin-right: 10px;"
+    >退回
+    </button>
+  </div>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <app-transfer-detail-table
+      [transfer]="this.transfer"
+      [transferForm]="this.transferForm"
+      [selectedFromWarehouse]="this.transferForm.value.selectFromWarehouse"
+      [orderType]="this.orderType"
+    >
+    </app-transfer-detail-table>
+  </nz-spin>
+
+</form>

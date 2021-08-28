@@ -1,0 +1,10 @@
+.page {
+  width: 22.5cm;
+  height: 14cm;
+}
+
+table, td, th, thead {
+  border: 1px solid black;
+  color: black;
+  font-family: Arial, "Microsoft YaHei";
+}

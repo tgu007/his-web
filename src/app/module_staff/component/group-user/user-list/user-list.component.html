@@ -1,0 +1,139 @@
+<div nz-row>
+
+  <nz-select [(ngModel)]="selectUserStatus"
+             (ngModelChange)="this.loadUserList()"
+             style="width:80pt;float: left;
+  margin-right: 10px;">
+    <nz-option nzLabel="全部" nzValue="all"></nz-option>
+    <nz-option nzLabel="已激活" [nzValue]="true"></nz-option>
+    <nz-option nzLabel="已停用" [nzValue]="false"></nz-option>
+  </nz-select>
+
+
+  <nz-select *ngIf="this.uiPermission.commonComponent.userList.fullRole"
+             nzPlaceHolder="用户角色"
+             [(ngModel)]="selectUserRole"
+             nzAllowClear
+             style="width: 200px; float: left;
+  margin-right: 10px;"
+  >
+    <nz-option *ngFor="let role of userRoleList" [nzValue]="role"
+               [nzLabel]="role.name"></nz-option>
+  </nz-select>
+
+  <input nz-input [(ngModel)]="filterPhoneNumber"
+         placeholder="手机号码搜索"
+         style="width: 200px; float: left;
+  margin-right: 10px;"
+  />
+
+  <input nz-input [(ngModel)]="filterName"
+         placeholder="名字搜索"
+         style="width: 200px ;float: left;
+  margin-right: 10px;"/>
+
+  <button nz-button (click)="this.loadUserList()">检索</button>
+
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #tblEmployeeList [nzData]="this.employeeList" nzSize="small"
+    >
+      <thead>
+      <tr>
+        <th>姓名</th>
+        <th>角色</th>
+        <th>手机号</th>
+        <th>权限</th>
+        <th>已激活</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let employee of tblEmployeeList.data">
+        <td>{{employee.name}}</td>
+        <td>{{employee.userRole.name}}</td>
+        <td>{{employee.mobileNumber}}</td>
+        <td>{{employee.authorizedDepartment}}</td>
+        <td><label nz-checkbox [(ngModel)]="employee.enabled" nzDisabled></label></td>
+        <td>
+          <nz-spin [nzSpinning]="employee.isBusy">
+            <button nz-button nzType="primary" nzSize="small"
+                    (click)="activateEmployee(employee, !employee.enabled)"
+            >{{employee.enabled ? "停用" : "激活"}}
+            </button>
+            <button nz-button nzType="primary" nzSize="small"
+                    (click)="permissionEditClicked(employee)"
+            >权限
+            </button>
+            <button nz-button nzType="primary" nzSize="small"
+                    (click)="this.doctorAgreementClicked(employee)"
+                    *ngIf="employee.userRole.name == '医生'"
+            >协议编号
+            </button>
+          </nz-spin>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="permissionModalVisible"
+  nzTitle=角色权限分配
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveUserPermissionClicked()"
+  nzWidth="500"
+  nzOkText="保存"
+  nzCancelText="关闭"
+>
+  <div nz-row>
+    <div nz-col nzSpan="10">
+      <nz-select
+        nzShowSearch
+        [(ngModel)]="selectUserRole"
+        (ngModelChange)="selectRoleChanged()"
+        style="width: 150px"
+      >
+        <nz-option *ngFor="let userRole of this.userRoleList"
+                   [nzValue]="userRole.uuid"
+                   [nzLabel]="userRole.name"></nz-option>
+      </nz-select>
+    </div>
+
+
+    <div nz-col nzSpan="14">
+      <nz-select
+        nzMode="multiple"
+        nzShowSearch
+        [(ngModel)]="selectDepartment"
+        style="width: 250px"
+      >
+        <nz-option *ngFor="let department of this.departmentList"
+                   [nzValue]="department.uuid"
+                   [nzLabel]="department.department.name"></nz-option>
+      </nz-select>
+    </div>
+
+  </div>
+
+</nz-modal>
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="doctorAgreementModalVisible"
+  nzTitle=‘医师协议编号’
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="this.doctorAgreementComponent.saveDoctorAgreement()"
+  nzWidth="500"
+  nzOkText="保存"
+  nzCancelText="关闭"
+  [nzOkLoading]="this.doctorAgreementComponent.saving"
+>
+  <app-doctor-agreement (agreementSavedEvent)="this.loadUserList()">
+  </app-doctor-agreement>
+
+</nz-modal>

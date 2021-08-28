@@ -1,0 +1,92 @@
+<form nz-form [formGroup]="ybSignInRecordForm">
+  <div nz-row>
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectDoctor">申请医生</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="请选申请医生">
+          <nz-select
+            nzShowSearch
+            formControlName="selectDoctor"
+          >
+            <nz-option *ngFor="let doctor of this.doctorList" [nzValue]="doctor.uuid"
+                       [nzLabel]="doctor.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtRecordNumber">备案号</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input
+            nz-input
+            formControlName="txtRecordNumber"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>开始时间</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd"
+            nzPlaceHolder="开始时间"
+            formControlName="dataStart"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>结束时间</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd"
+            nzPlaceHolder="结束时间"
+            formControlName="dataEnd"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>申请天数</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberAppliedDays"
+            [nzStep]="1"
+            [nzMin]="0"
+          ></nz-input-number>
+          天
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>剩余天数</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberDaysLeft"
+            [nzStep]="1"
+            [nzMin]="0"
+          ></nz-input-number>
+          天
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>

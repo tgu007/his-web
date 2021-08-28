@@ -1,0 +1,45 @@
+<form nz-form [formGroup]="autoFeeDetailForm">
+  <div nz-row>
+    <div nz-col nzSpan="2">
+      <nz-form-item>
+        <nz-form-control>
+          <label nz-checkbox
+                 formControlName="chkEnabled"
+          >启用</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="14">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectItem">付费项目</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24" nzErrorTip="请选择付费项目">
+          <nz-select
+            nzShowSearch
+            formControlName="selectItem"
+            style="width:300px"
+          >
+            <nz-option *ngFor="let item of this.itemList" [nzValue]="item.uuid"
+                       [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="numberQuantity">每次收费数量</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="请注每次收费数量">
+          <nz-input-number
+            nz-input
+            formControlName="numberQuantity"
+            [nzStep]="1"
+            [nzMin]=1
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+</form>
+

@@ -1,0 +1,66 @@
+<nz-select
+  nzShowSearch
+  nzServerSearch
+  [nzDropdownRender]="renderTemplate"
+  [style.width]="this.selectionWidth"
+  [nzDropdownMatchSelectWidth]=false
+  (nzOnSearch)=searchItem($event)
+  [ngModel]=this.selectedItemLabel
+  [nzPlaceHolder]="placeHolder"
+  (keydown.shift.arrowRight)="arrowLeftRightClicked(1);"
+  (keydown.shift.arrowLeft)="arrowLeftRightClicked(-1);"
+  (keydown.arrowDown)=this.arrowKeyClicked(1);
+  (keydown.arrowUp)=this.arrowKeyClicked(-1);
+  (keydown.enter)="this.enterClicked()"
+  [disabled]="this.disabled"
+  [nzAllowClear]="this.allowClear"
+  (ngModelChange)="this.valueChanged()"
+
+>
+  <nz-option [nzLabel]="this.selectedItem?this.selectedItem.label:''" nzValue="fakeSelection"
+             [nzHide]="true"></nz-option>
+  <ng-template #renderTemplate>
+    <div nz-row>
+      <nz-alert nzType="info" [nzCloseable]="true" nzMessage="shift + 左/右 可翻页，上下键可选择当前页列，同时也支持鼠标操作"></nz-alert>
+    </div>
+    <div nz-row>
+      <nz-spin [nzSpinning]="this.isLoading">
+        <nz-table #basicTable [nzData]="dataList" nzSize="small" style="background-color:white;"
+                  [nzTotal]="totalDataCount"
+                  [nzFrontPagination]=false
+                  (nzPageIndexChange)=pageIndexChanged($event)
+                  [nzPageSize]="tablePageSize"
+                  [(nzPageIndex)]="this.currentPageIndex"
+        >
+          <thead>
+          <tr>
+            <th *ngFor="let data of dataColumns">{{data}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <!--          (keydown.enter)="this.enterKeyClicked(dataRow)"-->
+          <!--          [tabIndex]="i"-->
+          <!--          style="background-color: blue"-->
+          <tr
+            *ngFor="let dataRow of basicTable.data let i= index"
+            (click)="this.dataSelected(dataRow)"
+            [ngClass]="{'rwoSelected': this.selectedRowIndex == i}"
+          >
+            <td *ngFor="let dataValue of dataRow.valueList">{{dataValue}}</td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </nz-spin>
+    </div>
+    <div class="container" *ngIf="this.showAddNew">
+      <input type="text" nz-input [placeholder]='this.addNewPlaceHolder' #inputElement/>
+      <button nz-button nzSize="small" (click)="addNewItem(inputElement)" nzType="primary"
+              [nzLoading]="this.adding"
+              [disabled]="inputElement.value == '' || inputElement.value == undefined">{{this.addNewItemLabel}}
+      </button>
+      <!--              <a class="add-item" (click)="addManufacturer(inputElement, control)"><i nz-icon nzType="plus"></i> 添加产地</a>-->
+    </div>
+  </ng-template>
+</nz-select>
+<ng-template #emptyTemplate>
+</ng-template>

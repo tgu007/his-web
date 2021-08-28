@@ -1,0 +1,183 @@
+<!--<nz-alert-->
+<!--  *ngIf="this.feeType == '药品'"-->
+<!--  nzType="info" nzMessage="药品手动计费只能选取非处方药"></nz-alert>-->
+<form nz-form [formGroup]="newManualFeeForm">
+  <div nz-row nzGutter="8">
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectDepartment">记费科室</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-select nzShowSearch formControlName="selectDepartment"
+                     style="width:150px"
+                     (ngModelChange)="selectedWarehouseChanged()"
+          >
+            <nz-option *ngFor="let department of this.departmentList"
+                       [nzLabel]="department.department.name"
+                       [nzValue]="department.uuid"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="12" [hidden]="this.feeType == '诊疗'">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectWarehouse">出库单位</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-select nzShowSearch formControlName="selectWarehouse"
+                     style="width:150px"
+                     (ngModelChange)="selectedWarehouseChanged()"
+          >
+            <nz-option *ngFor="let warehouse of this.warehouseList"
+                       [nzLabel]="warehouse.department.name"
+                       [nzValue]="warehouse.uuid"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row nzGutter="8">
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtFeeItem">计费项目</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <app-common-dynamic-select
+            (onSearchEvent)="searchFeeItem($event)"
+            formControlName="txtFeeItem"
+            [dataList]="this.feeItemList"
+            [totalDataCount]="this.feeItemTotalCount"
+            [dataColumns]=this.selectFeeItemColumnList
+            (onSelectedItemChangedEvent)="this.selectedFeeItemChanged($event)"
+            [pageCount]=this.feeItemPageCount
+          >
+          </app-common-dynamic-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtQuantity">数量</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="请注明数量">
+          <nz-input-number
+            nz-input
+            formControlName="txtQuantity"
+            #quantity
+            [nzStep]="1"
+            [nzMin]=1
+          ></nz-input-number>
+          <span>
+         {{this.selectedFeeItem ? this.feeType == '药品' ? this.selectedFeeItem.departmentUom.name : this.selectedFeeItem.minSizeUom.name : undefined}}
+      </span>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row nzGutter="8">
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzNoColon=true>
+          单价: {{this.selectedFeeItem ? this.selectedFeeItem.listPrice : ""}}</nz-form-label>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzNoColon=true>
+          总价: {{selectedFeeItem ? (selectedFeeItem.listPrice * this.newManualFeeForm.value.txtQuantity).toFixed(2) : 0}}</nz-form-label>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row nzGutter="8">
+    <div nz-col nzSpan="20">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24"
+                       [nzRequired]="this.selectedFeeItem && this.selectedFeeItem.prescriptionRequired"
+                       nzFor="selectPrescription">关联医嘱
+        </nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24">
+          <app-common-dynamic-select
+            #prescriptionSelect
+            (onSearchEvent)="searchPrescription($event)"
+            formControlName="selectPrescription"
+            [dataList]="this.prescriptionList"
+            [totalDataCount]="this.prescriptionListTotalCount"
+            [dataColumns]="['名称', '类型', '开始时间','结束时间','频次']"
+            [pageCount]=this.pageCount
+            [allowKeyBoardControl]="true"
+          >
+          </app-common-dynamic-select>
+        </nz-form-control>
+
+
+        <!--        <nz-form-control [nzSm]="16" [nzXs]="24">-->
+        <!--          <nz-select-->
+        <!--            nzShowSearch-->
+        <!--            nzPlaceHolder="选择关联医嘱"-->
+        <!--            formControlName="selectPrescription"-->
+        <!--            (ngModelChange)="this.selectedPrescriptionChanged()"-->
+        <!--          >-->
+        <!--            <nz-option *ngFor="let prescription of this.prescriptionList" [nzValue]="prescription.uuid"-->
+        <!--                       [nzLabel]="prescription.description"-->
+        <!--                       nzCustomContent-->
+        <!--            >-->
+        <!--              {{ prescription.description + ':' + prescription.startDate}}-->
+        <!--            </nz-option>-->
+        <!--          </nz-select>-->
+        <!--        </nz-form-control>-->
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="12" [hidden]="this.hideFrequencyControl">
+      <nz-alert nzType="info" nzMessage="若已经选择了医嘱，此处可不用填写，当自动计费频次与医嘱频次不相同时才需选择频次" nzShowIcon></nz-alert>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectFrequency" nzRequired>频次</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="请选择频次">
+          <nz-select
+            nzShowSearch
+            nzPlaceHolder="选择频次"
+            formControlName="selectFrequency"
+          >
+            <nz-option *ngFor="let frequency of this.prescriptionService.frequencyList" [nzValue]="frequency.id"
+                       [nzLabel]="frequency.code"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24"
+                       nzRequired>{{this.isAutoFee ? '开始' : ''}}
+          计费日期
+        </nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd HH:mm:ss"
+            nzPlaceHolder="选择日期时间"
+            formControlName="dateFeeDate"
+            nzSize="small"
+            [nzDisabledDate]="disabledDate"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+
+
+  <div nz-row [hidden]="this.patientSignIn.selfPay">
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-control>
+          <label nz-checkbox
+                 formControlName="chkSelfPay"
+          >自费项目</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+</form>

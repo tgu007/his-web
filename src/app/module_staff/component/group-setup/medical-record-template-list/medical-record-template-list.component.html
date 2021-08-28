@@ -1,0 +1,155 @@
+<nz-tabset [nzType]="'card'" nzSize="small" nzTabPosition="top"
+           [(nzSelectedIndex)]="activeTabIndex"
+>
+  <nz-tab nzTitle='模板列表'>
+    <nz-layout>
+      <nz-spin [nzSpinning]="this.sideIsBusy">
+        <nz-sider nzCollapsible
+                  [(nzCollapsed)]="this.collapsed"
+                  nzTheme="light"
+                  [nzCollapsedWidth]="30"
+                  [nzTrigger]="null"
+                  [nzWidth]="300"
+        >
+
+          <ul nz-menu nzMode="inline" [hidden]="this.collapsed">
+            <li *ngFor="let menu of this.menuList"
+                nz-submenu
+                [nzTitle]=menu.title
+                [(nzOpen)]="menu.expand" (nzOpenChange)="sideMenuExpandChanged(menu)"
+            >
+              <ul nz-menu nzMode="vertical">
+                <div nz-row *ngFor="let medicalRecordType of this.medicalRecordTypeList"
+                >
+                  <ng-template [ngIf]="medicalRecordType.enabled == menu.enabled">
+                    <nz-switch
+                      [(ngModel)]="medicalRecordType.enabled" [nzCheckedChildren]="checkedTemplate"
+                      [nzUnCheckedChildren]="unCheckedTemplate"
+                      style="display: inline; margin-left: 0px"
+                      (ngModelChange)=enableTemplateType(medicalRecordType)
+                    ></nz-switch>
+                    <li
+                      nz-menu-item
+                      (click)="this.getTemplateList(medicalRecordType)"
+                      [nzSelected]="this.selectedTemplateType && this.selectedTemplateType.uuid == medicalRecordType.uuid"
+                      style="display: inline;"
+                    >
+                      {{medicalRecordType.name}}
+                    </li>
+                  </ng-template>
+                </div>
+              </ul>
+            </li>
+          </ul>
+        </nz-sider>
+      </nz-spin>
+      <i
+        nz-icon
+        [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+        (click)="this.collapsed = !this.collapsed"
+      ></i>
+      <nz-layout class="inner-layout">
+        <div nz-row>
+          <button nz-button
+                  nzType="primary"
+                  (click)="this.newTemplateDetailTab(undefined)"
+
+                  style="float: left;margin-right: 10px;"
+          >新建模板
+          </button>
+          <!--          //[disabled]="!this.selectedTemplateType"-->
+          <input nz-input [(ngModel)]="filterTemplateName"
+                 placeholder="输入模板名字搜索"
+                 style="float: left;margin-right: 10px; width:250px"
+          />
+
+          <button nz-button (click)="this.getTemplateList(undefined)"
+                  style="float: left;margin-right: 10px;"
+          >检索
+          </button>
+
+          <button nz-button (click)="this.getTemplateList(undefined, true)"
+                  style="float: left;margin-right: 10px;"
+          >显示所有模板
+          </button>
+
+          <label nz-checkbox [(ngModel)]="this.showEnabledTemplateOnly"
+                 (ngModelChange)="this.getTemplateList(this.selectedTemplateType)"
+                 style="float: left;margin-right: 10px;">只显示启用的模板</label>
+
+          <button nz-button nzSize="small" nzType="primary" nzShape="circle"
+                  (click)="this.getTemplateList(this.selectedTemplateType)"><i nz-icon
+                                                                               nzType="reload"></i>
+          </button>
+
+        </div>
+
+        <div nz-row>
+          <nz-spin [nzSpinning]="this.listIsBusy">
+            <nz-table #basicTable [nzData]="this.templateList" nzSize="small"
+            >
+              <thead>
+              <tr>
+                <th>模板类型</th>
+                <th>模板名称</th>
+                <th>是否启用</th>
+                <th>模板权限</th>
+                <th>所属科室</th>
+                <!--                <th>所属医生</th>-->
+                <th>创建人</th>
+                <th>最后修改人</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngFor="let template of basicTable.data">
+
+                <tr>
+                  <td>{{template.recordType.name}}</td>
+                  <td>{{template.name}}</td>
+                  <td>
+                    <nz-spin [nzSpinning]="template.isbusy">
+                      <nz-switch [(ngModel)]="template.enabled" [nzCheckedChildren]="checkedTemplate"
+                                 [nzUnCheckedChildren]="unCheckedTemplate"
+                                 (ngModelChange)=enableTemplate(template)></nz-switch>
+                    </nz-spin>
+                  </td>
+                  <td>{{template.permissionType}}</td>
+                  <td>{{template.joinedDepartmentName}}</td>
+                  <!--                  <td>{{template.owner}}</td>-->
+                  <td>{{template.writer}}</td>
+                  <td>{{template.lastModifier}}</td>
+                  <td>
+                    <button nz-button nzType="primary" nzSize="small" (click)="newTemplateDetailTab(template)"><i
+                      nz-icon
+                      nzType="edit"></i>
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
+              </tbody>
+
+            </nz-table>
+          </nz-spin>
+        </div>
+      </nz-layout>
+    </nz-layout>
+    <ng-template #checkedTemplate><i nz-icon nzType="check"></i></ng-template>
+    <ng-template #unCheckedTemplate><i nz-icon nzType="close"></i></ng-template>
+  </nz-tab>
+  <nz-tab *ngFor="let tab of templateTabList" [nzTitle]="titleTemplate">
+    <app-medical-record-template-detail [template]="tab.template"
+                                        [templateTypeList]="this.medicalRecordTypeList"
+                                        (onTemplateSavedEvent)="this.onTemplateSaved($event)"
+    ></app-medical-record-template-detail>
+    <ng-template #titleTemplate>
+      <div
+      >{{ tab.tabName }}<i nz-icon nzType="close" class="ant-tabs-close-x"
+                           nz-popconfirm
+                           nzTitle="文档未保存，确认关闭?"
+                           [nzCondition]=!tab.template.modified
+                           (nzOnConfirm)="closeTemplateTab(tab)"
+      ></i></div>
+    </ng-template>
+  </nz-tab>
+</nz-tabset>

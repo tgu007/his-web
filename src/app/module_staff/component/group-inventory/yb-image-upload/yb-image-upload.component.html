@@ -1,0 +1,18 @@
+<nz-spin [nzSpinning]="this.imageUploading">
+  <nz-alert nzType="info" [nzCloseable]="true" nzMessage="图片大小不能超过2MB"></nz-alert>
+  <nz-upload
+    [(nzFileList)]="fileList"
+    [nzCustomRequest]="handleUpload"
+    [nzRemove]="handleRemove"
+    nzSize=2048
+    nzFileType='image/png,image/jpeg'
+    nzLimit=1
+  >
+    <button nz-button [disabled]="fileList.length >= 1"><i nz-icon nzType="upload"></i>选择影像文件</button>
+  </nz-upload>
+  <img *ngIf="this.prevImgSource" [src]="prevImgSource" style="width: 200px; height: 100px"/>
+  <ng-template [ngIf]="this.order && this.order.ybImageId">
+    <button nz-button (click)="this.downloadUploadedImage()" [nzLoading] = this.downloading>下载已上传影响</button>
+    <img *ngIf="this.downloadedImgSource" [src]="prevImgSource" style="width: 200px; height: 100px"/>
+  </ng-template>
+</nz-spin>

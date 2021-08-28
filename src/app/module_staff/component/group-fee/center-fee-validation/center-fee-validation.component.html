@@ -1,0 +1,98 @@
+<div nz-row *ngIf="this.patientSignIn.status != '已出院'">
+  <button
+    nz-button nzType="primary"
+    class="ant-btn ant-btn-primary"
+    style="float:left;margin-left: 10px;"
+    (click)="this.downloadFeeClicked()"
+    [nzLoading]="this.downloadingFee"
+    nzTooltipTitle="从医保服务下载所有已经被上传的服务明细，用于和HIS费用明细比对。"
+    nz-tooltip
+  >下载已上传的费用
+  </button>
+
+
+  <button
+    nz-button nzType="primary"
+    class="ant-btn ant-btn-primary"
+    style="float:left;margin-left: 10px;"
+    (click)="this.deleteAllFeeClicked()"
+    [nzLoading]="this.deletingAllFee"
+    nzTooltipTitle="删除所有上传至医保的费用，本地HIS系统内的费用全部变为未上传状态，然后重新上传"
+    nz-tooltip
+  >删除医保端费用
+  </button>
+
+  <button nz-button nzType="primary" (click)="this.refresh()"
+          style="float:left;margin-left: 10px;">
+    刷新所有信息
+  </button>
+</div>
+
+<div nz-row>
+  <nz-alert [nzType]="this.getUserGuidInfoType()" [nzMessage]=this.getUserGuidInfo() nzShowIcon></nz-alert>
+</div>
+
+<div nz-row style="width: 100%">
+  <app-settlement-summary [patientSignIn]="this.patientSignIn"
+                          [isFinalSettle]="false"></app-settlement-summary>
+</div>
+
+<div nz-row style="width: 100%; margin-top: 20px">
+  <span style="text-align: center; font-size: large"> 医保端费用与本地系统费用明细对比</span>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="centerFeeList" nzSize="small" style="background-color:white"
+              [nzTotal]="totalDataCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=this.reloadDownloadedFeeList()
+              [nzBordered]="true"
+    >
+      <thead>
+      <tr>
+        <th colspan="5">医保中心</th>
+        <th colspan="6">his系统</th>
+      </tr>
+      <tr>
+        <th>名称</th>
+        <th>金额</th>
+        <th>报销金额</th>
+        <th>错误信息</th>
+        <th>操作</th>
+        <th>名称</th>
+        <th>计费日期</th>
+        <th>计费人</th>
+        <th>金额</th>
+        <th>医保上传状态</th>
+        <th>报销金额</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data" nzShowRowSelection>
+        <td>{{data.kpxm}}</td>
+        <td>{{data.je}}</td>
+        <td>{{data.insuranceAmount}}</td>
+        <td>{{data.validationMessage}}</td>
+        <td>
+          <button
+            *ngIf="this.patientSignIn.status != '已出院'"
+            nz-button nzSize="small" nzType="primary" (click)="deleteCenterFee(data)"
+            nzTooltipTitle="从中心删除本条费用，删除成功后需重新上传"
+            nz-tooltip
+          >删除
+          </button>
+        </td>
+        <td>{{data.fee.name}}</td>
+        <td>{{data.fee.feeDate}}</td>
+        <td>{{data.fee.whoCreated}}</td>
+        <td>{{data.fee.totalAmount}}</td>
+        <td>{{data.fee.uploadStatus}}</td>
+        <td>{{data.fee.insuranceAmount}}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>

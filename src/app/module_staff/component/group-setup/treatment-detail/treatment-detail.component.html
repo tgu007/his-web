@@ -1,0 +1,264 @@
+<form nz-form [formGroup]="treatmentDetailForm">
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectCenterTreatment">医保诊疗目录</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <app-common-dynamic-select
+            (onSearchEvent)="searchCenterTreatment($event)"
+            formControlName="selectCenterTreatment"
+            [dataList]="this.centerTreatmentList"
+            [totalDataCount]="this.centerTreatmentListTotalCount"
+            [dataColumns]="this.dropDownColumnList"
+            [pageCount]=this.centerTreatmentListPageCount
+            (onSelectedItemChangedEvent)="this.selectedCenterTreatmentChanged($event)"
+          >
+          </app-common-dynamic-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtCode">编码</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtCode" [readOnly]="true"
+                 placeholder="自动生成"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtName">名称</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="txtName"
+                 placeholder="物品名称"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtSearchCode">拼音代码</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="txtSearchCode"
+                 placeholder="不填系统会自动生成"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectMinUom" nzRequired>最小单位</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-select
+            nzShowSearch
+            formControlName="selectMinUom"
+            #selectMinUom
+            [nzDropdownRender]="minUomTemplate"
+          >
+            <nz-option *ngFor="let minUom of this.minUomList" [nzValue]="minUom.uuid"
+                       [nzLabel]="minUom.name"></nz-option>
+            <ng-template #minUomTemplate>
+              <nz-divider></nz-divider>
+              <div class="container">
+                <input type="text" nz-input #inputUom/>
+                <button nz-button nzType="primary" nzSize="small"
+                        (click)="addUOM(inputUom, '诊疗', this.minUomList, 'selectMinUom')">
+                  <i nz-icon nzType="plus"></i>
+                </button>
+              </div>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectFeeType">费用类型</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="青选择费用类型">
+          <nz-select
+            nzShowSearch
+            formControlName="selectFeeType"
+          >
+            <nz-option *ngFor="let feeType of this.feeTypeList" [nzValue]="feeType.id"
+                       [nzLabel]="feeType.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="4">
+      <nz-form-item>
+        <nz-form-control [nzSm]="20" [nzXs]="24">
+          <label nz-checkbox formControlName="chkEnabled">作废</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectDepartmentType" nzRequired>执行科室类别</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="选择诊疗科室类别">
+          <nz-select
+            nzShowSearch
+            #selectDepartmentType
+            formControlName="selectDepartmentType"
+          >
+            <nz-option *ngFor="let departmentType of this.departmentTypeList" [nzValue]="departmentType"
+                       [nzLabel]="departmentType"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectDefaultDepartment">默认执行科室</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="选择默认执行科室">
+          <nz-select
+            nzShowSearch
+            formControlName="selectDefaultDepartment"
+            nzAllowClear
+          >
+            <nz-option *ngFor="let department of this.departmentList" [nzValue]="department.uuid"
+                       [nzLabel]="department.department.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+
+  <div nz-row [hidden]="selectDepartmentType.value !='康复科室'">
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectRecoveryType">康复诊疗类别</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="选择康复诊疗类别">
+          <nz-select
+            nzShowSearch
+            formControlName="selectRecoveryType"
+          >
+            <nz-option *ngFor="let recoveryType of this.recoveryTypeList" [nzValue]="recoveryType.id"
+                       [nzLabel]="recoveryType.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberDuration">诊疗操作时长</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberDuration"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+        <nz-form-label [nzSm]="2" [nzXs]="24"
+                       [nzNoColon]=true>分钟
+        </nz-form-label>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-control [nzSm]="20" [nzXs]="24">
+          <label nz-checkbox formControlName="chkAllowMultiExecution">允许和其他项目同时执行</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row [hidden]="selectDepartmentType.value !='检验科'">
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectLabTreatmentType">检验诊疗类别</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="选择检验诊疗类别">
+          <nz-select
+            nzShowSearch
+            formControlName="selectLabTreatmentType"
+          >
+            <nz-option *ngFor="let labTreatmentType of this.labTreatmentTypeList" [nzValue]="labTreatmentType.id"
+                       [nzLabel]="labTreatmentType.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectLabSampleType">检验标本类型</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="选择检验标本">
+          <nz-select
+            nzShowSearch
+            formControlName="selectLabSampleType"
+          >
+            <nz-option *ngFor="let labSampleType of this.labSampleTypeList" [nzValue]="labSampleType.id"
+                       [nzLabel]="labSampleType.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="16">
+      <nz-form-item>
+        <nz-form-control [nzSm]="20" [nzXs]="24" style="width: 120px">
+          <label #combo nz-checkbox formControlName="chkCombo">组套执行</label>
+        </nz-form-control>
+
+        <button nz-button nzSize="small" nzType="primary"
+                [hidden]="!combo.nzChecked"
+                style="float: left; margin-top: 10px"
+                (click)="this.addChildTreatmentControl()"
+        >
+          添加子项目
+        </button>
+      </nz-form-item>
+
+    </div>
+  </div>
+
+  <ng-template [ngIf]="combo.nzChecked">
+    <div nz-row *ngFor="let row of this.sortedControlList; let i = index">
+      <div nz-col nzSpan="8" *ngFor="let control of row; let j = colIndex">
+        <div nz-row>
+          <div style="float: left">
+            <nz-form-item>
+              <nz-form-control [nzSm]="8" [nzXs]="24">
+                <app-common-dynamic-select
+                  (onSearchEvent)="searchTreatment(control, $event)"
+                  [formControlName]="control.controlInstance"
+                  [dataList]="control.treatmentList"
+                  [totalDataCount]="control.treatmentListTotalCount"
+                  [dataColumns]="['名称', '价格']"
+                  (onSelectedItemChangedEvent)="this.selectedTreatmentChanged(control,$event)"
+                  [pageCount]=control.pageCount
+                  [allowKeyBoardControl]="true"
+                >
+                </app-common-dynamic-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div style="float: left; margin-left: 5px; margin-top: 10px">
+            <i nz-icon nzType="minus-circle-o" class="dynamic-delete-button"
+               (click)="removeChildTreatmentControl(control, $event)"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</form>

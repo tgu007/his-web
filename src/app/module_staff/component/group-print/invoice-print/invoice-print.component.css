@@ -1,0 +1,72 @@
+
+.page {
+
+  width: 12cm;
+  height: 203mm;
+  /*border: 1px solid #00ff00;*/
+  padding-left: 10mm;
+
+}
+
+span {
+  size: 4mm;
+  margin-bottom: 0.5mm;
+  color: black;
+  font-family: Arial, "Microsoft YaHei";
+}
+
+div {
+  /*border: 1px solid #00ff00;*/
+}
+
+.row {
+  /*width: 100mm;*/
+  width: 95mm;
+  height: 5.9mm;
+  margin-top: 0;
+}
+
+.feeCell {
+  width: 20mm;
+  height: 5.9mm;
+  margin-top: 0;
+  margin-left: 14mm;
+  float: left;
+}
+
+.feeCellSelf {
+  width: 21mm;
+  height: 5.9mm;
+  margin-top: 0;
+  margin-left: 2mm;
+  float: left;
+}
+
+table, td, th, thead {
+  border: 1px solid black;
+}
+
+
+.feeItem {
+  width: 14mm;
+  height: 5.9mm;
+  margin-top: 0;
+  margin-left: 0;
+  float: left;
+}
+
+.feeCellThree {
+  width: 20mm;
+  height: 5.9mm;
+  margin-top: 0;
+  margin-left: 18mm;
+  float: left;
+}
+
+.feeCellColumnThree {
+  width: 35mm;
+  height: 5.9mm;
+  margin-top: 0;
+  margin-left: 3mm;
+  float: left;
+}

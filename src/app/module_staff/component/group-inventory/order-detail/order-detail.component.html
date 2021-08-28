@@ -1,0 +1,215 @@
+<form nz-form [formGroup]="orderForm">
+  <div nz-row [hidden]="this.isReturnOrder">
+    <div nz-col nzSpan="4">
+      <nz-alert
+        *ngIf="!this.orderForm.value.selectSourceOrder && (this.order && this.order.orderStatus != '已批准')"
+        nzType="warning" nzMessage="没有关联的申购单"></nz-alert>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="5" [hidden]="this.isReturnOrder">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24"
+                       nzFor="selectSourceOrder">申购单号
+        </nz-form-label>
+        <nz-form-control>
+          <app-common-dynamic-select
+            formControlName="selectSourceOrder"
+            [dataList]="this.sourceOrderList"
+            [totalDataCount]="this.sourceOrderListCount"
+            [dataColumns]="['申购单号','名称','审核日期']"
+            (onSearchEvent)="searchSourceOrder($event)"
+            [placeHolder]="'输入单号搜索'"
+            [selectionWidth]="'150px'"
+          >
+          </app-common-dynamic-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="5">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24"
+                       nzRequired
+                       nzFor="selectSupplier">{{this.isReturnOrder ? '退货单位' : '供货单位'}}</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-select [nzDisabled]="this.order && this.order.orderStatus  =='已确认'"
+                     nzShowSearch
+                     nzServerSearch
+                     formControlName="selectSupplier"
+                     [nzFilterOption]="nzFilterOption"
+                     (nzOnSearch)="searchSupplier($event)"
+                     [nzDropdownMatchSelectWidth]=false
+                     [nzDropdownRender]="renderTemplate"
+                     style="width:150px;"
+                     placeHolder='名字或拼音搜索'
+          >
+            <nz-option *ngFor="let supplier of supplierList"
+                       [nzLabel]="supplier.contactNumber? supplier.name + '(' + supplier.contactNumber + ')' : supplier.name"
+                       [nzValue]="supplier.uuid"></nz-option>
+            <ng-template #renderTemplate>
+              <ng-template [ngIf]="this.sessionService.getUserPermission().commonComponent.orderpermission.allowEdit">
+                <nz-divider></nz-divider>
+                <div class="container">
+                  <input type="text" nz-input placeHolder='供应商名字' #inputElement/>
+                  <input type="text" nz-input placeHolder='供应商电话' #supplierContactInputElement/>
+                  <button nz-button nzSize="small" (click)="addSupplier(inputElement, supplierContactInputElement)"
+                          [disabled]="inputElement.value == ''">添加供应商
+                  </button>
+                  <!--              <a class="add-item" (click)="addManufacturer(inputElement, control)"><i nz-icon nzType="plus"></i> 添加产地</a>-->
+                </div>
+              </ng-template>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="5">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24"
+                       nzRequired nzFor="selectToWarehouse">{{this.isReturnOrder ? '出库单位' : '入库单位'}}</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-select nzShowSearch formControlName="selectToWarehouse"
+                     [nzDisabled]="this.disableSelectToWarehouse() ||(this.order && this.order.orderStatus  =='已确认')"
+                     style="width:150px"
+          >
+            <nz-option *ngFor="let warehouse of this.toWarehouseList"
+                       [nzLabel]="warehouse.department.name"
+                       [nzValue]="warehouse.uuid"></nz-option>
+
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="5">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtReference">备注</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtReference"/>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="4" [hidden]="this.isReturnOrder">
+      <nz-form-item>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <label nz-checkbox formControlName="chkPaid"
+          >已付款</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="5" hidden>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24"
+                       nzFor="dateOrderDate">{{ this.isReturnOrder ? '出库日期' : '入库日期'}}</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24">
+          <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd"
+            nzPlaceHolder="选择日期"
+            formControlName="dateOrderDate"
+            nzSize="small"
+            [nzShowTime]=false
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <button nz-button nzType="primary" (click)="  this.orderLineTableComponent.addLineControl()"
+              *ngIf="this.orderPermission.allowEdit &&
+                    this.order && (this.order.orderStatus == '已创建'|| this.order.uuid == undefined)"
+              style="float: left; margin-right: 10px;"
+      ><i nz-icon type="plus" theme="outline"></i>添加{{this.orderType == 'item' ? '物品' : '药品'}}
+      </button>
+      <button nz-button nzType="primary" (click)="  this.showSourceOrderModal(this.orderForm.value.selectSourceOrder)"
+              *ngIf="this.orderPermission.allowEdit &&
+                    this.order && (this.order.orderStatus == '已创建'|| this.order.uuid == undefined)
+                    && this.orderForm.value.selectSourceOrder"
+              style="float: left; margin-right: 10px;"
+      ><i nz-icon type="plus" theme="outline"></i>从申购单添加
+      </button>
+      <button nz-button nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle="确认删除？"
+              (nzOnConfirm)="deleteOrder()"
+              nzPopconfirmPlacement="rightBottom"
+              *ngIf="(this.orderPermission.allowEdit) &&
+              (this.order && this.order.orderStatus == '已创建')"
+              [nzLoading]="this.deleting"
+              style="float: left; margin-right: 10px;"
+      >删除订单
+      </button>
+      <button nz-button nzType="primary" (click)="updateOrderStatus('待审核', 'submit')"
+              *ngIf="this.order && this.order.orderStatus == '已创建' && this.orderPermission.allowEdit && !this.isReturnOrder"
+              [nzLoading]="this.statusUpdating"
+              style="float: left; margin-right: 10px;"
+      >提交审核
+      </button>
+      <button nz-button nzType="primary" (click)="updateOrderStatus('待出库', 'submit_return')"
+              *ngIf="this.order && this.order.orderStatus == '已创建' && this.orderPermission.allowEdit && this.isReturnOrder"
+              [nzLoading]="this.statusUpdating"
+              style="float: left; margin-right: 10px;"
+      >提交出库
+      </button>
+      <button nz-button nzType="primary" (click)="updateOrderStatus('已批准', 'approve')"
+              *ngIf="this.order && this.order.orderStatus == '待审核' && this.orderPermission.allowApprove"
+              [nzLoading]="this.statusUpdating"
+              style="float: left; margin-right: 10px;"
+      >批准
+      </button>
+      <button nz-button nzType="primary" (click)="updateOrderStatus('已创建', 'reject')"
+              *ngIf="this.order && this.order.orderStatus == '待审核' && this.orderPermission.allowApprove"
+              [nzLoading]="this.statusUpdating"
+              style="float: left; margin-right: 10px;"
+      >退回
+      </button>
+      <button nz-button nzType="primary" (click)="updateOrderStatus('已出库', 'approve_return')"
+              *ngIf="this.order && this.order.orderStatus == '待出库' && this.orderPermission.allowApproveReturn && this.isReturnOrder"
+              [nzLoading]="this.statusUpdating"
+              style="float: left; margin-right: 10px;"
+      >确认出库
+      </button>
+      <button nz-button nzType="primary" (click)="updateOrderStatus('已创建', 'reject_return')"
+              *ngIf="this.order && this.order.orderStatus == '待出库' && this.orderPermission.allowApproveReturn && this.isReturnOrder"
+              [nzLoading]="this.statusUpdating"
+              style="float: left; margin-right: 10px;"
+      >退回
+      </button>
+
+    </div>
+
+  </div>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <app-order-detail-table
+      [order]="this.order"
+      [isReturnOrder]="this.isReturnOrder"
+      [orderForm]="this.orderForm"
+      [selectedWarehouse]="this.orderForm.value.selectToWarehouse"
+      [orderType]="this.orderType"
+    >
+    </app-order-detail-table>
+  </nz-spin>
+
+</form>
+
+<!--+ this.orderType == 'item' ? '物品' : '药品'-->
+
+<nz-modal [(nzVisible)]="sourceOrderModalVisible"
+          [nzTitle]="'添加申购单'+ (this.orderType == 'item' ? '物品' : '药品')"
+          [nzMaskClosable]=false
+          (nzOnCancel)="closeModal()"
+          (nzOnOk)="this.addSourceOrderLine()"
+          nzOkText="添加"
+          nzCancelText="关闭"
+          [nzOkLoading]=this.addingSourceOrderLine
+>
+  <nz-spin [nzSpinning]="this.loadingSourceOrderLine">
+    <nz-transfer
+      [nzDataSource]="sourceOrderItemList"
+      [nzTitles]="['申购单物品', '采购单物品']"
+      nzShowSearch
+      [nzFilterOption]="sourceOrderFilterOption"
+    >
+    </nz-transfer>
+  </nz-spin>
+</nz-modal>

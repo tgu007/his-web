@@ -1,0 +1,74 @@
+<div nz-row>
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   style="float: left;"
+                   [nzAllowClear]="false"
+                   (ngModelChange)="this.loadPaymentList(1)"
+                   nzShowTime
+  ></nz-range-picker>
+
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.loading">
+    <nz-table #basicTable [nzData]="paymentList"
+              [nzFrontPagination]=false
+              nzSize="small"
+              style="background-color:white"
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=loadPaymentList(undefined)
+    >
+      <thead>
+      <tr>
+        <th>缴费类型</th>
+        <th>姓名</th>
+        <th>住院号</th>
+        <th>收费人</th>
+        <th>日期</th>
+        <th>收据号</th>
+        <th>原始收据号</th>
+        <th>金额</th>
+        <th>金额中文</th>
+        <th>支付方式</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let payment of basicTable.data">
+        <td>
+          <p [ngStyle]=this.getStatusColour(payment)>
+            {{payment.paymentType}}
+          </p>
+        </td>
+        <td>{{payment.patientName}}</td>
+        <td>{{payment.signInNumber}}</td>
+        <td>{{payment.whoCreated}}</td>
+        <td>{{payment.whenCreated}}</td>
+        <td>{{payment.paymentNumber}}</td>
+        <td>{{payment.originPaymentNumber}}</td>
+        <td>
+          <p [ngStyle]=this.getStatusColour(payment)>
+            {{payment.amount}}
+          </p>
+        </td>
+        <td>
+          <p [ngStyle]=this.getStatusColour(payment)>
+            {{this.feeService.toChineseNumeral(payment.amount)}}
+          </p>
+        </td>
+        <td>{{payment.paymentMethod.name}}</td>
+      </tr>
+      <tr *ngIf="basicTable.data" style="font-weight: bold">
+        <td>合计</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>{{this.getTotalAmount()}}</td>
+        <td>{{this.getTotalAmountInChinese()}}</td>
+        <td></td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>

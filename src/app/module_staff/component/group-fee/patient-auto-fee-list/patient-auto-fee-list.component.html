@@ -1,0 +1,97 @@
+<div nz-row>
+  <div nz-row>
+    <button nz-button
+            nz-dropdown [nzDropdownMenu]="addNewMenu"
+            nzType="primary" nzSize="default"
+            [nzDisabled]="this.patientSignIn.status != '已入院'"
+    >新计费<i nz-icon
+           nzType="down"></i>
+    </button>
+  </div>
+  <div nz-row *ngIf="!this.patientSignIn.selfPay">
+    <nz-alert nzType="warning"  nzMessage="此病人为医保病人，若您要添加的自动滚费为非医疗费用，如护工，空调，陪客躺椅费等。请关闭此页面并将此类费用设置在非医疗费用自动滚费页面下"></nz-alert>
+  </div>
+  <div nz-row>
+    <nz-spin [nzSpinning]="this.busy">
+      <nz-table #tblAutoFeeList [nzData]="autoFeeList" nzSize="small"
+                [nzTotal]="totalAutoFeeListCount"
+                [nzFrontPagination]=false
+                [(nzPageIndex)]="currentTblAutoFeeListPageIndex"
+                [nzPageSize]="tablePageSize"
+                (nzPageIndexChange)=subscribeAutoFeeList({})
+                style="background-color:white">
+        <thead>
+        <tr>
+          <th>开始日期</th>
+          <th>项目名称</th>
+          <th>规格</th>
+          <th>厂家</th>
+          <th>数量</th>
+          <th>单价</th>
+          <th>频次</th>
+          <th>相关医嘱</th>
+          <th>是否启用</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let autoFee of tblAutoFeeList.data">
+          <td>{{autoFee.feeDate}}</td>
+          <td>{{autoFee.description}}</td>
+          <td>{{autoFee.departmentModel}}</td>
+          <td>{{autoFee.manufacturer}}</td>
+          <td>{{autoFee.quantityInfo}}</td>
+          <td [ngStyle]="{'background-color':autoFee.unitAmount == 0 ?'red':undefined}">
+            {{autoFee.unitAmountInfo}}</td>
+          <td>{{autoFee.frequencyName}}</td>
+          <td>{{autoFee.prescriptionDescription}}</td>
+          <td><label nz-checkbox [(ngModel)]="autoFee.enabled" (ngModelChange)="enableChanged(autoFee)"
+                     [nzDisabled]="this.patientSignIn.status != '已入院'"
+          ></label></td>
+          <td>
+            <button *ngIf="autoFee.enabled"
+                    nz-button nzSize="small" nzType="primary"
+                    (click)="this.autoFeeManualRun(autoFee) "
+            >手动运行
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </nz-spin>
+  </div>
+</div>
+
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="drawerVisible"
+  nzTitle="新增计费"
+  (nzOnClose)="close()"
+>
+  <app-patient-fee-detail [patientSignIn]="patientSignIn" [isAutoFee]="true"
+                          (feeCreatedEvent)="feeCreated($event)"></app-patient-fee-detail>
+  <div class="footer">
+    <button type="button" (click)="close()" class="ant-btn" style="margin-right: 8px;"><span>关闭</span></button>
+    <button type="button" (click)="createNewAutoFee()" class="ant-btn ant-btn-primary"><span>提交</span></button>
+  </div>
+</nz-drawer>
+
+<nz-dropdown-menu #addNewMenu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item>
+      <a (click)="addNewAutoFee('诊疗')">诊疗</a>
+    </li>
+    <li nz-menu-item>
+      <a (click)="addNewAutoFee('耗材')">耗材</a>
+    </li>
+  </ul>
+</nz-dropdown-menu>
+<!--        <nz-select [(ngModel)]="selectAutoFeeStatus"-->
+<!--                   nzAllowClear (ngModelChange)="subscribeAutoFeeList()"-->
+<!--                   nzPlaceHolder="启用停用"-->
+<!--                   style="width:80pt;">-->
+<!--          <nz-option nzLabel="已启用" nzValue="true"></nz-option>-->
+<!--          <nz-option nzLabel="已停用" nzValue="false"></nz-option>-->
+<!--        </nz-select>-->

@@ -1,0 +1,323 @@
+<form nz-form [formGroup]="nursingRecordDetailForm">
+  <!--  [nzLayout]="'inline'"-->
+  <nz-spin [nzSpinning]="isSpinning" [nzDelay]="500">
+  </nz-spin>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="dateRecordDate">日期</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd HH:mm:ss"
+            nzPlaceHolder="选择日期时间"
+            formControlName="dateRecordDate"
+            nzSize="small"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberBodyTemp">体温</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberBodyTemp"
+            [nzStep]="1"
+          ></nz-input-number>
+          C
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberPulse">脉搏</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberPulse"
+            [nzStep]="1"
+          ></nz-input-number>
+          次/分
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberBreath">呼吸</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberBreath"
+            [nzStep]="1"
+          ></nz-input-number>
+          次/分
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectConsciousness">意识</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-select formControlName="selectConsciousness"
+                     nzAllowClear
+                     style="width:80pt;">
+            <nz-option nzLabel="清醒" nzValue="清醒"></nz-option>
+            <nz-option nzLabel="嗜睡" nzValue="嗜睡"></nz-option>
+            <nz-option nzLabel="意识模糊" nzValue="意识模糊"></nz-option>
+            <nz-option nzLabel="昏睡" nzValue="昏睡"></nz-option>
+            <nz-option nzLabel="浅昏迷" nzValue="浅昏迷"></nz-option>
+            <nz-option nzLabel="中昏迷" nzValue="中昏迷"></nz-option>
+            <nz-option nzLabel="深昏迷" nzValue="深昏迷"></nz-option>
+            <nz-option nzLabel="谵忘状态" nzValue="谵忘状态"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="4" [nzXs]="12" nzFor="numberBloodPressureHigh">血压</nz-form-label>
+        <nz-form-control [nzSm]="6" [nzXs]="12">
+          <nz-input-number
+            nz-input
+            formControlName="numberBloodPressureLow"
+            [nzStep]="1"
+          ></nz-input-number>
+          /
+        </nz-form-control>
+
+        <nz-form-control [nzSm]="6" [nzXs]="12">
+          <nz-input-number
+            nz-input
+            formControlName="numberBloodPressureHigh"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+
+
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberSpo2">Spo2</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberSpo2"
+            [nzStep]="1"
+          ></nz-input-number>
+          %
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberOxygen">吸氧</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberOxygen"
+            [nzStep]="1"
+          ></nz-input-number>
+          L/min
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="9">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="selectPupilLeft">瞳孔（左）</nz-form-label>
+        <nz-form-control [nzSm]="6" [nzXs]="12">
+          <nz-select formControlName="selectPupilLeft"
+                     nzAllowClear
+                     style="width:80pt;">
+            <nz-option nzLabel="灵敏" nzValue="灵敏"></nz-option>
+            <nz-option nzLabel="迟钝" nzValue="迟钝"></nz-option>
+            <nz-option nzLabel="消失" nzValue="消失"></nz-option>
+            <nz-option nzLabel="不规则" nzValue="不规则"></nz-option>
+            <nz-option nzLabel="针尖样" nzValue="针尖样"></nz-option>
+          </nz-select>
+        </nz-form-control>
+
+        <nz-form-control [nzSm]="6" [nzXs]="12">
+          <input
+            nz-input
+            formControlName="txtLeftPupilSize"
+            placeholder="大小"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="9">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="selectPupilRight">瞳孔（右）</nz-form-label>
+        <nz-form-control [nzSm]="6" [nzXs]="24">
+          <nz-select formControlName="selectPupilRight"
+                     nzAllowClear
+                     style="width:80pt;">
+            <nz-option nzLabel="灵敏" nzValue="灵敏"></nz-option>
+            <nz-option nzLabel="迟钝" nzValue="迟钝"></nz-option>
+            <nz-option nzLabel="消失" nzValue="消失"></nz-option>
+            <nz-option nzLabel="不规则" nzValue="不规则"></nz-option>
+            <nz-option nzLabel="针尖样" nzValue="针尖样"></nz-option>
+          </nz-select>
+        </nz-form-control>
+
+        <nz-form-control [nzSm]="6" [nzXs]="12">
+          <input
+            nz-input
+            formControlName="txtRightPupilSize"
+            placeholder="大小"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectPipingCondition">管路情况</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-select formControlName="selectPipingCondition"
+                     nzAllowClear
+                     style="width:80pt;">
+            <nz-option nzLabel="在位通畅" nzValue="在位通畅"></nz-option>
+            <nz-option nzLabel="阻塞" nzValue="阻塞"></nz-option>
+            <nz-option nzLabel="滑脱" nzValue="滑脱"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtSkinCondition">皮肤情况</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input
+            nz-input
+            formControlName="txtSkinCondition"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberPressureSoreScore">压疮评分</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberPressureSoreScore"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberFallScore">跌倒坠床评分</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberFallScore"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberCareOneselfScore">自理能力评分</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberCareOneselfScore"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="4" [nzXs]="12">入量</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="12">
+          <input
+            nz-input
+            formControlName="txtInName"
+            placeholder="名称"
+          />
+        </nz-form-control>
+        <nz-form-control [nzSm]="4" [nzXs]="12">
+          <nz-input-number
+            nz-input
+            formControlName="numberInVolume"
+            [nzStep]="1"
+            placeholder="ml"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="4" [nzXs]="12">出量</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="12">
+          <input
+            nz-input
+            formControlName="txtOutName"
+            placeholder="名称"
+          />
+        </nz-form-control>
+
+        <nz-form-control [nzSm]="4" [nzXs]="12">
+          <nz-input-number
+            nz-input
+            formControlName="numberOutVolume"
+            placeholder="ml"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+
+        <nz-form-control [nzSm]="8" [nzXs]="12">
+          <input
+            nz-input
+            formControlName="txtOutCondition"
+            placeholder="性状"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <nz-form-item>
+        <nz-form-label [nzSm]="4" [nzXs]="12">护理内容</nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="12">
+          <textarea rows="6" nz-input formControlName="txtReference"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>
+

@@ -1,0 +1,100 @@
+<div class="page">
+  <div nz-row class="title">
+    <span>台州黄岩新安康复医院-非医疗费用收款收据</span>
+  </div>
+
+  <div class="father">
+
+    <div class="c">
+      <span class="description">单号</span>
+    </div>
+
+    <div class="c">
+       <span class="description">{{this.printData.payment.paymentNumber}}</span>
+    </div>
+
+    <div class="c">
+      <span class="description">名字</span>
+    </div>
+
+    <div class="c">
+      <span class="description">{{ this.printData.his ?  this.printData.payment.patient.patient.name:
+                  this.printData.payment.patientInfo}}</span>
+    </div>
+
+    <div class="c">
+      <span class="description">病区</span>
+    </div>
+
+    <div class="c">
+      <span class="description">{{
+        this.printData.his ?  this.printData.payment.patient.currentBed.wardRoom.ward.name:
+          this.printData.payment.ward}}</span>
+    </div>
+
+    <div class="c">
+      <span class="description">缴费方式</span>
+    </div>
+
+    <div class="c">
+      <span class="description">{{this.printData.payment.paymentMethod.name}}</span>
+    </div>
+
+    <div class="c">
+      <span class="description">缴费项目</span>
+    </div>
+
+    <div class="c">
+      <span class="description">{{this.printData.payment.item?.name}}</span>
+    </div>
+
+    <div class="c">
+      <span class="description">缴费时间</span>
+    </div>
+
+    <div class="c">
+      <span class="description">{{this.printData.payment.paymentDate}}</span>
+    </div>
+
+    <div class="c">
+      <span class="description">金额（大写）</span>
+    </div>
+
+    <div class="c" style="width: 50%">
+      <span class="description">  {{this.printData.payment.moneyInChinese}}</span>
+    </div>
+
+    <div class="c">
+      <span class="description">金额（小写）</span>
+    </div>
+
+    <div class="c" >
+      <span class="description">  {{this.printData.payment.amount}}</span>
+    </div>
+
+    <div class="c">
+      <span class="description">收费单位</span>
+    </div>
+
+    <div class="c" style="width: 50%">
+      <span class="description">台州黄岩新安康复医院</span>
+    </div>
+
+    <div class="c">
+      <span class="description">收费人</span>
+    </div>
+
+    <div class="c" >
+      <span class="description">{{this.printData.payment.createdBy}}</span>
+    </div>
+
+    <div class="c">
+      <span class="description">缴款人签字</span>
+    </div>
+
+    <div class="c" style="width: 83.33%">
+
+    </div>
+  </div>
+</div>
+

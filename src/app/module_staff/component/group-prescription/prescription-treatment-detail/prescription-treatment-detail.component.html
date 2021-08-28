@@ -1,0 +1,156 @@
+<form nz-form [formGroup]="newTreatmentPrescriptionForm">
+  <!--  <div nz-row>-->
+  <!--    <div nz-col nzSpan="12">-->
+  <!--      <nz-form-item>-->
+  <!--        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectDepartment" nzRequired>执行科室</nz-form-label>-->
+  <!--        <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="请选择执行科室">-->
+  <!--          <nz-select-->
+  <!--            nzShowSearch-->
+  <!--            nzPlaceHolder="选择执行科室"-->
+  <!--            formControlName="selectDepartment"-->
+  <!--          >-->
+  <!--            <nz-option *ngFor="let department of this.departmentList" [nzValue]="department.uuid"-->
+  <!--                       [nzLabel]="department.department.name"></nz-option>-->
+  <!--          </nz-select>-->
+  <!--        </nz-form-control>-->
+  <!--      </nz-form-item>-->
+  <!--    </div>-->
+  <!--  </div>-->
+  <nz-spin [nzSpinning]="this.loading">
+    <div nz-row>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtTreatment">项目</nz-form-label>
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <app-common-dynamic-select
+              (onSearchEvent)="searchTreatment($event)"
+              formControlName="txtTreatment"
+              [dataList]="this.treatmentList"
+              [totalDataCount]="this.treatmentListTotalCount"
+              [dataColumns]="['名称', '价格', '等级']"
+              (onSelectedItemChangedEvent)="this.selectedTreatmentChanged($event)"
+              [pageCount]=this.pageCount
+              [allowKeyBoardControl]="true"
+            >
+            </app-common-dynamic-select>
+            <div *ngIf="formErrors['selectMedicine']">{{ formErrors['selectMedicine'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectFrequency" nzRequired>频次</nz-form-label>
+          <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="请选择频次">
+            <nz-select
+              nzShowSearch
+              nzPlaceHolder="选择频次"
+              formControlName="selectFrequency"
+              (ngModelChange)="frequencyChanged($event)"
+            >
+              <nz-option *ngFor="let frequency of this.prescriptionService.frequencyList" [nzValue]="frequency.id"
+                         [nzLabel]="frequency.code"></nz-option>
+            </nz-select>
+            <div *ngIf="formErrors['selectFrequency']">{{ formErrors['selectFrequency'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="txtQuantity" nzRequired>每次数量</nz-form-label>
+          <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="请注明数量">
+            <nz-input-number
+              nz-input
+              formControlName="txtQuantity"
+              #quantity
+              [nzStep]="1"
+              [nzMin]="1"
+            ></nz-input-number>
+            {{selectedTreatment ? selectedTreatment.minSizeUom.code : ''}}
+            <div *ngIf="formErrors['txtQuantity']">{{ formErrors['txtQuantity'] }}</div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">首日次数</nz-form-label>
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <nz-input-number
+              nz-input
+              formControlName="txtFirstDayQuantity"
+              [nzStep]="1"
+              [nzMin]="0"
+            ></nz-input-number>
+            次
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzNoColon=true>
+            单价: {{this.selectedTreatment ? this.selectedTreatment.listPrice : ""}}</nz-form-label>
+        </nz-form-item>
+
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24" nzNoColon=true>
+            总价: {{this.selectedTreatment ? (this.selectedTreatment.listPrice * this.newTreatmentPrescriptionForm.value.txtQuantity).toFixed(2) : ""}}</nz-form-label>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="16">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">说明</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <input
+              nz-input
+              formControlName="txtNote"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-row hidden>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-control>
+            <label nz-checkbox #chkManualDate
+                   formControlName="chkManualDate"
+                   (nzCheckedChange)="chkManualDateChanged($event)"
+            >补录医嘱</label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12" [hidden]="!chkManualDate.nzChecked">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" [nzRequired]="chkManualDate.nzChecked">开始时间</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <nz-date-picker
+              nzShowTime
+              nzFormat="yyyy-MM-dd HH:mm:ss"
+              nzPlaceHolder="选择日期时间"
+              formControlName="dateStartDateTime"
+              nzSize="small"
+              [nzDisabledDate]="disabledDate"
+            ></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </nz-spin>
+
+</form>
+
+
+
+
+
+
+
+

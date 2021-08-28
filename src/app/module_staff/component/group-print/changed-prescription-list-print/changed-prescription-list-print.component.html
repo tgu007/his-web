@@ -1,0 +1,49 @@
+<div nz-row>
+   <span class="hospitalName">
+    {{this.hospitalName}}
+  </span>
+</div>
+<div nz-row>
+  <h2 class="title">
+    变更医嘱
+  </h2>
+</div>
+<div nz-row>
+  <span>
+    {{'日期范围:' + this.printData.dateRange}}
+  </span>
+</div>
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.printData.prescriptionChangedList" nzSize="small" [nzPageSize]="pageSize">
+    <thead>
+    <tr>
+      <th>病人</th>
+      <th>变更</th>
+      <th>长期</th>
+      <th>名称</th>
+      <th>用药<br/>剂量</th>
+      <th>数量</th>
+      <th>首日</th>
+      <th>频次</th>
+      <th>变更时间</th>
+      <th>开嘱医生</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-data [ngForOf]="basicTable.data">
+      <tr style="font-size: xx-small !important;">
+        <td>{{basicTable.data.indexOf(data) % pageSize == 0 || data.patientGroupIndex == 0 ? data.patientName : undefined}}</td>
+        <td>{{data.changedStatus}}</td>
+        <td><label nz-checkbox [(ngModel)]="!data.listRespDto.oneOff" nzDisabled></label></td>
+        <td>{{data.listRespDto.description}}</td>
+        <td>{{data.listRespDto.serveInfo}}</td>
+        <td>{{data.listRespDto.quantityInfo}}</td>
+        <td>{{data.listRespDto.firstDayQuantityInfo}}</td>
+        <td>{{data.listRespDto.frequency}}</td>
+        <td>{{data.listRespDto.whenModified}}</td>
+        <td>{{data.listRespDto.whoCreated}}</td>
+      </tr>
+    </ng-template>
+    </tbody>
+  </nz-table>
+</div>

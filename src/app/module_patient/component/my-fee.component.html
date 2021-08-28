@@ -1,0 +1,84 @@
+<div nz-row>
+  <div nz-col nzSpan="12">
+    <ListItem>你好{{this.patientSignIn?.patientName}}</ListItem>
+  </div>
+  <div nz-col nzSpan="12">
+    <ListItem>入院日期：{{this.patientSignIn?.signInDate}}</ListItem>
+  </div>
+</div>
+<div nz-row>
+  <div nz-col nzSpan="24">
+    <SwipeAction [right]="right" (onOpen)="showDateSelect()" [autoClose]="true">
+      <ListItem extra="向左滑动更改日期" [arrow]="'horizontal'">费用日期：{{this.getSelectedDateRange()}}</ListItem>
+    </SwipeAction>
+  </div>
+</div>
+
+
+<TabBar
+  [barTintColor]="'white'"
+  [ngStyle]="tabbarStyle"
+  [activeTab]="selectedTabIndex"
+  (onPress)="tabBarTabOnPress($event)"
+>
+
+  <TabBarItem title='汇总费用' [key]="1" [icon]="emptyTemplate" [selectedIcon]="emptyTemplate"
+  >
+    <div style="background-color: white; height: 85%; text-align: center">
+      <div>
+        <List [className]="'my-list'" [renderHeader]="'总费用:' + this.feeSummaryTotal + '元'">
+          <nz-spin [nzSpinning]="this.isLoading">
+            <ListItem *ngFor="let feeSummary of this.summaryFeeList" [extra]="'单价：'+ feeSummary.displayUnitAmount"
+                      [wrap]=true>
+              {{feeSummary.name}}
+              <Badge [text]="feeSummary.displayQuantityInfo" style="margin-left:12px;">
+              </Badge>
+              <Brief> 项目总价：{{feeSummary.totalAmount}}元</Brief>
+            </ListItem>
+          </nz-spin>
+        </List>
+      </div>
+    </div>
+  </TabBarItem>
+  <TabBarItem title='明细费用' [key]="2" [icon]="emptyTemplate" [selectedIcon]="emptyTemplate"
+  >
+    <div style="background-color: white; height: 100%; text-align: center">
+      <div>
+        <List [className]="'my-list'" [renderHeader]="'总费用:' + this.feeDetailTotal + '元'">
+          <nz-spin [nzSpinning]="this.isLoading">
+            <ListItem *ngFor="let fee of this.detailFeeList" [extra]="'单价：'+ fee.displayUnitAmount"
+                      [wrap]=true>
+              {{fee.name}}
+              <Badge [text]="fee.displayQuantityInfo" style="margin-left:12px;">
+              </Badge>
+              <Brief>
+                <div nz-row>
+                  项目总价：{{fee.totalAmount}}元
+                </div>
+                <div nz-row>
+                  计费日期：{{fee.shortFormatFeeDate}}
+                </div>
+              </Brief>
+            </ListItem>
+          </nz-spin>
+        </List>
+      </div>
+    </div>
+  </TabBarItem>
+
+</TabBar>
+
+<ng-template #emptyTemplate>
+</ng-template>
+
+<Calendar
+  [(ngModel)]="this.calendarState.date"
+  [locale]="'zhCN'"
+  [visible]="this.calendarState.show"
+  [maxDate]="this.calendarState.maxDate"
+  [rowSize]="'normal'"
+  [showShortcut]="true"
+  [infinite]="true"
+  (onCancel)="calendarDateClosed(false, undefined)"
+  (onConfirm)="calendarDateClosed(true, $event)"
+></Calendar>

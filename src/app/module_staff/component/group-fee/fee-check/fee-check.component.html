@@ -1,0 +1,369 @@
+<nz-dropdown-menu #addNewMenu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item *ngIf="this.sessionService.getUserPermission().commonComponent.fee.newFee.medicine">
+      <a (click)="addNewFee('药品', this.filterPrescription? this.filterPrescription.uuid:undefined)">药品</a>
+    </li>
+    <li nz-menu-item *ngIf="this.sessionService.getUserPermission().commonComponent.fee.newFee.treatment">
+      <a (click)="addNewFee('诊疗', this.filterPrescription? this.filterPrescription.uuid:undefined)">诊疗</a>
+    </li>
+    <li nz-menu-item *ngIf="this.sessionService.getUserPermission().commonComponent.fee.newFee.item">
+      <a (click)="addNewFee('耗材', this.filterPrescription? this.filterPrescription.uuid:undefined)">耗材</a>
+    </li>
+  </ul>
+</nz-dropdown-menu>
+
+<div nz-row>
+
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   style="float: left;"
+  ></nz-range-picker>
+  <ng-template #tagPlaceHolder let-selectedList> 其余{{ selectedList.length }}个</ng-template>
+  <nz-select
+    nzMode="multiple"
+    nzPlaceHolder="费用科室"
+    style="float: left;margin-right: 10px; width:160pt;"
+    [nzMaxTagCount]="3"
+    [nzMaxTagPlaceholder]="tagPlaceHolder"
+    [(ngModel)]="listOfSelectedFeeDepartment"
+  >
+    <nz-option *ngFor="let feeDepartment of feeDepartmentList" [nzValue]="feeDepartment.uuid"
+               [nzLabel]="feeDepartment.department.name"></nz-option>
+  </nz-select>
+  <ng-template #tagPlaceHolder let-selectedList> 其余{{ selectedList.length }}个</ng-template>
+  <nz-select
+    nzMode="multiple"
+    nzPlaceHolder="费用类型"
+    style="float: left;margin-right: 10px; width:160pt;"
+    [(ngModel)]="listOfSelectedFeeType"
+    [nzMaxTagCount]="3"
+    [nzMaxTagPlaceholder]="tagPlaceHolder"
+  >
+    <nz-option *ngFor="let feeType of feeTypeList" [nzValue]="feeType"
+               [nzLabel]="feeType"></nz-option>
+  </nz-select>
+
+  <input nz-input [(ngModel)]="filterFeeName"
+         placeholder="费用名称搜索"
+         style="float: left;margin-right: 10px; width:250px"
+  />
+
+
+  <app-common-dynamic-select
+    #prescriptionSelect
+    (onSearchEvent)="searchPrescription($event)"
+    [(ngModel)]="this.filterPrescription"
+    [dataList]="this.prescriptionList"
+    [totalDataCount]="this.prescriptionListTotalCount"
+    [dataColumns]="['名称', '类型', '开始时间','结束时间','频次']"
+    [pageCount]=this.pageCount
+    (onSelectedItemChangedEvent)="this.selectedPrescriptionChanged()"
+    [allowKeyBoardControl]="true"
+    placeHolder="根据医嘱进行筛选"
+    style="float: left;margin-right: 10px;"
+    allowClear
+    (onClearEvent)=this.clearFilterPrescription();
+  >
+  </app-common-dynamic-select>
+
+  <button nz-button (click)="this.subscribeFeeCheckList()"
+          style="float: left;margin-right: 10px;"
+  >检索
+  </button>
+
+  <button
+    *ngIf="this.sessionService.getUserPermission().commonComponent.fee.newFee"
+    nz-button nz-dropdown [nzDropdownMenu]="addNewMenu" nzType="primary" nzSize="default"
+    [nzDisabled]="this.patientSignIn.status != '已入院'"
+    style="float: left;margin-right: 10px;"
+  >新计费<i nz-icon
+         nzType="down"></i>
+  </button>
+</div>
+<div nz-row>
+  <nz-alert nzType="info" [nzCloseable]="true" nzMessage="第一次加载默认为当天费用，若要查看更多，请调整费用日期范围后按检索键"></nz-alert>
+</div>
+
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="dataList" nzSize="small"
+              nzPageSize="100"
+
+    >
+      <thead>
+      <tr>
+        <th nzWidth="30px"></th>
+        <th nzWidth="15%">名称</th>
+
+        <th>用药剂量</th>
+        <th>数量</th>
+        <th>频次</th>
+        <th>首日次数</th>
+        <th>途径</th>
+        <th>滴速</th>
+        <th>帖数</th>
+        <th>备注</th>
+        <th>状态</th>
+        <th>开始时间</th>
+        <th>停止时间</th>
+        <th>天数</th>
+        <th>总费用</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-template ngFor let-data [ngForOf]="basicTable.data">
+        <tr>
+          <td
+            nzShowExpand
+            [(nzExpand)]="mapOfExpandData[data.uuid]"
+            (nzExpandChange)="levelOneExpendChanged(data, $event)"
+          ></td>
+          <td [colSpan]="data.prescriptionListDto.type =='文字' ? 3:1">
+            <!--                <nz-badge *ngIf="data.groupId" [nzColor]="data.groupColour" [nzText]="data.description"></nz-badge>-->
+            <nz-tag *ngIf="data.prescriptionListDto.groupId" [nzColor]="data.prescriptionListDto.groupColour"
+            >组{{data.prescriptionListDto.groupIndex}}
+            </nz-tag>
+            {{data.prescriptionListDto.description}}
+          </td>
+          <td [hidden]="data.prescriptionListDto.type =='文字'">{{data.prescriptionListDto.serveInfo}}</td>
+          <td [hidden]="data.prescriptionListDto.type =='文字'">{{data.prescriptionListDto.quantityInfo}}</td>
+
+          <td>{{data.prescriptionListDto.frequency}}</td>
+          <td>{{data.prescriptionListDto.firstDayQuantityInfo && data.prescriptionListDto.firstDayQuantityInfo != 0 ? data.prescriptionListDto.firstDayQuantityInfo + '次' : undefined}}</td>
+          <td>{{data.prescriptionListDto.useMethod}}</td>
+          <td>{{data.prescriptionListDto.dropSpeed}}</td>
+          <td>{{data.prescriptionListDto.fixedQuantity}}</td>
+          <!--            <td>{{data.unitPrice}}</td>-->
+          <td>{{data.prescriptionListDto.reference}}</td>
+          <td>{{data.prescriptionListDto.status}}</td>
+          <td>{{data.prescriptionListDto.startDate}}</td>
+          <td>{{data.prescriptionListDto.endDate}}</td>
+          <td>{{data.duration}}</td>
+          <td>{{data.totalAmount}}</td>
+          <td>
+            <button
+              *ngIf="this.sessionService.getUserPermission().commonComponent.fee.newFee"
+              nz-button nz-dropdown
+              [nzDropdownMenu]="addNewPrescriptionFee" nzType="primary" nzSize="small"
+              [nzDisabled]="this.patientSignIn.status != '已入院'"
+              style="float: left;margin-right: 10px;"
+            >新计费<i nz-icon
+                   nzType="down"></i>
+            </button>
+            <nz-dropdown-menu #addNewPrescriptionFee="nzDropdownMenu">
+              <ul nz-menu>
+                <li nz-menu-item *ngIf="this.sessionService.getUserPermission().commonComponent.fee.newFee.medicine">
+                  <a (click)="addNewFee('药品', data.uuid)">药品</a>
+                </li>
+                <li nz-menu-item *ngIf="this.sessionService.getUserPermission().commonComponent.fee.newFee.treatment">
+                  <a (click)="addNewFee('诊疗', data.uuid)">诊疗</a>
+                </li>
+                <li nz-menu-item *ngIf="this.sessionService.getUserPermission().commonComponent.fee.newFee.item">
+                  <a (click)="addNewFee('耗材', data.uuid)">耗材</a>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          </td>
+        </tr>
+        <tr [nzExpand]="mapOfExpandData[data.uuid]">
+          <th></th>
+          <th></th>
+          <th>项目名称</th>
+          <th>规格</th>
+          <th>产地</th>
+          <th>项目类型</th>
+          <th colspan="2">首次计费时间</th>
+          <th colspan="2">最后计费时间</th>
+          <th>首尾间隔天数</th>
+          <th>计费天数</th>
+          <th>总计费次数</th>
+          <th>费用</th>
+        </tr>
+        <ng-template ngFor let-entity [ngForOf]="data.entityList">
+          <tr [nzExpand]="mapOfExpandData[data.uuid]">
+            <td
+
+            >
+
+            </td>
+            <td
+              nzShowExpand
+              [(nzExpand)]="mapOfExpandEntityData[entity.id]"
+              (nzExpandChange)="this.levelTwoExpendChange(data, entity,  $event)"
+            >
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                style="margin-left: 5px"
+                (click)="this.cancelFeeList(entity)"
+              >
+                批量退费
+              </button>
+              <label nz-checkbox
+                     [(ngModel)]="entity.selectAll"
+                     (ngModelChange)="this.checkAllEntityChanged(entity, $event)"
+                     style="margin-left: 5px"
+              >全选</label>
+
+            </td>
+            <td>{{entity.description}}</td>
+            <td>{{entity.departmentModel}}</td>
+            <td>{{entity.manufacturer}}</td>
+            <td>{{entity.feeTypeName}}</td>
+            <td colspan="2">{{entity.firstRecordDate}}</td>
+            <td colspan="2">{{entity.lastRecordDate}}</td>
+            <td>{{entity.duration}}</td>
+            <td>{{entity.recordDayCount}}</td>
+            <td>{{entity.recordCount}}</td>
+            <td>{{entity.totalAmount}}</td>
+          </tr>
+
+          <tr [nzExpand]="mapOfExpandEntityData[entity.id]">
+            <th
+
+            ></th>
+            <th
+            ></th>
+            <th>记账日期</th>
+            <th>记费人</th>
+            <ng-template [ngIf]="!this.patientSignIn.selfPay">
+              <th>自费项目</th>
+            </ng-template>
+            <th>数量</th>
+            <th>单价</th>
+            <th>总价</th>
+            <th>状态</th>
+            <th>上传状态</th>
+            <th>自费比例</th>
+            <th>自费金额</th>
+            <th>报销金额</th>
+            <th></th>
+          </tr>
+          <ng-template ngFor let-fee [ngForOf]="entity.feeList">
+            <tr [nzExpand]="mapOfExpandEntityData[entity.id]">
+              <td></td>
+              <td
+                nzShowCheckbox
+                [(nzChecked)]="fee.checked"
+              ></td>
+              <td>
+                <ng-container *ngIf="fee.editingDate; else displayFee">
+                  <nz-date-picker
+                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                    nzPlaceHolder="修改费用日期"
+                    [(ngModel)]="fee.feeDate"
+                    nzShowTime="true"
+                    nzSize="small"
+                  ></nz-date-picker>
+                </ng-container>
+                <ng-template #displayFee>
+                  {{fee.feeDate}}
+                </ng-template>
+                <ng-template [ngIf]="this.hasEditPermission(fee)">
+                  <ng-container *ngIf="fee.editingDate; else showEditButton">
+                    <button nz-button nzType="primary" (click)="commitLineControl(fee)"
+                    ><i nz-icon nzType="save"></i></button>
+                  </ng-container>
+                  <ng-template #showEditButton>
+                    <button nz-button nzType="primary" (click)="editLineControl(fee)"
+                    ><i nz-icon nzType="edit"></i></button>
+                  </ng-template>
+                </ng-template>
+              </td>
+              <td>{{fee.whoCreated}}</td>
+              <ng-template [ngIf]="!this.patientSignIn.selfPay">
+                <td><label nz-checkbox [(ngModel)]="fee.selfPay" nzDisabled></label></td>
+              </ng-template>
+              <td>{{fee.displayQuantityInfo}}</td>
+              <td>{{fee.displayUnitAmount}}</td>
+              <td>{{fee.totalAmount}}元</td>
+              <td
+                [ngStyle]="{'color':fee.feeStatus == '待退药' ?'red':undefined}"
+              >{{fee.feeStatus}}</td>
+              <td
+                nz-popover
+                [nzPopoverTitle]="fee.uploadStatus == '上传出错'?'错误信息':null"
+                [nzPopoverContent]="fee.uploadStatus =='上传出错'?fee.uploadError:null"
+              >{{fee.uploadStatus}}</td>
+              <td>{{fee.selfRatio}}</td>
+              <td>{{fee.selfFeeAmount}}元</td>
+              <td>{{fee.insuranceAmount}}元</td>
+              <td>
+                <ng-template [ngIf]="fee.showReturnQuantity">
+                  <nz-input-number
+                    nz-input
+                    [(ngModel)]="fee.returnQuantity"
+                    [nzStep]="1"
+                    [nzMin]="0"
+                    [nzMax]="fee.quantity"
+                    nzSize="small"
+                    nzPrecision=0
+                    nzPlaceHolder="退费数量"
+                  ></nz-input-number>
+
+                  <button (click)="this.cancelPartialCancel(fee)"
+                          nz-button nzSize="small"
+                  >取消
+                  </button>
+                  <button (click)="this.confirmPartialCancel(fee)"
+                          nz-button nzSize="small">提交
+                  </button>
+                </ng-template>
+
+                <ng-template [ngIf]="!fee.showReturnQuantity">
+                  <button *ngIf="fee.feeStatus =='正常'"
+                          [disabled]="this.patientSignIn.status != '已入院'"
+                          nz-button nzSize="small"
+                          nzType="primary"
+                          (click)="this.cancelSingleFee(fee) "
+                          nz-dropdown [nzDropdownMenu]="cancelPartialFeeMenu"
+                  >退费
+                  </button>
+                  <nz-dropdown-menu #cancelPartialFeeMenu="nzDropdownMenu">
+                    <ul nz-menu>
+                      <li nz-menu-item (click)="this.cancelPartialFeeClicked(fee)">
+                        <a>部分退费</a>
+                      </li>
+                    </ul>
+                    <ul nz-menu>
+                      <li
+                        *ngIf="fee.uploadStatus == '已上传'"
+                        nz-menu-item (click)="this.cancelYBSideFee(fee)">
+                        <a>删除医保端费用</a>
+                      </li>
+                    </ul>
+                  </nz-dropdown-menu>
+                </ng-template>
+
+              </td>
+            </tr>
+          </ng-template>
+        </ng-template>
+      </ng-template>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>
+
+
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="drawerVisible"
+  nzTitle="新增计费"
+  (nzOnClose)="close()"
+>
+  <app-patient-fee-detail [patientSignIn]="patientSignIn"
+                          (feeCreatedEvent)="this.newFeeCreated()"></app-patient-fee-detail>
+  <div class="footer">
+    <button nz-button type="button" (click)="close()" class="ant-btn" style="margin-right: 8px;"><span>关闭</span>
+    </button>
+    <button nz-button type="button" (click)=" this.patientManualFeeDetailComponent.createNewFee();"
+            class="ant-btn ant-btn-primary"
+            [nzLoading]="this.patientManualFeeDetailComponent.saving"><span>提交</span></button>
+  </div>
+</nz-drawer>
+
+

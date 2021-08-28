@@ -1,0 +1,43 @@
+
+.title {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin-bottom: 25px;
+  color: #000000;
+  font-size: x-large;
+  font-family: Arial,"Microsoft YaHei";
+}
+
+.headerInfo{
+  color: black;
+  font-family: Arial,"Microsoft YaHei";
+  font-size: large;
+}
+
+.container {
+  /*font-weight: bold !important;*/
+  text-align: center !important;
+  border: black 1px solid;
+  width: 400mm;
+  height: 220mm;
+  color: black;
+  font-family: Arial,"Microsoft YaHei";
+  border: black 1px solid;
+  font-size: large;
+}
+
+.cell {
+  border: black 1px solid;
+  height: 20mm;
+}
+
+.singleLineCell {
+  border: black 1px solid;
+  height: 10mm;
+}
+
+.lastLineCell {
+  border: black 2px solid;
+  height: 20mm;
+}

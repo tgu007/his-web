@@ -1,0 +1,85 @@
+<div nz-row>
+  <div nz-col [nzSpan]="4">
+    <button nz-button nzType="primary" nzSize="default" (click)="newTempRecordClicked()"
+            [disabled]="!this.patientSignIn"
+            [hidden]=!this.sessionService.getUserPermission().commonComponent.patientSignIn.nursingRecord.allowEdit
+            style="margin-left: 10px"
+    >新体温记录
+    </button>
+  </div>
+  <div nz-col nzSpan="4">
+    <nz-range-picker [(ngModel)]="filterDateRange"></nz-range-picker>
+  </div>
+  <div nz-col nzSpan="2">
+    <button nz-button (click)="searchClicked()">检索</button>
+  </div>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.loading">
+    <nz-table #basicTable [nzData]="tempRecordList" nzSize="small"
+              [nzPageSize]="30"
+              [nzBordered]="true"
+    >
+      <thead>
+      <tr>
+        <th>时间</th>
+        <th>脉搏</th>
+        <th>心率</th>
+        <th>呼吸</th>
+        <th>大便</th>
+        <th>血压（mmHg）</th>
+        <th>腋温</th>
+        <th>口温</th>
+        <th>耳温</th>
+        <th>肛温</th>
+        <th>降温</th>
+        <th>入量</th>
+        <th>出量</th>
+        <th>尿量</th>
+        <th>身高</th>
+        <th>体重</th>
+        <th>卧床</th>
+        <th>药物过敏</th>
+        <th>备注</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-template ngFor let-data [ngForOf]="basicTable.data">
+        <tr>
+          <td>{{data.recordDate}}</td>
+          <td>{{data.pulse}}</td>
+          <td>{{data.heartBeat}}</td>
+          <td>{{data.breath}}</td>
+          <td>{{data.bowels}}</td>
+          <td>{{data.bloodPressureLow != undefined && data.bloodPressureHigh != undefined ? data.bloodPressureLow + '/' + data.bloodPressureHigh : undefined}}</td>
+          <td>{{data.armpitTemp}}</td>
+          <td>{{data.mouthTemp}}</td>
+          <td>{{data.earTemp}}</td>
+          <td>{{data.rectalTemp}}</td>
+          <td>{{data.adjustTemp}}</td>
+          <td>{{data.inVolume}}</td>
+          <td>{{data.outVolume}}</td>
+          <td>{{data.urineVolume ? data.urineVolume : data.urineVolumeSelection}}</td>
+          <td>{{data.height}}</td>
+          <td>{{data.weight}}</td>
+          <td><label nz-checkbox [(ngModel)]="data.canNotStand" nzDisabled></label></td>
+          <td>{{data.allergy}}</td>
+          <td>{{data.reference}}</td>
+          <td>
+            <button nz-button nzSize="small" (click)="editTempRecord(data)">查看</button>
+            <button nz-button nzSize="small"
+                    nz-popconfirm
+                    nzTitle="删除后无法恢复，确认删除?"
+                    nzPopconfirmPlacement="bottom"
+                    (nzOnConfirm)="this.deleteTempRecord(data)"
+            >删除
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>

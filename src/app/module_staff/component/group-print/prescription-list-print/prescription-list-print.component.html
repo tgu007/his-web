@@ -1,0 +1,77 @@
+<ng-template #emptyResult></ng-template>
+<table style="border: none">
+  <THEAD style="border:none;">
+  <div nz-row>
+   <span class="hospitalName">
+    {{this.hospitalName}}
+  </span>
+  </div>
+  <div nz-row>
+    <h2 class="title">
+      {{this.printData.isOneOff ? '临时' : '长期'}}医嘱单
+    </h2>
+  </div>
+  <div nz-row>
+    <nz-descriptions [nzColumn]="{ xxl: 5, xl: 5, lg: 5, md: 1, sm: 1, xs: 1 }"
+                     style="width: 994px; margin-left: 40px"
+    >
+      <nz-descriptions-item
+        nzTitle="姓名">{{this.printData.patientSignIn ? this.printData.patientSignIn.patient.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="科室">{{this.printData.patientSignIn ? this.printData.patientSignIn.departmentTreatment.department.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="住院号">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInNumberCode : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="入院日期">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInDate : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="诊断">{{this.printData.patientSignIn ? this.printData.patientSignIn.diagnoseString : undefined}}</nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+  </THEAD>
+  <nz-table #basicTable
+            [nzData]="this.printData.prescriptionList"
+            nzSize="small"
+            [nzShowPagination]="false"
+            nzPageSize="999999"
+            nzBordered
+            [nzNoResult]=emptyResult
+  >
+    <thead>
+    <tr>
+      <th>开始日期</th>
+      <th>医嘱</th>
+      <th nzWidth='100px'>开嘱医生</th>
+      <th nzWidth='100px'>确认护士</th>
+      <th>{{this.printData.isOneOff ? '执行日期' : '停止日期'}}</th>
+      <!--      <th nzWidth='80px'>{{this.printData.isOneOff ? '执行人' : '停嘱医生'}}</th>-->
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-data [ngForOf]="basicTable.data">
+      <tr>
+        <td>{{data.startDate}}</td>
+        <td>
+          <nz-tag *ngIf="data.groupId" [nzColor]="data.groupColour"
+          >组{{data.groupIndex}}
+          </nz-tag>
+          {{this.getDescription(data)}}</td>
+        <td>{{data.whoCreated}}</td>
+        <td>{{data.approvedBy}}</td>
+        <td> {{data.endDate}}</td>
+        <!--  <td>{{data.stoppedBy}}</td>-->
+      </tr>
+    </ng-template>
+    </tbody>
+  </nz-table>
+  <TFOOT style="display:table-footer-group;font-weight:bold">
+  <TR>
+    <div nz-row></div>
+    <div nz-row style="margin-top: 30px">
+      <div nz-col nzSpan="12" nzOffset="12"
+      >
+        签名：________________________________
+      </div>
+    </div>
+  </TR>
+  </TFOOT>
+</table>

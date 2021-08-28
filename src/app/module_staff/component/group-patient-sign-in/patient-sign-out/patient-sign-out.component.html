@@ -1,0 +1,124 @@
+<form nz-form [formGroup]="patientSignOutForm">
+
+  <div nz-row>
+    <nz-descriptions [nzColumn]="{ xxl: 3, xl: 6, lg: 6, md: 6, sm: 1, xs: 1 }">
+      <nz-descriptions-item
+        nzTitle="住院号">{{this.patientSignIn ? this.patientSignIn.signInNumberCode : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="入院日期">{{this.patientSignIn ? this.patientSignIn.signInDate : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="姓名">{{this.patientSignIn ? this.patientSignIn.patient.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="性别">{{this.patientSignIn ? this.patientSignIn.patient.genderDto.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="年龄">{{this.patientSignIn ? this.patientSignIn.age : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="性质">{{this.patientSignIn ? this.patientSignIn.insuranceType.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="科室">{{this.patientSignIn ? this.patientSignIn.departmentTreatment.department.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="入院病区">{{this.patientSignIn ? this.patientSignIn.currentBed.wardRoom.ward.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="护理级别">{{this.patientSignIn ? this.patientSignIn.nursingLevel.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="主治医师">{{this.patientSignIn ? this.patientSignIn.doctor.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="入院诊断">{{this.patientSignIn ? this.patientSignIn.diagnoseString : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="诊断编码">{{this.patientSignIn ? this.patientSignIn.diagnoseCodeString : undefined}}</nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectSignOutReason">出院原因</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24" nzErrorTip="请选择出院原因">
+          <nz-select
+            nzShowSearch
+            formControlName="selectSignOutReason"
+          >
+            <ng-template [ngIf]="initializePrams != undefined">
+            <nz-option *ngFor="let signOutReason of this.initializePrams.signOutReasonList" [nzValue]="signOutReason.id"
+                       [nzLabel]="signOutReason.name"></nz-option>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="dateRecordDate">出院时间</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd HH:mm:ss"
+            nzPlaceHolder="选择日期时间"
+            formControlName="dateSignOutDate"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectDepartment">出院诊断科室</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选择出院诊断科室">
+          <nz-select
+            nzShowSearch
+            formControlName="selectDepartment"
+          >
+            <ng-template [ngIf]="initializePrams != undefined">
+              <nz-option *ngFor="let treatmentDepartment of this.initializePrams.departmentTreatmentList"
+                         [nzValue]="treatmentDepartment.uuid"
+                         [nzLabel]="treatmentDepartment.department.name"></nz-option>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectDoctor">出院诊断医师</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选出院诊断医师">
+          <nz-select
+            nzShowSearch
+            formControlName="selectDoctor"
+          >
+            <ng-template [ngIf]="initializePrams != undefined">
+              <nz-option *ngFor="let doctor of this.initializePrams.employeeList" [nzValue]="doctor.uuid"
+                         [nzLabel]="doctor.name"></nz-option>
+            </ng-template>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <nz-form-item>
+        <nz-form-label [nzSm]="4" [nzXs]="12" nzFor="txtAdvise">出院小结</nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="12">
+          <textarea rows="4" nz-input formControlName="txtAdvise"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <button type="button" (click)="this.patientSignInDiseaseTableComponent.addLineControl()"
+              class="ant-btn ant-btn-primary">添加诊断
+      </button>
+    </div>
+
+  </div>
+  <div nz-row>
+    <app-patient-sign-in-disease [patientSignInForm]="this.patientSignOutForm"></app-patient-sign-in-disease>
+  </div>
+
+</form>

@@ -1,0 +1,277 @@
+<div nz-row>
+
+
+  <nz-select
+    nzMode="multiple"
+    nzPlaceHolder="选择库房"
+    style="width:160pt; float: left;margin-right: 10px;"
+    [(ngModel)]="selectWarehouse"
+    (ngModelChange)="selectDepartmentChanged()"
+    [hidden]="!this.warehouseList || this.warehouseList.length <= 1"
+  >
+    <nz-option *ngFor="let warehouse of warehouseList" [nzValue]="warehouse.uuid"
+               [nzLabel]="warehouse.department.name"></nz-option>
+  </nz-select>
+
+
+  <nz-select
+    nzPlaceHolder="选择库存种类"
+    style="width:80pt;"
+    [(ngModel)]="selectEntityType"
+    (ngModelChange)="selectStockTypeChanged()"
+    style=" float: left;margin-right: 10px;"
+    #stockType
+    [hidden]="!this.stockTypeList || this.stockTypeList.length <= 1"
+  >
+    <ng-template [ngIf]="this.stockTypeList">
+      <nz-option *ngFor="let stockType of this.stockTypeList" [nzValue]="stockType.value"
+                 [nzLabel]="stockType.label"></nz-option>
+    </ng-template>
+
+    <!--      <nz-option nzValue='medicine' nzLabel="药品"></nz-option>-->
+    <!--      <nz-option nzValue='item' nzLabel="物品"></nz-option>-->
+  </nz-select>
+
+  <div [hidden]="!(this.selectEntityType == 'item')">
+    <nz-form-label
+      style=" float: left;"
+    >库房类型
+    </nz-form-label>
+    <nz-select nzShowSearch [(ngModel)]="this.selectItemWarehouseType"
+               (ngModelChange)="this.loadDepartmentStock()"
+               nzAllowClear
+               style="width:150px; float: left; "
+    >
+      <nz-option *ngFor="let warehouseType of this.itemWarehouseTypeList"
+                 [nzLabel]="warehouseType.name"
+                 [nzValue]="warehouseType.id"
+      ></nz-option>
+    </nz-select>
+  </div>
+  <div [hidden]="!(this.selectEntityType == 'medicine')">
+    <nz-form-label
+      style=" float: left;"
+    >药品种类
+    </nz-form-label>
+    <nz-select nzShowSearch [(ngModel)]="this.selectMedicineType"
+               (ngModelChange)="this.loadDepartmentStock()"
+               nzAllowClear
+               style="width:150px; float: left; "
+    >
+      <nz-option *ngFor="let medicineType of this.medicineTypeList"
+                 [nzLabel]="medicineType.name"
+                 [nzValue]="medicineType.id"
+      ></nz-option>
+    </nz-select>
+  </div>
+  <input nz-input [(ngModel)]="filterEntityName"
+         placeholder="输入拼音代码搜索"
+         style=" float: left; width: 300px"/>
+
+  <div [hidden]="!(this.selectEntityType == 'medicine')">
+
+    <label nz-checkbox #chkExpireDate
+           [(ngModel)]="chkExpireDateFilter"
+           (nzCheckedChange)="this.chkExpireDateFilterChanged()"
+           style=" float: left; margin-left: 10px;"
+    >过期药品查询</label>
+    <nz-date-picker
+      [hidden]="!chkExpireDate.nzChecked"
+      nzFormat="yyyy-MM-dd"
+      nzPlaceHolder="药品过期日期"
+      [(ngModel)]="filterExpireDate"
+      (ngModelChange)="this.searchEntityStock()"
+      style=" float: left; margin-left: 10px;"
+    ></nz-date-picker>
+  </div>
+
+  <label nz-checkbox [(ngModel)]="chkIncludeDisable"
+         style=" float: left; margin-left: 10px;">包含作废{{this.selectEntityType == 'item'? '物品':'药品'}}</label>
+
+  <button nz-button nzType="primary" (click)="searchEntityStock()"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询
+  </button>
+
+
+  <button nz-button
+          nzType="primary" nzSize="default"
+          [nzLoading]="this.isLoading"
+          (click)="this.printClicked()"
+          style=" float: left; margin-left: 10px;"
+  >打印
+  </button>
+
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="entityList" nzSize="small" style="background-color:white"
+              [nzTotal]="totalDataCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=pageIndexChanged()
+    >
+      <thead>
+      <tr>
+        <th></th>
+        <th>名称</th>
+        <th>已作废</th>
+        <th>仓库规格</th>
+        <th>{{stockType.value == 'item' ? '科室规格' : '药房规格'}}</th>
+        <th>厂家</th>
+        <th>最小包装数量</th>
+        <th>仓库包装数量</th>
+        <th>{{stockType.value == 'item' ? '科室' : '药房'}}数量</th>
+        <th>库存价值</th>
+        <th>库存成本</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-template ngFor let-summaryData [ngForOf]="basicTable.data">
+        <!--      *ngFor="let data of basicTable.data"-->
+        <tr nzShowRowSelection>
+          <td
+            [(nzExpand)]="mapOfExpandData[summaryData.stockEntity.uuid]"
+            [nzShowExpand]="summaryData.stockSummaryList.length > 0"
+          ></td>
+          <td>{{summaryData.stockEntity.name}}</td>
+          <td><label nz-checkbox [(ngModel)]="!summaryData.stockEntity.enabled" nzDisabled></label></td>
+          <td>{{summaryData.stockEntity.warehouseModel}}</td>
+          <td>{{summaryData.stockEntity.departmentModel}}</td>
+          <td>{{summaryData.stockEntity.manufacturer.name}}</td>
+          <td>{{summaryData.minUomDisplayQuantity}}</td>
+          <td>{{summaryData.warehouseDisplayQuantity}}</td>
+          <td>{{summaryData.departmentDisplayQuantity}}</td>
+          <td>{{summaryData.totalValue}}</td>
+          <td>{{summaryData.totalCost}}</td>
+        </tr>
+        <tr [nzExpand]="mapOfExpandData[summaryData.stockEntity.uuid]">
+          <th>
+          </th>
+          <th>库房名</th>
+          <th>库存数量</th>
+          <th>价值</th>
+          <th>成本</th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+        <ng-template ngFor let-departmentStock [ngForOf]="summaryData.stockSummaryList">
+          <tr [nzExpand]="mapOfExpandData[summaryData.stockEntity.uuid]">
+            <td>
+              <ng-template [ngIf]="this.sessionService.getUserPermission().commonComponent.stock.allowAdjust">
+                <button *ngIf="!departmentStock.inEdit" nz-button nzSize="small" nzType="primary"
+                        (click)="adjustClicked(departmentStock)">盘点
+                </button>
+                <button *ngIf="departmentStock.inEdit" nz-button nzSize="small" nzType="primary"
+                        (click)="submitAdjustment(departmentStock, summaryData)">提交
+                </button>
+                <button *ngIf="departmentStock.inEdit" nz-button nzSize="small" nzType="primary"
+                        (click)="cancelAdjustment(departmentStock)">取消
+                </button>
+              </ng-template>
+            </td>
+            <td>
+              {{departmentStock.warehouse.department.name}}
+            </td>
+            <ng-container *ngIf="departmentStock.inEdit == undefined || !departmentStock.inEdit else rowInEdit">
+              <td>{{departmentStock.displayQuantity}}</td>
+              <td>{{departmentStock.totalValue}}</td>
+              <td>{{departmentStock.totalCost}}</td>
+              <td></td>
+            </ng-container>
+            <ng-template #rowInEdit>
+              <td [hidden]="summaryData.stockEntity.warehouseConversionRate == 1">
+                <nz-input-number
+                  nz-input
+                  [nzStep]="1"
+                  [nzMin]=0
+                  [(ngModel)]="departmentStock.newWarehouseQuantity"
+                ></nz-input-number>
+                {{summaryData.stockEntity.warehouseUom.name}}
+              </td>
+              <td [hidden]="summaryData.stockEntity.departmentConversionRate == 1">
+                <nz-input-number
+                  nz-input
+                  [nzStep]="1"
+                  [nzMin]=0
+                  [(ngModel)]="departmentStock.newDepartmentQuantity"
+                ></nz-input-number>
+                {{summaryData.stockEntity.departmentUom.name}}
+              </td>
+              <td>
+                <nz-input-number
+                  nz-input
+                  [nzStep]="1"
+                  [nzMin]=0
+                  [(ngModel)]="departmentStock.newMinUomQuantity"
+                ></nz-input-number>
+                {{summaryData.stockEntity.minSizeUom.name}}
+              </td>
+              <td>
+                <input type="text" nz-input placeholder="盘整备注" [(ngModel)]="departmentStock.adjustmentReference"/>
+              </td>
+              <td [hidden]="summaryData.stockEntity.warehouseConversionRate != 1"></td>
+              <td [hidden]="summaryData.stockEntity.departmentConversionRate != 1"></td>
+            </ng-template>
+            <td>
+              <button nz-button nzSize="small" nzType="primary"
+                      (click)="getStockDetail(this.selectEntityType, departmentStock.stockIdList)">详情
+              </button>
+            </td>
+            <td></td>
+          </tr>
+        </ng-template>
+      </ng-template>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>
+
+<nz-modal [(nzVisible)]="orderLineModalVisible"
+          nzTitle=采购信息
+          [nzCancelDisabled]="true"
+          (nzOnOk)="this.closeOrderLineModal()"
+          nzWidth="1000"
+>
+  <nz-table #orderLineTable [nzData]="this.orderLineList" nzSize="small" style="background-color:white"
+            [nzFrontPagination]=false
+            [nzPageSize]="9999"
+  >
+    <thead>
+    <tr>
+      <th>数量</th>
+      <th>订单号</th>
+      <th>采购单价</th>
+      <th>采购总价</th>
+      <th>发票号</th>
+      <th>批次号</th>
+      <ng-template [ngIf]="this.selectEntityType == 'medicine'">
+        <th>批准文号</th>
+        <th>过期日期</th>
+      </ng-template>
+      <th>制造厂家</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-data [ngForOf]="orderLineTable.data">
+      <!--      *ngFor="let data of basicTable.data"-->
+      <tr>
+        <td>{{data.displayQuantity}}</td>
+        <td>{{data.originPurchaseOrderLine.orderNumber}}</td>
+        <td>{{data.originPurchaseOrderLine.cost}}</td>
+        <td>{{data.totalCost}}</td>
+        <td>{{data.originPurchaseOrderLine.invoiceNumber}}</td>
+        <td>{{data.originPurchaseOrderLine.batchNumber}}</td>
+        <ng-template [ngIf]="this.selectEntityType == 'medicine'">
+          <td>{{data.originPurchaseOrderLine.batch}}</td>
+          <td>{{data.originPurchaseOrderLine.expireDate}}</td>
+        </ng-template>
+        <td>{{data.originPurchaseOrderLine.manufacturer?.name}}</td>
+      </tr>
+    </ng-template>
+    </tbody>
+  </nz-table>
+</nz-modal>

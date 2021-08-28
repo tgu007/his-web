@@ -1,0 +1,88 @@
+<nz-layout>
+  <nz-sider nzCollapsible
+            [(nzCollapsed)]="this.collapsed"
+            nzTheme="light"
+            [nzCollapsedWidth]="30"
+            [nzTrigger]="null"
+  >
+
+    <app-patient-select [hidden]="this.collapsed" [selectAll]="false" [loadAllOnInit]="false"></app-patient-select>
+  </nz-sider>
+  <i
+    nz-icon
+    [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+    (click)="this.collapsed = !this.collapsed"
+  ></i>
+  <nz-layout class="inner-layout">
+    <div nz-row>
+      <nz-select
+        [hidden]="this.sessionService.loginUser.userRole.userRoleType !='系统管理员'"
+        nzShowSearch
+        nzPlaceHolder="选择病区"
+        [(ngModel)]="selectWard"
+        (ngModelChange)="this.reloadPatientTree()"
+      >
+        <nz-option *ngFor="let ward of this.wardList" [nzValue]="ward"
+                   [nzLabel]="ward.name"></nz-option>
+      </nz-select>
+
+      <button nz-button nzType="primary"
+              (click)="this.submitOrder()">
+        退药提交
+      </button>
+    </div>
+    <div nz-row>
+      <nz-table #basicTable [nzData]="pendingReturnMedicineOrderList" nzSize="small" [nzPageSize]="pageSize">
+        <thead>
+        <tr>
+          <th nzWidth="50"></th>
+          <th nzWidth="100px">病区</th>
+          <th nzWidth="100px">病房</th>
+          <th nzWidth="100px">病人</th>
+          <th>药品名称</th>
+          <th>规格</th>
+          <th>已发数量</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-template ngFor let-data [ngForOf]="basicTable.data">
+          <tr>
+            <td
+              [nzShowExpand]="true"
+              [(nzExpand)]="mapOfExpandData[data.patientSignInId + data.medicineId]"
+            ></td>
+            <td>{{basicTable.data.indexOf(data) % pageSize == 0 || data.patientGroupIndex == 0 ? data.ward : undefined}}</td>
+            <td>{{basicTable.data.indexOf(data) % pageSize == 0 || data.patientGroupIndex == 0 ? data.wardRoom : undefined}}</td>
+            <td>{{basicTable.data.indexOf(data) % pageSize == 0 || data.patientGroupIndex == 0 ? data.patientName : undefined}}</td>
+            <td>{{data.medicineName}}</td>
+            <td>{{data.pharmacyModel}}</td>
+            <td>{{data.orderQuantityInfo}}</td>
+          </tr>
+          <tr [nzExpand]="mapOfExpandData[data.patientSignInId + data.medicineId]">
+            <td
+              [(nzChecked)]="data.allChecked"
+              [nzIndeterminate]="false"
+              (nzCheckedChange)="checkAll($event, data)"
+              nzShowCheckbox
+            ></td>
+            <td colspan="2">发药日期</td>
+            <td>价格</td>
+            <td>发药单号</td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr [nzExpand]="mapOfExpandData[data.patientSignInId + data.medicineId]"
+              *ngFor="let orderLine of data.orderLineList">
+            <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[orderLine.uuid]"></td>
+            <td colspan="2"> {{orderLine.processedDate}}</td>
+            <td>{{orderLine.orderLineCommon.priceInfo}}</td>
+            <td>{{orderLine.orderNumber}}</td>
+            <td></td>
+            <td>{{orderLine.orderQuantityInfo}}</td>
+            <!--    </tr>-->
+        </ng-template>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-layout>
+</nz-layout>

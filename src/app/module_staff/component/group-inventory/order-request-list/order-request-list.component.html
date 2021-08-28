@@ -1,0 +1,88 @@
+<div nz-row>
+
+  <nz-select [(ngModel)]="selectRequestStatus"
+             (ngModelChange)="loadOrderRequestList()"
+             nzMode="multiple"
+             style="float: left;margin-right: 10px;">
+    <nz-option *ngFor="let status of this.statusList" [nzValue]="status"
+               [nzLabel]="status"></nz-option>
+  </nz-select>
+
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   (ngModelChange)="loadOrderRequestList()"
+                   style="width: 300px; float: left;
+  margin-right: 10px;"></nz-range-picker>
+
+
+  <button nz-button nzType="primary" (click)="addOrderRequest()"
+          *ngIf="this.sessionService.getUserPermission().commonComponent.orderRequestPermission.allowEdit"
+          style=" float: left;margin-right: 10px;"
+  >新增
+  </button>
+
+  <button nz-button nzSize="small" nzType="primary" nzShape="circle" (click)="this.refreshClicked()"><i nz-icon
+                                                                                                        nzType="reload"></i>
+  </button>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="orderRequestList" nzSize="small" style="background-color:white"
+              [nzTotal]="totalDataCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=this.loadOrderRequestList()
+    >
+      <thead>
+      <tr>
+        <th>申请单号</th>
+        <th>紧急采购</th>
+        <th>计划名</th>
+        <th>创建日期</th>
+        <th>申请部门</th>
+        <th>申请人</th>
+        <th>录入人</th>
+        <th>批准日期</th>
+        <th>批准人</th>
+        <th>状态</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{data.orderRequestNumber}}</td>
+        <td><label nz-checkbox [(ngModel)]="data.urgent"></label></td>
+        <td>{{data.name}}</td>
+        <td>{{data.whenCreated}}</td>
+        <td>{{data.byDepartmentName}}</td>
+        <td>{{data.byEmployeeName}}</td>
+        <td>{{data.whoCreated}}</td>
+        <td>{{data.approvedDate}}</td>
+        <td>{{data.approvedBy}}</td>
+        <td>{{data.status}}</td>
+        <td>
+          <button nz-button nzSize="small" nzType="primary" (click)="editOrderRequest(data)">查看</button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="orderRequestDetailVisible"
+  nzTitle="申购计划"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveOrderRequest()"
+  nzWidth="95%"
+  nzCancelText="关闭"
+  [nzOkLoading]=this.orderRequestDetailComponent.saving
+  [nzStyle]="{ top: '20px' }"
+  [nzOkText]="this.allowEdit()"
+>
+  <app-order-request-detail (orderRequestListRefreshRequiredEvent)="onRefreshRequired($event)"
+                            [orderType]="this.orderType"
+  ></app-order-request-detail>
+</nz-modal>
+<!--nzOkText="保存"-->

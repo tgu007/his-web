@@ -1,0 +1,170 @@
+<div class="page">
+  <div nz-row style="margin-top: 5%">
+    <div nz-col nzSpan="12" nzOffset="6">
+      <span class="title" style="margin-top: 8%">
+        {{this.hospitalName}}
+      </span>
+    </div>
+    <div nz-col nzSpan="6">
+      <p style="font-size: xx-large">麻，精一</p>
+    </div>
+  </div>
+  <div nz-row>
+    <span class="title" style="font-size: large">麻醉（精一）药品处方笺</span>
+  </div>
+
+  <div style="height: 60%">
+    <div nz-row>
+     <p>ID:{{this.printData.prescription.medicine.uuid}}</p>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="6">
+        <p>姓名：{{this.printData.patientSignIn.patient.name}}</p>
+      </div>
+
+      <div nz-col nzSpan="6">
+        <p>性别：{{this.printData.patientSignIn.patient.genderDto.name}}</p>
+      </div>
+
+      <div nz-col nzSpan="6">
+        <p>年龄：{{this.printData.patientSignIn.age}}</p>
+      </div>
+
+      <div nz-col nzSpan="6">
+        <p>费别：{{this.printData.patientSignIn.insuranceType.name}}</p>
+      </div>
+    </div>
+
+    <div nz-row>
+      <div nz-col nzSpan="16">
+        <p>门诊（住院）病历号：{{this.printData.patientSignIn.signInNumberCode}}</p>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <p>(科别)床号：{{this.printData.patientSignIn.currentBedInfo}}</p>
+      </div>
+    </div>
+
+    <div nz-row>
+      <div nz-col nzSpan="16">
+        <p>地址：{{this.printData.patientSignIn.patient.address}}</p>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <p>电话：________________</p>
+      </div>
+    </div>
+
+    <div nz-row>
+      <p>患者身份证编号：{{this.printData.patientSignIn.patient.idNumber}}</p>
+    </div>
+
+    <div nz-row>
+      <div nz-col nzSpan="12">
+        <p>代办人姓名：__________________</p>
+      </div>
+
+      <div nz-col nzSpan="6">
+        <p>性别：____________</p>
+      </div>
+
+      <div nz-col nzSpan="6">
+        <p>年龄：____________</p>
+      </div>
+    </div>
+
+    <div nz-row>
+      <p>代办人身份证编号：______________________________________</p>
+    </div>
+
+    <div nz-row>
+      <div nz-col nzOffset="12">
+        <p>开方日期:{{this.printData.prescriptionList.orderDate}}</p>
+      </div>
+    </div>
+
+    <div nz-row>
+      <p>临床诊断：{{this.printData.patientSignIn.diagnoseString}}</p>
+    </div>
+
+    <ng-template #emptyTable>
+    </ng-template>
+    <div nz-row>
+      <nz-table #tblPrescription nzSize="small"
+                [nzNoResult]=emptyTable
+                style="background-color:white">
+        <thead>
+        <tr>
+          <th>名称</th>
+          <th>规格</th>
+          <th>数量</th>
+          <th>用量</th>
+          <th>频次</th>
+          <th>用法</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>{{this.printData.prescription.medicine.name}}</td>
+          <td>{{this.printData.prescription.medicine.departmentModel}}</td>
+          <td>{{this.printData.prescriptionList.fixedQuantityInfo}}</td>
+          <td colspan="3"></td>
+        </tr>
+        <tr>
+          <td colspan="3"></td>
+          <td>每次：{{this.printData.prescriptionList.serveInfo}}</td>
+          <td>{{this.printData.prescriptionList.frequencyName}}</td>
+          <td>{{this.printData.prescriptionList.useMethod}}</td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <p>药费_____________</p>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <p>收费</p>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <p>医师：_____________</p>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <p>注射费___________</p>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <p>盖章</p>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <p>配方药师：_____________</p>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="8" nzOffset="16">
+      <p>复核药师：_____________</p>
+    </div>
+  </div>
+
+  <div nz-row>
+    <p>
+      *注意：1请勿遗失，处方当日有效。<br/>2.发药时请注明药品批号。
+    </p>
+  </div>
+  <div nz-row>
+    <p>
+      批号:_________________
+    </p>
+  </div>
+</div>
+
+

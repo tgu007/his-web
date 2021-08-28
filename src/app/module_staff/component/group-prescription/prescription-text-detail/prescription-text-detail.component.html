@@ -1,0 +1,49 @@
+<form nz-form [formGroup]="newTextPrescriptionForm">
+  <nz-spin [nzSpinning]="this.loading">
+    <div nz-row>
+      <div nz-col nzSpan="16">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>文字医嘱描述</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <textarea formControlName="txtDescription" rows="4" nz-input></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row hidden>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-control>
+            <label nz-checkbox #chkManualDate
+                   formControlName="chkManualDate"
+                   (nzCheckedChange)="chkManualDateChanged($event)"
+            >补录医嘱</label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12" [hidden]="!chkManualDate.nzChecked">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" [nzRequired]="chkManualDate.nzChecked">开始时间</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <nz-date-picker
+              nzShowTime
+              nzFormat="yyyy-MM-dd HH:mm:ss"
+              nzPlaceHolder="选择日期时间"
+              formControlName="dateStartDateTime"
+              nzSize="small"
+              [nzDisabledDate]="disabledDate"
+            ></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </nz-spin>
+</form>
+
+
+
+
+
+
+
+

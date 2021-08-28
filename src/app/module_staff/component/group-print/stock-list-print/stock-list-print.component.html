@@ -1,0 +1,38 @@
+
+<ng-template #emptyResult></ng-template>
+<nz-table #basicTable
+          [nzData]="this.printData.stockList"
+          nzSize="small"
+          [nzShowPagination]="false"
+          nzPageSize="999999"
+          nzBordered
+          [nzNoResult]=emptyResult
+>
+  <thead>
+  <tr>
+    <th>名称</th>
+    <th>仓库规格</th>
+    <th>{{this.printData.stockType.value == 'item' ? '科室规格' : '药房规格'}}</th>
+    <th>最小包装数量</th>
+    <th>仓库包装数量</th>
+    <th>{{this.printData.stockType.value == 'item' ? '科室' : '药房'}}数量</th>
+    <th>库存价值</th>
+    <th>库存成本</th>
+  </tr>
+  </thead>
+  <tbody>
+  <ng-template ngFor let-summaryData [ngForOf]="basicTable.data">
+    <!--      *ngFor="let data of basicTable.data"-->
+    <tr nzShowRowSelection>
+      <td>{{summaryData.stockEntity.name}}</td>
+      <td>{{summaryData.stockEntity.warehouseModel}}</td>
+      <td>{{summaryData.stockEntity.departmentModel}}</td>
+      <td>{{summaryData.minUomDisplayQuantity}}</td>
+      <td>{{summaryData.warehouseDisplayQuantity}}</td>
+      <td>{{summaryData.departmentDisplayQuantity}}</td>
+      <td>{{summaryData.totalValue}}</td>
+      <td>{{summaryData.totalCost}}</td>
+    </tr>
+  </ng-template>
+  </tbody>
+</nz-table>

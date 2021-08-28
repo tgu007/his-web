@@ -1,0 +1,142 @@
+.mainContentScreen {
+  width: 1000px;
+  box-sizing: border-box;
+  border: 1px solid #000c17;
+}
+
+.label {
+  display: inline-block;
+  text-align: justify;
+  text-align-last: justify;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #777;
+  margin-bottom: 1.5em;
+  padding-bottom: 10px;
+}
+
+.header > .center {
+  align-self: center;
+}
+
+.header > div:nth-child(1) {
+  font-family: "楷体";
+  margin: 14px 0;
+}
+
+.header > div:nth-child(2) {
+  font-family: "黑体";
+  font-size: 28px;
+}
+
+.header > div,
+section > div {
+  font-family: "宋体";
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.row > .title {
+  margin-right: 0.5em;
+}
+
+.theInput {
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 1px solid black;
+  /*text-align: center;*/
+  color: green;
+}
+
+.theBetween {
+  justify-content: space-between;
+}
+
+.row .auto {
+  flex: 1 1 auto;
+}
+
+.row .word2 {
+  width: 2em;
+}
+
+.row .word5 {
+  width: 5em;
+}
+
+.row .word1 {
+  width: 1em;
+  border: 1px solid black;
+  color: green;
+  /*text-align: center;*/
+}
+
+.baseInfo > div {
+  margin-bottom: 1em;
+}
+
+table {
+  width: 100%;
+  border: 1px solid #777;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+th {
+  border: 1px solid #777;
+}
+
+td {
+  border: 1px solid #777;
+}
+
+td > input {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  border: none;
+  /*text-align: center;*/
+  color: green;
+}
+
+.none {
+  border: none;
+  color: green;
+  margin-right: 1em;
+}
+
+.small {
+  width: 10em;
+  margin-right: 1.5em;
+}
+
+p {
+  font-size: 12px;
+}
+
+table td, table th {
+  height: 2em;
+}
+
+.replaceableInput {
+  background-color: #6dbfff;
+}
+
+
+.data {
+  color: green;
+  text-decoration: underline
+}
+.page {
+  page-break-after: always;
+  /*height: 27cm;*/
+}

@@ -1,0 +1,114 @@
+<div nz-row>
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   style="float: left;"
+                   [nzAllowClear]="false"
+                   (ngModelChange)="this.loadPaymentSummaryList()"
+                   nzShowTime
+  ></nz-range-picker>
+
+  <button nz-button
+          nzType="primary" nzSize="default"
+          (click)=" this.printClicked()"
+          style=" float: left; margin-left: 10px;"
+  >打印
+  </button>
+</div>
+
+<div nz-row>
+  <nz-spin [nzSpinning]="this.loading">
+    <nz-table #basicTable [nzData]="summaryList"
+              [nzFrontPagination]=false
+              nzSize="small"
+              style="background-color:white"
+    >
+      <thead>
+      <tr>
+        <th></th>
+        <th>收费人</th>
+        <th>现金支付</th>
+        <th>银联支付</th>
+        <th>微信支付</th>
+        <th>支付宝支付</th>
+        <th>支付总额</th>
+        <th>支付总额大写</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-template ngFor let-summary [ngForOf]="basicTable.data">
+        <tr>
+          <td
+            nzShowExpand
+            [(nzExpand)]="mapOfExpandData[summary.whoCreated]">
+          </td>
+          <td>{{summary.whoCreated}}</td>
+          <td>{{summary.totalCashAmount}}</td>
+          <td>{{summary.totalBankAmount}}</td>
+          <td>{{summary.totalWechatAmount}}</td>
+          <td>{{summary.totalAliAmount}}</td>
+          <td>{{summary.totalAmount}}</td>
+          <td>{{summary.moneyInChinese}}</td>
+        </tr>
+        <tr [nzExpand]="mapOfExpandData[summary.whoCreated]">
+          <th></th>
+          <th>类型</th>
+          <th>状态</th>
+          <th>收费人</th>
+          <th>日期</th>
+          <th>收据号</th>
+          <th>原始收据号</th>
+          <th>金额</th>
+          <th>金额中文</th>
+          <th>支付方式</th>
+        </tr>
+        <tr [nzExpand]="mapOfExpandData[summary.whoCreated]" *ngFor="let payment of summary.paymentDetailList">
+          <td></td>
+          <td>
+            <p [ngStyle]=this.getStatusColour(payment)>
+              {{payment.paymentType}}
+            </p>
+          </td>
+          <td>{{payment.status}}</td>
+          <td>{{payment.whoCreated}}</td>
+          <td>{{payment.whenCreated}}</td>
+          <td>{{payment.paymentNumber}}</td>
+          <td>{{payment.originPaymentNumber}}</td>
+          <td>
+            <p [ngStyle]=this.getStatusColour(payment)>
+              {{payment.amount}}
+            </p>
+          </td>
+          <td>
+            <p [ngStyle]=this.getStatusColour(payment)>
+              {{this.feeService.toChineseNumeral(payment.amount)}}
+            </p>
+          </td>
+          <td>{{payment.paymentMethod.name}}</td>
+        </tr>
+      </ng-template>
+      <tr *ngIf="basicTable.data" style="font-weight: bold">
+        <td></td>
+        <td>合计</td>
+        <td>{{this.getTotalCashAmount()}}</td>
+        <td>{{this.getTotalBankTransferAmount()}}</td>
+        <td>{{this.getTotalWechatPaymentAmount()}}</td>
+        <td>{{this.getTotalAliPaymentAmount()}}</td>
+        <td>{{this.getTotalAmount()}}</td>
+        <td>{{this.getTotalAmountInChinese()}}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>
+
+<!--<ng-template #summary>-->
+<!--  <div nz-row style="font-weight: bold">-->
+<!--    <div nz-col nzSpan="11" nzOffset="2">-->
+<!--      合计现金：{{this.getTotalCashAmount()}}元-->
+<!--    </div>-->
+
+<!--    <div nz-col nzSpan="11">-->
+<!--      合计总额：{{this.getTotalAmount()}}元-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--</ng-template>-->

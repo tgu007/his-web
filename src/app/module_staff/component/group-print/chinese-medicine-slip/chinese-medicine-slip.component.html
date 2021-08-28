@@ -1,0 +1,97 @@
+<div class="page">
+  <div nz-row style="margin-top: 5%">
+    <div nz-col nzSpan="12" nzOffset="6">
+      <span class="title" style="margin-top: 8%">
+        {{this.hospitalName}}
+      </span>
+    </div>
+    <div nz-col nzSpan="6">
+      <p style="font-size: xx-large">普通</p>
+    </div>
+  </div>
+  <div nz-row>
+    <span class="title" style="font-size: large">普通(住院)处方笺</span>
+  </div>
+
+  <div style="height: 70%">
+    <div nz-row>
+      <div nz-col nzSpan="6">
+        <p>姓名：{{this.printData.patientSignIn.patient.name}}</p>
+      </div>
+
+      <div nz-col nzSpan="6">
+        <p>性别：{{this.printData.patientSignIn.patient.genderDto.name}}</p>
+      </div>
+
+      <div nz-col nzSpan="6">
+        <p>年龄：{{this.printData.patientSignIn.age}}</p>
+      </div>
+
+      <div nz-col nzSpan="6">
+        <p>日期：{{this.getToday()}}</p>
+      </div>
+    </div>
+
+    <div nz-row>
+      <div nz-col nzSpan="8">
+        <p>住院号：{{this.printData.patientSignIn.signInNumberCode}}</p>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <p>科室：{{this.printData.patientSignIn.departmentTreatment.department.name}}</p>
+      </div>
+
+      <div nz-col nzSpan="8">
+        <p>床号：{{this.printData.patientSignIn.currentBedInfo}}</p>
+      </div>
+    </div>
+
+    <div nz-row>
+      <p>
+        临床诊断：{{this.printData.prescriptionList.diagnoseName ? this.printData.prescriptionList.diagnoseName : this.printData.patientSignIn.diagnoseString}}</p>
+
+    </div>
+
+    <div nz-row>
+      <span style="font-size: x-large; font-weight: bold">RP:</span>
+    </div>
+
+    <div nz-row *ngFor="let row of this.rows; let ri=index">
+      <div nz-col nzSpan="3" >
+      </div>
+      <div nz-col nzSpan="7" *ngFor="let col of this.columns; let ci=index">
+        <ng-template [ngIf]="this.data[ri.toString() + ci.toString()]">
+          <span style="text-align: center">{{data[ri.toString() + ci.toString()].slipDescription}}</span>
+        </ng-template>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="12" nzOffset="12" >
+        {{this.getUseDescription()}}
+      </div>
+    </div>
+
+  </div>
+
+  <div nz-row>
+    <div nz-col nzOffset="16" nzSpan="8">
+      <p>处方医师:_____________</p>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="16">
+      <p>审核调配:_____________</p>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <p>核对发药:_____________</p>
+    </div>
+  </div>
+
+  <div nz-row>
+    <p>
+      *注意：请勿遗失，处方当日有效，此处方不作为缴费凭据*
+    </p>
+  </div>
+</div>
+

@@ -1,0 +1,123 @@
+<div nz-col *ngIf="this.medicine && this.medicine.uuid">
+  <nz-descriptions nzBordered nzSize="small">
+    <nz-descriptions-item nzTitle="类别">{{this.medicine.typeDto.name}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="名称">{{this.medicine.name}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="剂型">{{this.medicine.doseType.name}}</nz-descriptions-item>
+  </nz-descriptions>
+</div>
+
+<div nz-col>
+  <button nz-button nzType="primary" (click)="this.addLineControlClicked()"><i nz-icon type="plus" theme="outline"></i>添加匹配
+  </button>
+</div>
+<div nz-col>
+  <nz-table [nzData]="this.medicineMatchForm.get('matchList').controls" nzSize="small">
+    <thead>
+    <tr>
+      <th>匹配状态</th>
+      <th>药品名称</th>
+      <th>恩普编码</th>
+      <th>雷博编码</th>
+      <th>开始日期</th>
+      <th>结束日期</th>
+      <th>剂型</th>
+      <th>规格</th>
+      <th>产地</th>
+      <th>类别</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody *ngFor="let control of medicineMatchForm.get('matchList').controls; let i=index">
+    <tr [formGroup]="control">
+      <td>
+        {{control.value.txtStatus}}
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[i].inEdit; else codeInput">
+          {{control.value.selectCenterMedicine?.name}}
+        </ng-container>
+        <ng-template #codeInput>
+          <nz-form-control>
+            <app-common-dynamic-select
+              (onSearchEvent)="searchCenterMedicine($event, i)"
+              formControlName="selectCenterMedicine"
+              [dataList]="this.editCache[i].rowSelectionList.entityList"
+              [totalDataCount]="this.editCache[i].rowSelectionList.dataListTotalCount"
+              [dataColumns]="this.dropDownColumnList"
+              [pageCount]=this.editCache[i].rowSelectionList.dataListPageCount
+              (onSelectedItemChangedEvent)="this.selectedMedicineChanged($event, i)"
+            >
+            </app-common-dynamic-select>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        {{control.value.selectCenterMedicine?.code1}}
+      </td>
+      <td>
+        {{control.value.selectCenterMedicine?.code2}}
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[i].inEdit; else startDateInput">
+          {{this.datePipe.transform(control.value.txtStartDate, 'yyyy-MM-dd')}}
+        </ng-container>
+        <ng-template #startDateInput>
+          <nz-form-control>
+            <nz-date-picker
+              nzFormat="yyyy-MM-dd"
+              nzPlaceHolder="选择日期"
+              formControlName="txtStartDate"
+              nzSize="small"
+            ></nz-date-picker>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[i].inEdit; else endDateInput">
+          {{this.datePipe.transform(control.value.txtEndDate, 'yyyy-MM-dd')}}
+        </ng-container>
+        <ng-template #endDateInput>
+          <nz-form-control>
+            <nz-date-picker
+              nzFormat="yyyy-MM-dd"
+              nzPlaceHolder="选择日期"
+              formControlName="txtEndDate"
+              nzSize="small"
+            ></nz-date-picker>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        {{control.value.selectCenterMedicine?.doseType}}
+      </td>
+      <td>
+        {{control.value.selectCenterMedicine?.model}}
+      </td>
+      <td>
+        {{control.value.selectCenterMedicine?.manufacture}}
+      </td>
+      <td>
+        {{control.value.selectCenterMedicine?.chargeLevel}}
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[i].inEdit; else inEdit">
+          <button nz-button nzType="primary" nzSize="small" (click)="editLineControl(i)"><i nz-icon nzType="edit"></i>
+          </button>
+          <button nz-button nzType="primary" nzSize="small" (click)="removeLineControl(i)"><i nz-icon
+                                                                                              nzType="delete"></i>
+          </button>
+        </ng-container>
+        <ng-template #inEdit>
+          <button nz-button nzType="primary" nzSize="small" (click)="commitLineControl(i)"><i nz-icon nzType="save"></i>
+          </button>
+          <button nz-button nzType="primary" nzSize="small" (click)="removeLineControl(i)"><i nz-icon
+                                                                                              nzType="delete"></i>
+          </button>
+        </ng-template>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+

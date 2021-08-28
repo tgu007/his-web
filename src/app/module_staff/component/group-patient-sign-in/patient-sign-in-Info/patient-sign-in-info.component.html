@@ -1,0 +1,106 @@
+<nz-descriptions nzBordered [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }" nzSize="small">
+  <nz-descriptions-item nzTitle="入院诊断">
+    {{this.patientSignIn ? this.patientSignIn.diagnoseString : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="姓名">
+    {{this.patientSignIn ? this.patientSignIn.patient.name : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="入院号">
+    {{this.patientSignIn ? this.patientSignIn.signInNumberCode : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="性别">
+    {{this.patientSignIn ? this.patientSignIn.patient.genderDto.name : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="年龄">
+    {{this.patientSignIn ? this.patientSignIn.age : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="入院日期">
+    {{this.patientSignIn ? this.patientSignIn.signInDate : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="入院天数">
+    {{this.patientSignIn ? this.patientSignIn.signedInDays + '天' : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="备案到期日" *ngIf="!patientSignIn?.selfPay">
+   <span
+     [ngStyle]="this.getYBSignInDateCellColour()"
+   >
+     {{this.patientSignIn ? this.patientSignIn.ybSignInRecordDate : undefined}}
+   </span>
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="护理等级">
+    {{this.patientSignIn ? this.patientSignIn.nursingLevel.name : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="入院科室">
+    {{this.patientSignIn ? this.patientSignIn.departmentTreatment.department.name : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="主治医生">
+    {{this.patientSignIn ? this.patientSignIn.doctor.name : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="费用总额">
+    {{this.patientSignIn ? this.patientSignIn.totalFeeAmount + '元' : undefined}}
+    <ng-template [ngIf]="this.patientSignIn">
+      <span *ngIf="patientSignIn.totalUpperLimit"
+            style="color:red;">{{'(' + patientSignIn.totalUpperLimit + ')'}}</span>
+      <span *ngIf="patientSignIn.totalLowerLimit"
+            style="color:forestgreen;">{{'(' + patientSignIn.totalLowerLimit + ')'}}</span>
+    </ng-template>
+
+  </nz-descriptions-item>
+  <nz-descriptions-item [nzTitle]="this.patientSignIn?.selfPay? '未上传费用':'未结算费用'">
+    {{this.patientSignIn ? this.patientSignIn.pendingFeeAmount + '元' : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="上次预结日期" *ngIf="!patientSignIn?.selfPay">
+    {{this.patientSignIn?.lastSettlementDate}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="日均费用">
+    {{this.patientSignIn ? this.patientSignIn.averageFeeAmount + '元' : undefined}}
+    <ng-template [ngIf]="this.patientSignIn">
+      <span *ngIf="patientSignIn.averageUpperLimit"
+            style="color:red;">{{'(' + patientSignIn.averageUpperLimit + ')'}}</span>
+      <span *ngIf="patientSignIn.averageLowerLimit"
+            style="color:forestgreen;">{{'(' + patientSignIn.averageLowerLimit + ')'}}</span>
+    </ng-template>
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="报销总额" *ngIf="!patientSignIn?.selfPay">
+    {{this.patientSignIn ? this.patientSignIn.coveredFeeAmount + '元' : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="个人账户支付" *ngIf="!patientSignIn?.selfPay">
+    {{this.patientSignIn?.deductAmountFromCard + '元'}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="现金支付总额" *ngIf="!patientSignIn?.selfPay">
+    {{this.patientSignIn?.selfPayFeeAmount + '元'}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="预交金额">
+    {{this.patientSignIn ? this.patientSignIn.totalPaidAmount + '元' : undefined}}
+  </nz-descriptions-item>
+  <nz-descriptions-item nzTitle="余额">
+    {{this.patientSignIn ? this.patientSignIn.accountBalance + '元' : undefined}}
+
+    <ng-template [ngIf]="!this.patientSignIn?.selfPay">
+      <nz-tag
+        nz-tooltip
+        [nzTooltipTitle]="this.getBalanceDescription(this.patientSignIn)"
+        [nzColor]="this.patientSignIn?.pendingFeeAmount == 0? 'green':'orange'"
+        style="float: left"
+      >详情
+      </nz-tag>
+    </ng-template>
+
+  </nz-descriptions-item>
+
+  <ng-template [ngIf]="!this.patientSignIn?.selfPay">
+    <nz-descriptions-item nzTitle="非医疗总额">
+      {{this.patientSignIn ? this.patientSignIn.internalTotalFeeAmount + '元' : undefined}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="非医疗预交">
+      {{this.patientSignIn ? this.patientSignIn.internalTotalPaidAmount + '元' : undefined}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="非医疗余额">
+      {{this.patientSignIn ? this.patientSignIn.internalBalanceAmount + '元' : undefined}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="汇总余额">
+      {{this.patientSignIn ? this.patientSignIn.overallAccountBalance + '元' : undefined}}
+    </nz-descriptions-item>
+  </ng-template>
+
+</nz-descriptions>

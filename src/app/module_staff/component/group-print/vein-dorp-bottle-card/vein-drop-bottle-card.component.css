@@ -1,0 +1,25 @@
+.PageNext{
+  page-break-after: always;
+}
+
+.cardBorder{width:50%;height:100%;
+  /*border:1px solid #00ff00;*/
+  padding-top: 2%;
+}
+
+.row{
+  width:100%;
+  height:25%;
+}
+
+
+.page {
+  width: 20.3cm;
+  height: 27cm;
+  page-break-after: always;
+}
+
+
+table, td, th, thead {
+  border: 1px solid black;
+}

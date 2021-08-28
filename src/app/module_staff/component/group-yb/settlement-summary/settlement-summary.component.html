@@ -1,0 +1,326 @@
+<nz-spin [nzSpinning]="this.loading">
+  <nz-collapse>
+
+    <nz-collapse-panel
+      nzHeader="系统结算信息" nzActive>
+      <div nz-row *ngIf="this.patientSignIn && !this.patientSignIn.selfPay">
+        <nz-alert nzType="info" [nzCloseable]="true"
+                  nzMessage="系统结算的医保报销费和待付金额为预估数据，医保起付线以及医保账户余额并未计算在内，请以预结或者最后结算信息为准"></nz-alert>
+      </div>
+
+      <div nz-row style="width: 50%">
+        <nz-descriptions [nzColumn]="{ xxl: 4, xl: 4, lg: 4, md: 2, sm: 1, xs: 1 }" nzBordered nzSize="small">
+          <nz-descriptions-item nzTitle="费用总额">
+            {{this.patientSignIn ? this.patientSignIn.totalFeeAmount : undefined}}元
+          </nz-descriptions-item>
+
+          <nz-descriptions-item nzTitle="报销总额">
+            {{this.patientSignIn ? this.patientSignIn.coveredFeeAmount : undefined}}元
+          </nz-descriptions-item>
+
+          <nz-descriptions-item nzTitle="自费总额">
+            {{this.patientSignIn ? this.patientSignIn.selfPayFeeAmount : undefined}}元
+          </nz-descriptions-item>
+
+          <nz-descriptions-item nzTitle="未上传费用">
+            {{this.patientSignIn ? this.patientSignIn.pendingFeeAmount : undefined}}元
+            <button
+              nzSize="small"
+              nz-button nzType="primary"
+              class="ant-btn ant-btn-primary"
+              (click)="this.uploadFee()"
+              [nzLoading]="this.uploadingFee"
+              [disabled]="this.patientSignIn?.status == '已出院'"
+            >上传
+            </button>
+          </nz-descriptions-item>
+
+          <nz-descriptions-item nzTitle="已付金额">
+            {{this.patientSignIn ? this.patientSignIn.totalPaidAmount : undefined}}元
+          </nz-descriptions-item>
+
+          <nz-descriptions-item nzTitle="余额">
+            {{this.patientSignIn ? this.patientSignIn.accountBalance : undefined}}元
+          </nz-descriptions-item>
+
+          <nz-descriptions-item nzTitle="付(退)款">
+            <nz-select
+              nzShowSearch
+              [(ngModel)]="this.selectPaymentMethod"
+              style=" width: 150px"
+            >
+              <nz-option *ngFor="let paymentMethod of this.paymentMethodList" [nzValue]="paymentMethod"
+                         [nzLabel]="paymentMethod.code"></nz-option>
+            </nz-select>
+
+            <nz-input-number
+              [nzStep]="1000"
+              [(ngModel)]="this.paymentAmount"
+              [nzFormatter]="formatterDollar"
+              [nzParser]="parserDollar"
+              style="margin-left: 10px; width: 150px"
+            ></nz-input-number>
+
+            <button
+              nzSize="small"
+              nz-button nzType="primary"
+              class="ant-btn ant-btn-primary"
+              (click)="this.creatPayment()"
+              [nzLoading]="this.creatingPayment"
+              [disabled]="this.patientSignIn && this.patientSignIn.accountBalance == 0"
+              style="margin-left: 10px;"
+            >{{this.paymentAmount > 0 ? '收款':'退款'}}
+            </button>
+          </nz-descriptions-item>
+        </nz-descriptions>
+      </div>
+
+    </nz-collapse-panel>
+
+    <nz-collapse-panel
+      *ngIf="this.patientSignIn && !this.patientSignIn.selfPay"
+      nzHeader="医保预结信息" [nzActive]="!this.isFinalSettle">
+      <div nz-row>
+        <label nz-checkbox
+               #showAllPreSettlementItem
+               style="float: left"
+        >显示所有预结信息</label>
+
+        <button
+          nzSize="small"
+          nz-button nzType="primary"
+          class="ant-btn ant-btn-primary"
+          style="margin-left: 10px; float: left"
+          (click)="this.preSettle()"
+          [nzLoading]="this.preSettling"
+          [disabled]="this.patientSignIn.status == '已出院'"
+        >医保预结算
+        </button>
+      </div>
+      <div>
+        <nz-descriptions [nzColumn]="{ xxl: 6, xl: 6, lg: 6, md: 4, sm: 2, xs: 1 }" nzBordered nzSize="small">
+          <nz-descriptions-item nzTitle="费用总额">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.zje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="合计报销金额">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.bxje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="起付线">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.qfx : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="合计现金支付">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.xjje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="自费总额(丙类)">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.zfje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="自理总额(乙类)">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.zlje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="医保费用">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.ybfy : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="转院自费">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.zyzf : undefined}}元
+          </nz-descriptions-item>
+
+          <nz-descriptions-item nzTitle="历年帐户支付">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.lnzhzf : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="当年帐户支付">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.dnzhzf : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="个人自费现金支付">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.grzfxj : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="个人自负现金支付">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.zfxj : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="统筹基金支付">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.tcje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="结算后当年个帐余额">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.jshdngzye : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="结算后历年个帐余额">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.jshlngzye : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="个人自负">
+            {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.grzf : undefined}}元
+          </nz-descriptions-item>
+
+          <ng-template [ngIf]="showAllPreSettlementItem.nzChecked">
+            <nz-descriptions-item nzTitle="大病补助支付">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.dbje : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="公务员补助支付">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.gwybzzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="离休基金支付">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.lxjjzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="二乙基金支付">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.eyjjzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="补充医疗保险">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.bcylbx : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="大额自付补助">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.dezfbz : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="民政救助支付">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.mzjzzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="生育基金支付">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.syjjzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="门诊统筹基金支付">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.mztcqfx : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="门诊统筹医保费用">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.mztcybfy : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="门诊统筹起付线">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.mztcqfx : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="优抚补助">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.yfbz : undefined}}元
+            </nz-descriptions-item>
+
+            <nz-descriptions-item nzTitle="家庭共济基金">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.jtgjjj : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="医疗救助">
+              {{this.patientSignIn.preSettlement ? this.patientSignIn.preSettlement.yljz : undefined}}元
+            </nz-descriptions-item>
+          </ng-template>
+        </nz-descriptions>
+      </div>
+    </nz-collapse-panel>
+
+    <nz-collapse-panel *ngIf="this.isFinalSettle && (this.patientSignIn && !this.patientSignIn.selfPay)"
+                       nzHeader="医保正式结算信息" nzActive>
+      <div nz-row>
+        <label nz-checkbox
+               #showAllSettlementItem
+        >显示所有结算信息</label>
+      </div>
+      <div>
+        <nz-descriptions [nzColumn]="{ xxl: 6, xl: 6, lg: 6, md: 4, sm: 2, xs: 1 }" nzBordered nzSize="small">
+          <nz-descriptions-item nzTitle="费用总额">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.zje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="合计报销金额">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.bxje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="起付线">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.qfx : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="合计现金支付">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.xjje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="自费总额(丙类)">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.zfje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="自理总额(乙类)">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.zlje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="医保费用">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.ybfy : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="转院自费">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.zyzf : undefined}}元
+          </nz-descriptions-item>
+
+          <nz-descriptions-item nzTitle="历年帐户支付">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.lnzhzf : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="当年帐户支付">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.dnzhzf : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="个人自费现金支付">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.grzfxj : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="个人自负现金支付">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.zfxj : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="统筹基金支付">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.tcje : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="结算后当年个帐余额">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.jshdngzye : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="结算后历年个帐余额">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.jshlngzye : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="个人自负">
+            {{this.patientSignIn.settlement ? this.patientSignIn.settlement.grzf : undefined}}元
+          </nz-descriptions-item>
+
+          <ng-template [ngIf]="showAllSettlementItem.nzChecked">
+            <nz-descriptions-item nzTitle="大病补助支付">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.dbje : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="公务员补助支付">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.gwybzzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="离休基金支付">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.lxjjzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="二乙基金支付">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.eyjjzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="补充医疗保险">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.bcylbx : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="大额自付补助">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.dezfbz : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="民政救助支付">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.mzjzzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="生育基金支付">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.syjjzf : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="门诊统筹基金支付">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.mztcqfx : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="门诊统筹医保费用">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.mztcybfy : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="门诊统筹起付线">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.mztcqfx : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="优抚补助">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.yfbz : undefined}}元
+            </nz-descriptions-item>
+
+            <nz-descriptions-item nzTitle="家庭共济基金">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.jtgjjj : undefined}}元
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="医疗救助">
+              {{this.patientSignIn.settlement ? this.patientSignIn.settlement.yljz : undefined}}元
+            </nz-descriptions-item>
+          </ng-template>
+        </nz-descriptions>
+      </div>
+    </nz-collapse-panel>
+
+    <nz-collapse-panel *ngIf="this.patientSignIn && !this.patientSignIn.selfPay" nzActive nzHeader="非医疗费用信息">
+      <nz-alert nzType="info" nzBanner nzMessage="非医疗费用不会用于医保结算单，请根据下列信息多退少补，另行开票" nzShowIcon></nz-alert>
+      <div nz-row style="width: 50%">
+        <nz-descriptions [nzColumn]="{ xxl: 4, xl: 4, lg: 4, md: 2, sm: 1, xs: 1 }" nzBordered nzSize="small">
+          <nz-descriptions-item nzTitle="非医疗总额">
+            {{this.patientSignIn ? this.patientSignIn.internalTotalFeeAmount : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="非医疗预交">
+            {{this.patientSignIn ? this.patientSignIn.internalTotalPaidAmount : undefined}}元
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="非医疗余额">
+            {{this.patientSignIn ? this.patientSignIn.internalBalanceAmount : undefined}}元
+          </nz-descriptions-item>
+        </nz-descriptions>
+      </div>
+    </nz-collapse-panel>
+  </nz-collapse>
+</nz-spin>

@@ -1,0 +1,93 @@
+<div nz-row>
+  <nz-form-label
+    nzFor="selectFromWarehouse"
+    style=" float: left; margin-left: 10px;"
+  >{{this.transferType == 'in' ? "入库部门" : "出库部门"}}
+  </nz-form-label>
+
+  <nz-select nzShowSearch [(ngModel)]="this.selectWarehouse"
+             (ngModelChange)="this.loadTransferList()"
+             style="width:150px; float: left;margin-right: 10px;"
+  >
+    <nz-option *ngFor="let warehouse of this.warehouseList"
+               [nzLabel]="warehouse.department.name"
+               [nzValue]="warehouse.uuid"
+    ></nz-option>
+  </nz-select>
+
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   style="width: 300px; float: left;
+  margin-right: 10px;"></nz-range-picker>
+
+  <button nz-button nzType="primary" (click)="addTransfer()"
+          style=" float: left;margin-right: 10px;"
+  >新增
+  </button>
+
+  <button nz-button nzSize="small" nzType="primary" nzShape="circle" (click)="this.loadTransferList()"><i nz-icon
+                                                                                                          nzType="reload"></i>
+  </button>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="itemTransferList" nzSize="small" style="background-color:white"
+              [nzTotal]="totalDataCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=pageIndexChanged()
+    >
+      <thead>
+      <tr>
+        <th>调拨单号</th>
+        <th>创建时间</th>
+        <th>调拨时间</th>
+        <th>出库部门</th>
+        <th>入库部门</th>
+        <th>备注</th>
+        <th>录入人</th>
+        <th>状态</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data" nzShowRowSelection>
+        <td>{{data.transferNumber}}</td>
+        <td>{{data.transferDate}}</td>
+        <td>{{data.confirmedDate}}</td>
+        <td>{{data.fromWarehouse.department.name}}</td>
+        <td>{{data.toWarehouse.department.name}}</td>
+        <td>{{data.reference}}</td>
+        <td>{{data.whoCreated}}</td>
+        <td>{{data.transferStatus}}</td>
+        <td>
+          <button nz-button nzType="primary" nzSize="small" (click)="editTransfer(data)">查看</button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>
+<nz-modal
+  [(nzVisible)]="transferDetailVisible"
+  nzTitle="调拨"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveTransfer()"
+  nzWidth="95%"
+  nzOkText="保存"
+  nzCancelText="关闭"
+  [nzOkDisabled]="!(this.transferDetailComponent.transfer
+  && (this.transferDetailComponent.transfer.transferStatus == '已创建'|| this.transferDetailComponent.transfer.uuid == undefined))"
+  [nzMaskClosable]=false
+  [nzOkLoading]=this.transferDetailComponent.saving
+  [nzStyle]="{ top: '20px' }"
+>
+  <app-transfer-detail
+    (transferListRefreshRequiredEvent)="onRefreshRequired($event)"
+    [fromWarehouseType]="this.fromWarehouseType"
+    [toWarehouseType]="this.toWarehouseType"
+    [orderType]="this.orderType"
+    [transferType]="transferType"
+  >
+  </app-transfer-detail>
+</nz-modal>

@@ -1,0 +1,26 @@
+.table {
+  display: table;
+  border: 1px solid #cccccc;
+  margin: 5px;
+}
+
+.row {
+  display: table-row;
+  border: 1px solid #cccccc;
+}
+
+.cell {
+  display: table-cell;
+  border: 1px solid #cccccc;
+  padding: 5px;
+}
+
+.-thead{
+  display:table-header-group;
+}
+
+table, td, th, thead {
+  border: 1px solid black;
+  color: black;
+  font-family: Arial, "Microsoft YaHei";
+}

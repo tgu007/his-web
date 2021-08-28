@@ -1,0 +1,379 @@
+<nz-layout>
+  <nz-sider nzCollapsible
+            [(nzCollapsed)]="this.collapsed"
+            nzTheme="light"
+            [nzTrigger]="null"
+            [nzCollapsedWidth]="30"
+  >
+    <div nz-row [hidden]="this.collapsed">
+      <app-patient-select [selectAll]="false"
+                          [allowMultiple]="false"
+                          [checkable]="false"
+                          [loadAllOnInit]="false"
+      ></app-patient-select>
+    </div>
+  </nz-sider>
+  <i
+    nz-icon
+    [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+    (click)="this.collapsed = !this.collapsed"
+  ></i>
+  <nz-layout class="inner-layout">
+    <div nz-row>
+      <div nz-row>
+        <button
+          *ngIf="this.uiPermission.newFee"
+          nz-button nz-dropdown [nzDropdownMenu]="addNewMenu" nzType="primary" nzSize="default"
+          [nzDisabled]="this.patientSignIn.status != '已入院'"
+          style="float: left;margin-right: 10px;"
+        >新计费<i nz-icon
+               nzType="down"></i>
+        </button>
+        <button
+          *ngIf="!this.uiPermission.readOnly"
+          nz-button nzType="primary" (click)="cancelFeeList(undefined)"
+          [disabled]="(selectListFormat != 'simple') || (this.patientSignIn.status != '已入院')"
+          style="float: left;margin-right: 10px;"
+        >批量退费
+        </button>
+        <button nz-button
+                nzType="primary" nzSize="default"
+                [nzLoading]="this.isLoading"
+                (click)=" this.printClicked()"
+                style=" float: left; margin-left: 10px;"
+        >{{this.printButtonText}}
+        </button>
+
+        <nz-select [(ngModel)]="selectListFormat"
+                   (ngModelChange)="reloadData()"
+                   #listFormat
+                   style="width:80pt; float: left;margin-left: 10px;">
+          <nz-option nzLabel="每日明细" nzValue="simple"></nz-option>
+          <nz-option nzLabel="每日汇总" nzValue="byDate"></nz-option>
+          <nz-option nzLabel="住院汇总" nzValue="byType"></nz-option>
+        </nz-select>
+
+        <label nz-checkbox [(ngModel)]="this.orderDesc"
+               (ngModelChange)="this.searchClicked()"
+               style="float: left;margin-left: 10px;">时间倒排序</label>
+
+        <label nz-checkbox [(ngModel)]="this.filterPendingUploadFee"
+               (ngModelChange)="this.searchClicked()"
+               style="float: left;margin-left: 10px;">待传费用</label>
+
+        <label nz-checkbox [(ngModel)]="this.recoveryDepartmentCheck"
+               (ngModelChange)="this.reloadData()"
+               style="float: left;margin-right: 10px;">康复治疗费用核对</label>
+      </div>
+
+      <div nz-row>
+
+
+        <nz-range-picker [(ngModel)]="filterDateRange"
+                         style="float: left;margin-right: 10px;"
+        ></nz-range-picker>
+
+        <input nz-input [(ngModel)]="filterFeeName"
+               placeholder="输入拼音代码搜索"
+               style="float: left;margin-right: 10px; width:250px"
+        />
+
+        <nz-select
+          nzMode="multiple"
+          nzPlaceHolder="费用科室"
+          style="float: left;margin-right: 10px; width:160pt;"
+          [(ngModel)]="listOfSelectedFeeDepartment"
+        >
+          <nz-option *ngFor="let feeDepartment of feeDepartmentList" [nzValue]="feeDepartment.uuid"
+                     [nzLabel]="feeDepartment.department.name"></nz-option>
+        </nz-select>
+        <ng-template #tagPlaceHolder let-selectedList> 其余{{ selectedList.length }}个 </ng-template>
+        <nz-select
+          nzMode="multiple"
+          nzPlaceHolder="费用类型"
+          style="float: left;margin-right: 10px; width:160pt;"
+          [(ngModel)]="listOfSelectedFeeType"
+          [nzMaxTagCount]="3"
+          [nzMaxTagPlaceholder]="tagPlaceHolder"
+        >
+          <nz-option *ngFor="let feeType of feeTypeList" [nzValue]="feeType"
+                     [nzLabel]="feeType"></nz-option>
+        </nz-select>
+
+        <nz-select
+          nzMode="multiple"
+          nzPlaceHolder="Please select"
+          style="float: left;margin-right: 10px; width:160pt;"
+          [(ngModel)]="listOfSelectedFeeStatus"
+        >
+          <nz-option nzLabel="正常" nzValue="正常"></nz-option>
+          <nz-option nzLabel="已退费" nzValue="已退费"></nz-option>
+          <nz-option nzLabel="待退药" nzValue="待退药"></nz-option>
+        </nz-select>
+
+
+        <button nz-button (click)="searchClicked()"
+                style="float: left;margin-right: 10px;"
+        >检索
+        </button>
+
+
+      </div>
+      <div nz-row style="background-color:white">
+        <nz-spin [nzSpinning]="this.isLoading">
+          <div nz-row id="feeTable">
+            <nz-table #tblFeeList [hidden]="selectListFormat != 'simple'" [nzData]="feeList" nzSize="small"
+                      [nzTotal]="totalFeeListCount"
+                      [nzFrontPagination]=false
+                      [(nzPageIndex)]="tblFeeListPageIndex"
+                      [nzPageSize]="tablePageSize"
+                      (nzPageIndexChange)=reloadData()
+                      [nzPaginationPosition]="'both'"
+            >
+              <thead>
+              <tr>
+                <th
+                  nzShowCheckbox
+                  [(nzChecked)]="isAllDisplayDataChecked"
+                  (nzCheckedChange)="checkAll($event)"
+                ></th>
+                <th>记账日期</th>
+                <th>记费人</th>
+                <ng-template [ngIf]="this.recoveryDepartmentCheck">
+                  <th>执行时长</th>
+                  <th>记费方式</th>
+                  <th>带教人</th>
+                </ng-template>
+                <th>项目类型</th>
+                <th>项目名称</th>
+                <ng-template [ngIf]="!this.patientSignIn.selfPay">
+                  <th>自费项目</th>
+                </ng-template>
+                <th>数量</th>
+                <th>单价</th>
+                <th>总价</th>
+                <th>状态</th>
+                <th>上传状态</th>
+<!--                <th>自费比例</th>-->
+                <th>自费自理</th>
+                <th>报销金额</th>
+                <th *ngIf="showReturnQuantity">退还数量</th>
+                <th *ngIf="showReturnQuantity"></th>
+                <th *ngIf="!showReturnQuantity"></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let fee of tblFeeList.data;  let i= index"
+
+              >
+                <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[fee.uuid]" (nzCheckedChange)="refreshStatus()"></td>
+
+
+                <td [ngStyle]="{'background-color':this.getBackgroundColour(fee)}">
+                  <ng-container *ngIf="!editCache[i].inEdit; else dateInput">
+                    {{fee.feeDate}}
+                  </ng-container>
+                  <ng-template #dateInput>
+                    <nz-date-picker
+                      nzFormat="yyyy-MM-dd HH:mm:ss"
+                      nzPlaceHolder="修改费用日期"
+                      [(ngModel)]="fee.feeDate"
+                      nzShowTime="true"
+                      nzSize="small"
+                    ></nz-date-picker>
+                  </ng-template>
+                  <ng-template [ngIf]="this.hasEditPermission(fee)">
+                    <ng-container *ngIf="!editCache[i].inEdit; else inEdit">
+                      <button nz-button nzType="primary" (click)="editLineControl(i)"
+                      ><i nz-icon nzType="edit"></i></button>
+                    </ng-container>
+                    <ng-template #inEdit>
+                      <button nz-button nzType="primary" (click)="commitLineControl(i, fee)"
+                      ><i nz-icon nzType="save"></i></button>
+                    </ng-template>
+                  </ng-template>
+                </td>
+
+                <td>{{fee.whoCreated}}</td>
+                <ng-template [ngIf]="this.recoveryDepartmentCheck">
+                  <td>{{fee.duration}}</td>
+                  <td>{{fee.feeRecordMethod}}</td>
+                  <td>
+                    <ng-container *ngIf="!editCache[i].supervisorInEdit; else superVisroSelect">
+                      {{fee.supervisorName}}
+                    </ng-container>
+                    <ng-template #superVisroSelect>
+                      <nz-select
+                        nzShowSearch
+                        nzServerSearch
+                        nzPlaceHolder="选择带教人"
+                        [(ngModel)]="editCache[i].supervisor"
+                        [nzFilterOption]="nzFilterOption"
+                        (nzOnSearch)="searchSupervisor($event, i)"
+                        style="width: 150px"
+                      >
+                        <nz-option *ngFor="let supervisor of this.editCache[i].supervisorList"
+                                   [nzValue]="supervisor.uuid"
+                                   [nzLabel]="supervisor.name"></nz-option>
+                      </nz-select>
+                    </ng-template>
+                    <ng-template [ngIf]="fee.missingSupervisor">
+                      <ng-template [ngIf]="this.hasEditPermission(fee)">
+                        <ng-container *ngIf="!editCache[i].supervisorInEdit; else supervisorInEdit">
+                          <span style="color:orange">缺带教</span>
+                          <button nz-button nzType="primary" (click)="editSupervisorLineControl(i)"
+                          ><i nz-icon nzType="edit"></i></button>
+                        </ng-container>
+                        <ng-template #supervisorInEdit>
+                          <button nz-button nzType="primary" (click)="commitSupervisorLLineControl(i, fee)"
+                          ><i nz-icon nzType="save"></i></button>
+                        </ng-template>
+                      </ng-template>
+                    </ng-template>
+                  </td>
+                </ng-template>
+                <td>{{fee.feeType}}</td>
+                <td>{{fee.name}}</td>
+                <ng-template [ngIf]="!this.patientSignIn.selfPay">
+                  <td><label nz-checkbox [(ngModel)]="fee.selfPay" nzDisabled></label></td>
+                </ng-template>
+                <td>{{fee.displayQuantityInfo}}</td>
+                <td>{{fee.displayUnitAmount}}</td>
+                <td>{{fee.totalAmount}}元</td>
+                <td>{{fee.feeStatus}}</td>
+
+                <td
+                  nz-popover
+                  [nzPopoverTitle]="fee.uploadStatus == '上传出错'?'错误信息':null"
+                  [nzPopoverContent]="fee.uploadStatus =='上传出错'?fee.uploadError:null"
+                >{{fee.uploadStatus}}</td>
+<!--                <td>{{fee.selfRatio}}</td>-->
+                <td>{{fee.selfFeeAmount}}元</td>
+                <td>{{fee.insuranceAmount}}元</td>
+                <td *ngIf="fee.showReturnQuantity">
+                  <nz-input-number
+                    nz-input
+                    [(ngModel)]="fee.returnQuantity"
+                    [nzStep]="1"
+                    [nzMin]="0"
+                    [nzMax]="fee.quantity"
+                    nzSize="small"
+                    nzPrecision=0
+                  ></nz-input-number>
+                </td>
+                <td *ngIf="fee.showReturnQuantity">
+                  <button (click)="this.cancelPartialCancel(fee)"
+                          nz-button nzSize="small"
+                  >取消
+                  </button>
+                  <button (click)="this.confirmPartialCancel(fee)"
+                          nz-button nzSize="small">提交
+                  </button>
+                </td>
+
+                <td *ngIf="!fee.showReturnQuantity">
+
+                  <button *ngIf="fee.feeStatus =='正常' && (!this.uiPermission.readOnly)"
+                          [disabled]="this.patientSignIn.status != '已入院'"
+                          nz-button nzSize="small" (click)="this.cancelFeeList(fee) "
+                          nz-dropdown [nzDropdownMenu]="cancelFeeMenu"
+                  >退费
+                  </button>
+                  <nz-dropdown-menu #cancelFeeMenu="nzDropdownMenu">
+                    <ul nz-menu>
+                      <li nz-menu-item (click)="this.cancelPartialFeeClicked(fee)">
+                        <a>部分退费</a>
+                      </li>
+                    </ul>
+                  </nz-dropdown-menu>
+                </td>
+              </tr>
+              </tbody>
+            </nz-table>
+            <nz-table #tblFeeListByDate [hidden]="selectListFormat != 'byDate'" [nzData]="feeListByDate" nzSize="small"
+                      [nzPageSize]="tablePageSize"
+            >
+              <thead>
+              <tr>
+                <th>记账日期</th>
+                <th>项目类型</th>
+                <th>项目名称</th>
+                <th>数量</th>
+                <th>单价</th>
+                <th>总价</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let fee of tblFeeListByDate.data">
+                <td>{{fee.feeDate}}</td>
+                <td>{{fee.feeType}}</td>
+                <td>{{fee.name}}</td>
+                <td>{{fee.displayQuantityInfo}}</td>
+                <td>{{fee.displayUnitAmount}}</td>
+                <td>{{fee.totalAmount}}元</td>
+              </tr>
+              </tbody>
+            </nz-table>
+            <nz-table #tblFeeListByType [hidden]="selectListFormat != 'byType'" [nzData]="feeListByType" nzSize="small"
+                      [nzPageSize]="tablePageSize">
+              <thead>
+              <tr>
+                <th>项目类型</th>
+                <th>项目名称</th>
+                <th>数量</th>
+                <th>单价</th>
+                <th>总价</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let fee of tblFeeListByType.data">
+                <td>{{fee.feeType}}</td>
+                <td>{{fee.name}}</td>
+                <td>{{fee.displayQuantityInfo}}</td>
+                <td>{{fee.displayUnitAmount}}</td>
+                <td>{{fee.totalAmount}}元</td>
+              </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </nz-spin>
+      </div>
+    </div>
+  </nz-layout>
+</nz-layout>
+
+
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="drawerVisible"
+  nzTitle="新增计费"
+  (nzOnClose)="close()"
+>
+  <app-patient-fee-detail [patientSignIn]="patientSignIn"
+                          (feeCreatedEvent)="feeCreated($event)"></app-patient-fee-detail>
+  <div class="footer">
+    <button nz-button type="button" (click)="close()" class="ant-btn" style="margin-right: 8px;"><span>关闭</span>
+    </button>
+    <button nz-button type="button" (click)="createNewFee()" class="ant-btn ant-btn-primary"
+            [nzLoading]="this.patientManualFeeDetailComponent.saving"><span>提交</span></button>
+  </div>
+</nz-drawer>
+
+<nz-dropdown-menu #addNewMenu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item *ngIf="this.uiPermission.newFee.medicine">
+      <a (click)="addNewFee('药品')">药品</a>
+    </li>
+    <li nz-menu-item *ngIf="this.uiPermission.newFee.treatment">
+      <a (click)="addNewFee('诊疗')">诊疗</a>
+    </li>
+    <li nz-menu-item *ngIf="this.uiPermission.newFee.item">
+      <a (click)="addNewFee('耗材')">耗材</a>
+    </li>
+  </ul>
+</nz-dropdown-menu>
+
+
+

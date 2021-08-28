@@ -1,0 +1,93 @@
+<ng-template #emptyResult></ng-template>
+<div class="page">
+  <div nz-row>
+   <span class="hospitalName">
+    {{this.hospitalName}}
+  </span>
+  </div>
+  <div nz-row>
+    <h2 class="title" style="margin-bottom: 0px">
+      检验申请单
+    </h2>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      {{'姓名: ' + this.printData.patientSignIn.patient.name}}
+    </div>
+
+    <div nz-col nzSpan="6">
+      {{'性别: ' + this.printData.patientSignIn.patient.genderDto.name}}
+    </div>
+
+    <div nz-col nzSpan="6">
+      {{'年龄: ' + this.printData.patientSignIn.age}}
+    </div>
+
+    <div nz-col nzSpan="6">
+      {{'病区: ' + this.printData.patientSignIn.currentBedInfo}}
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      {{'临床诊断: '}}
+    </div>
+
+    <div nz-col nzSpan="6">
+      {{'申请人: ' + this.sessionService.loginUser.name}}
+    </div>
+
+    <div nz-col nzSpan="6">
+      {{'申请日期: ' + this.datePipe.transform(this.getToday(), 'yyyy-MM-dd')}}
+    </div>
+
+    <div nz-col nzSpan="6">
+      {{'住院号码: ' + this.printData.patientSignIn.signInNumberCode}}
+    </div>
+
+
+  </div>
+
+  <nz-table #basicTable nzSize="small"
+            nzPageSize='999999'
+            [nzShowPagination]="false"
+            [nzNoResult]=emptyResult
+            [nzData]="this.printData.prescriptionList"
+  >
+    <thead>
+    <tr>
+      <th>开嘱时间</th>
+      <th>项目名称</th>
+      <th>标本类型</th>
+      <th>医生</th>
+      <th>备注</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-prescription [ngForOf]="basicTable.data">
+      <tr>
+        <td>{{prescription.startDate}}</td>
+        <td>{{prescription.description}}</td>
+        <td>{{prescription.sampleType}}</td>
+        <td>{{prescription.whoCreated}}</td>
+        <td>{{prescription.reference}}</td>
+      </tr>
+    </ng-template>
+    </tbody>
+  </nz-table>
+  <div nz-row>
+    <div nz-col nzSpan="6" nzOffset="6">
+      <span>检验医师：</span>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <span>审核医师：</span>
+    </div>
+
+  </div>
+</div>
+
+
+
+

@@ -1,0 +1,204 @@
+<ng-template [ngIf]="this.showPrintMedicalRecordMain">
+  <app-medical-record-main-print
+    [printData]="this.printData"
+  >
+  </app-medical-record-main-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showPatientQrCode">
+  <app-patient-qr-code-print
+    [printData]="this.printData"
+  >
+  </app-patient-qr-code-print>
+</ng-template>
+
+
+<ng-template [ngIf]="this.showTempRecordChart">
+  <app-temp-record-chart-print
+    [printData]="this.printData"
+    [openPrintWidowAfterInit]=false
+  >
+  </app-temp-record-chart-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showPatientSignInDetail">
+  <app-patient-sign-in-print
+    [printData]="this.printData"
+  >
+  </app-patient-sign-in-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showPrescriptionList">
+  <app-prescription-list-print
+    [printData]="this.printData"
+  >
+  </app-prescription-list-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showLongTermPrescriptionList">
+  <app-prescription-list-long-term-print
+    [printData]="this.printData"
+  >
+  </app-prescription-list-long-term-print>
+</ng-template>
+
+
+<ng-template [ngIf]="this.showFeeList">
+  <app-fee-list-print
+    [printData]="this.printData"
+  >
+  </app-fee-list-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showFeeSummaryList">
+  <app-fee-summary-list-print
+    [printData]="this.printData"
+  >
+  </app-fee-summary-list-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showFeeDaySummaryList">
+  <app-fee-day-summary-print
+    [printData]="this.printData"
+  >
+  </app-fee-day-summary-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showNursingRecordList">
+  <app-nursing-record-print
+    [printData]="this.printData"
+  >
+  </app-nursing-record-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showStockList">
+  <app-stock-list-print
+    [printData]="this.printData"
+  >
+  </app-stock-list-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showVeinDropBottleCard">
+  <app-vein-drop-bottle-card
+    [printData]="this.printData"
+  >
+  </app-vein-drop-bottle-card>
+</ng-template>
+
+
+<ng-template [ngIf]="this.showInternalPayment">
+  <app-internal-payment-print
+    [printData]="this.printData"
+  >
+  </app-internal-payment-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showLabBottleCard">
+  <app-lab-bottle-card-print
+    [printData]="this.printData"
+  >
+  </app-lab-bottle-card-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showPrescriptionSlipOne">
+  <app-prescription-slip-mz
+    [printData]="this.printData"
+  >
+  </app-prescription-slip-mz>
+</ng-template>
+
+<ng-template [ngIf]="this.showPrescriptionSlipTwo">
+  <app-prescription-slip-j2
+    [printData]="this.printData"
+  >
+  </app-prescription-slip-j2>
+</ng-template>
+
+<ng-template [ngIf]="this.showPayment">
+  <app-payment-print
+    [printData]="this.printData"
+  >
+  </app-payment-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showPrescriptionOrderList">
+  <app-prescription-order-summary-print
+    [printData]="this.printData"
+  >
+  </app-prescription-order-summary-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showInvoice">
+  <app-invoice-print [printData]="this.printData">
+  </app-invoice-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showHYInvoice">
+  <app-hy-invoice-print [printData]="this.printData">
+
+  </app-hy-invoice-print>
+</ng-template>
+
+
+<ng-template [ngIf]="this.showMedicalRecord">
+  <app-medical-record-print [printData]="this.printData">
+  </app-medical-record-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showPendingPrescriptionList">
+  <app-pending-execution-prescription-print [printData]="this.printData">
+  </app-pending-execution-prescription-print>
+</ng-template>
+
+
+<ng-template [ngIf]="this.showNursingCard">
+  <app-nursing-card-print [printData]="this.printData">
+  </app-nursing-card-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showTreatmentNursingCard">
+  <app-nursing-treatment-card-print [printData]="this.printData">
+  </app-nursing-treatment-card-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showInternalFeeSummary">
+  <app-internal-fee-summary-print [printData]="this.printData">
+  </app-internal-fee-summary-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showReturnOrder">
+  <app-prescription-return-order-print [printData]="this.printData">
+  </app-prescription-return-order-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showChineseMedicineSlip">
+  <app-chinese-medicine-slip [printData]="this.printData">
+  </app-chinese-medicine-slip>
+</ng-template>
+
+<ng-template [ngIf]="this.showSettlementPaymentRequest">
+  <app-print-settlement-payment-request [printData]="this.printData">
+
+  </app-print-settlement-payment-request>
+</ng-template>
+
+<ng-template [ngIf]="this.showChangedPrescriptionList">
+  <app-changed-prescription-list-print [printData]="this.printData">
+
+  </app-changed-prescription-list-print>
+</ng-template>
+
+
+<ng-template [ngIf]="this.showPaymentSummary">
+  <app-payment-summary-print
+    [printData]="this.printData"
+  >
+  </app-payment-summary-print>
+</ng-template>
+
+<ng-template [ngIf]="this.showLabTestRequest">
+  <app-lab-test-request-print
+    [printData]="this.printData"
+  >
+  </app-lab-test-request-print>
+</ng-template>

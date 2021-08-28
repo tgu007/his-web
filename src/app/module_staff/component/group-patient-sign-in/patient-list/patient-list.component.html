@@ -1,0 +1,105 @@
+<div nz-row>
+  <div nz-col nzSpan="4">
+    <button nz-button nzType="primary" (click)="addPatient()">添加病人</button>
+    <!--    <button nz-button nzType="primary" (click)="exportToExcel()">导出到Excel</button>-->
+  </div>
+  <div nz-col nzSpan="4">
+    <input nz-input placeholder="病人姓名" [(ngModel)]="searchPatientName"/>
+  </div>
+  <div nz-col nzSpan="2">
+    <button nz-button nzType="primary" (click)="reloadPatientList()">查询</button>
+  </div>
+  <div nz-col nzSpan="2">
+    <button nz-button nzSize="small" nzType="primary" nzShape="circle" (click)="this.reloadPatientList()"><i nz-icon
+                                                                                                             nzType="reload"></i>
+    </button>
+  </div>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="patientList" nzSize="small"
+              [nzTotal]="totalPatientListCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=reloadPatientList()
+    >
+      <thead>
+      <tr>
+        <th>姓名</th>
+        <th>证件类型</th>
+        <th>证件号码</th>
+        <th>出生日期</th>
+        <th>性别</th>
+        <th>民族</th>
+        <th>已入院</th>
+        <th>编辑病人</th>
+        <th>入院</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let patient of basicTable.data">
+        <td>{{patient.name}}</td>
+        <td>{{patient.idTypeDto.name}}</td>
+        <td>{{patient.idNumber}}</td>
+        <td>{{patient.birthday}}</td>
+        <td>{{patient.genderDto.name}}</td>
+        <td>{{patient.ethnicDto.name}}</td>
+        <td><label nz-checkbox [(ngModel)]="patient.currentSignInId" nzDisabled></label></td>
+        <td>
+          <button nz-button nzType="primary" nzSize="small" (click)="editPatient(patient)"><i nz-icon nzType="edit"></i>
+          </button>
+        </td>
+        <td>
+          <button *ngIf="this.uiPermission.commonComponent.patient.allowSignIn"
+                  nz-button nzType="primary" nzSize="small" (click)="addSignIn(patient)"
+                  [hidden]="patient.currentSignInId">办理入院
+          </button>
+          <button nz-button nzType="primary" nzSize="small" (click)="editSignIn(patient)"
+                  [hidden]="!patient.currentSignInId">入院证
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="patientDetailModalVisible"
+  [nzTitle]="patientDetailModalTitle"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveNewPatient()"
+  nzWidth="1000"
+  nzOkText="保存"
+  nzCancelText="关闭"
+  [nzOkLoading]=this.patientDetailModalVisible.isSaving
+>
+  <app-patient-detail (newPatientSaved)="onNewPatientSaved($event)"></app-patient-detail>
+</nz-modal>
+
+
+<nz-modal
+  [(nzVisible)]="signInModalVisible"
+  nzTitle=入院证
+  (nzOnCancel)="handleCancel()"
+  nzWidth="1000"
+  [nzMaskClosable]="false"
+  [nzFooter]="signInModalFooter"
+>
+  <app-patient-sign-in-detail (newSignInSaved)="onSignInSaved($event)"></app-patient-sign-in-detail>
+</nz-modal>
+
+<ng-template #signInModalFooter>
+  <button nz-button nzType="primary" (click)="handleCancel()">关闭</button>
+  <button nz-button nzType="primary"
+          [nzLoading]=this.newSignInComponent.isSaving
+          *ngIf="this.uiPermission.commonComponent.patient.allowSignIn"
+          (click)="this.saveNewSignIn()">保存
+
+  </button>
+  <button nz-button nzType="primary"
+          *ngIf="this.newSignInComponent && this.newSignInComponent.patientSignIn.uuid"
+          (click)="this.printSignInDetailClicked()">打印
+  </button>
+</ng-template>

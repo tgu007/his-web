@@ -1,0 +1,68 @@
+<form nz-form [formGroup]="itemDetailForm">
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-control>
+          <label nz-checkbox
+                 formControlName="chkEnabled"
+          >启用</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtName">项目名称</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtName"
+                 placeholder="项目名称"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtUom">项目单位</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtUom"
+                 placeholder="项目单位"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="numberPrice">价格</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="请注明价格">
+          <nz-input-number
+            nz-input
+            formControlName="numberPrice"
+            [nzStep]="1"
+            [nzMin]=1
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="numberDefaultQuantity">默认计费数量</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberDefaultQuantity"
+            [nzStep]="1"
+            [nzMin]=1
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>
+

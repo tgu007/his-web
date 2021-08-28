@@ -1,0 +1,153 @@
+<form nz-form [formGroup]="paymentDetailForm">
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtSignInNumber">住院号</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtSignInNumber"
+                 placeholder="住院号"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="txtPatientInfo">病人信息</nz-form-label>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <input nz-input formControlName="txtPatientInfo"
+                 placeholder="病人姓名"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectWard">病区</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24" nzErrorTip="请选择病区">
+          <nz-select
+            nzShowSearch
+            nzPlaceHolder="请选择病区"
+            formControlName="selectWard"
+          >
+            <nz-option nzValue="ICU" nzLabel="ICU"></nz-option>
+            <nz-option nzValue="二病区" nzLabel="二病区"></nz-option>
+            <nz-option nzValue="六病区" nzLabel="六病区"></nz-option>
+            <nz-option nzValue="七病区" nzLabel="七病区"></nz-option>
+            <nz-option nzValue="八病区" nzLabel="八病区"></nz-option>
+            <nz-option nzValue="九病区" nzLabel="九病区"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectPaymentType">费用类型</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24" nzErrorTip="请选择费用类型">
+          <nz-select
+            nzShowSearch
+            nzPlaceHolder="请选择费用类型"
+            formControlName="selectPaymentType"
+          >
+            <nz-option nzValue="0" nzLabel="预交费"></nz-option>
+            <nz-option nzValue="1" nzLabel="退费"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="numberAmount">缴费金额</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-input-number
+            [nzStep]="1000" formControlName="numberAmount"
+            [nzFormatter]="formatterDollar"
+            [nzParser]="parserDollar"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectPaymentMethod">付费方式</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24" nzErrorTip="请选择付费方式">
+          <nz-select
+            nzShowSearch
+            formControlName="selectPaymentMethod"
+          >
+            <nz-option *ngFor="let paymentMethod of this.paymentMethodList" [nzValue]="paymentMethod.id"
+                       [nzLabel]="paymentMethod.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>缴费日期</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24">
+          <nz-date-picker
+            nzShowTime
+            nzFormat="yyyy-MM-dd HH:mm:ss"
+            nzPlaceHolder="选择日期时间"
+            formControlName="datePaymentDate"
+            nzSize="small"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectItem">缴费项目</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24" nzErrorTip="缴费项目">
+          <nz-select
+            nzShowSearch
+            formControlName="selectItem"
+          >
+            <nz-option *ngFor="let item of this.itemList" [nzValue]="item.uuid"
+                       [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col nzSpan="4">
+      <nz-form-item>
+        <nz-form-control>
+          <label nz-checkbox #chkAddAutoFee
+                 formControlName="chkAddAutoFee"
+          >添加自动滚费</label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col nzSpan="18"  [hidden]="!chkAddAutoFee.nzChecked">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="selectItem">付费项目</nz-form-label>
+        <nz-form-control [nzSm]="8" [nzXs]="24" nzErrorTip="请选择付费项目">
+          <nz-select
+            nzShowSearch
+            formControlName="selectItemList"
+            nzMode="multiple"
+            style="width: 250px"
+          >
+            <nz-option *ngFor="let item of this.itemList" [nzValue]="item.uuid"
+                       [nzLabel]="item.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>

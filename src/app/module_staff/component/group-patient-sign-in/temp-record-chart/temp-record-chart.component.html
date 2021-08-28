@@ -1,0 +1,327 @@
+<div nz-row>
+  <button nz-button nzType="primary" nzSize="default" (click)="newTempRecordClicked()"
+          [disabled]="!this.patientSignIn"
+          [hidden]=!this.sessionService.getUserPermission().commonComponent.patientSignIn.nursingRecord.allowEdit
+          style="float: left; margin-left: 10px"
+  >新体温记录
+
+  </button>
+
+  <nz-select [(ngModel)]="selectWeek"
+             (ngModelChange)="loadWeekTempRecord()"
+             style="width:80pt; float: left; margin-left: 10px">
+    <nz-option *ngFor="let week of weekList" [nzValue]="week.index"
+               [nzLabel]="week.label"></nz-option>
+  </nz-select>
+  <button nz-button nzType="primary" (click)="previousWeek()"
+          [disabled]="!this.patientSignIn"
+          style="float: left; margin-left: 10px">
+    上周
+  </button>
+  <button nz-button nzType="primary" (click)="nextWeek()" [disabled]="!this.patientSignIn"
+          style="float: left; margin-left: 10px">
+    下周
+  </button>
+  <button nz-button nzType="primary" (click)="printClicked()" style="float: left; margin-left: 10px">
+    打印
+  </button>
+</div>
+<div nz-row>
+  <ng-template #emptyResult></ng-template>
+  <div nz-row style="font-weight: bold">
+    <nz-descriptions [nzColumn]="{ xxl: 5, xl: 5, lg: 5, md: 1, sm: 1, xs: 1 }"
+                     style="width: 994px; margin-left: 40px"
+    >
+      <nz-descriptions-item
+        nzTitle="姓名">{{this.patientSignIn ? this.patientSignIn.patient.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="科别">{{this.patientSignIn ? this.patientSignIn.departmentTreatment.department.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="病区">{{this.patientSignIn ? this.patientSignIn.currentBed.wardRoom.ward.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="床号">{{this.patientSignIn ? this.patientSignIn.currentBed.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="住院号">{{this.patientSignIn ? this.patientSignIn.signInNumberCode : undefined}}</nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+  <div nz-row>
+    <nz-table #weekTable nzSize="small"
+              [nzBordered]="true"
+              [nzShowPagination]="false"
+              [nzNoResult]=emptyResult
+              style="width: 1061px"
+    >
+      <thead>
+      <tr>
+        <th colspan="2" width="105px">日期</th>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <th
+            colspan="6"
+            width="132"
+            *ngFor="let date of this.chartResponse.weekDateColumnList">
+            {{this.datePipe.transform(date, 'yyyy-MM-dd') }}
+          </th>
+        </ng-template>
+        <th
+          width="25px"
+        ></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td colspan="2">住院日数</td>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <td
+            colspan="6"
+            *ngFor="let day of this.chartResponse.signInDaysList">{{day}}</td>
+        </ng-template>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="2">术后日数</td>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <td
+            colspan="6"
+            *ngFor="let day of this.chartResponse.signInDaysList"></td>
+        </ng-template>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="2">时间</td>
+        <td width="22px" style="color: red">2</td>
+        <td width="22px" style="color: red">6</td>
+        <td width="22px">10</td>
+        <td width="22px">14</td>
+        <td width="22px">18</td>
+        <td width="22px" style="color: red">22</td>
+
+        <td width="22px" style="color: red">2</td>
+        <td width="22px" style="color: red">6</td>
+        <td width="22px">10</td>
+        <td width="22px">14</td>
+        <td width="22px">18</td>
+        <td width="22px" style="color: red">22</td>
+
+        <td width="22px" style="color: red">2</td>
+        <td width="22px" style="color: red">6</td>
+        <td width="22px">10</td>
+        <td width="22px">14</td>
+        <td width="22px">18</td>
+        <td width="22px" style="color: red">22</td>
+
+        <td width="22px" style="color: red">2</td>
+        <td width="22px" style="color: red">6</td>
+        <td width="22px">10</td>
+        <td width="22px">14</td>
+        <td width="22px">18</td>
+        <td width="22px" style="color: red">22</td>
+
+        <td width="22px" style="color: red">2</td>
+        <td width="22px" style="color: red">6</td>
+        <td width="22px">10</td>
+        <td width="22px">14</td>
+        <td width="22px">18</td>
+        <td width="22px" style="color: red">22</td>
+
+        <td width="22px" style="color: red">2</td>
+        <td width="22px" style="color: red">6</td>
+        <td width="22px">10</td>
+        <td width="22px">14</td>
+        <td width="22px">18</td>
+        <td width="22px" style="color: red">22</td>
+
+        <td width="22px" style="color: red">2</td>
+        <td width="22px" style="color: red">6</td>
+        <td width="22px">10</td>
+        <td width="22px">14</td>
+        <td width="22px">18</td>
+        <td width="22px" style="color: red">22</td>
+
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="45">
+          <div echarts [options]="option" (chartInit)="onChartInit($event)"
+               style="height: 1032px; margin: 0; padding: 0"></div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">入量（ml）</td>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <td
+            colspan="6"
+            *ngFor="let data of this.chartResponse.inVolumeList">{{data}}</td>
+        </ng-template>
+        <td></td>
+      </tr>
+      <tr>
+        <td rowspan="3" style="width: 15px">排出量</td>
+        <td>大便（次）</td>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <td
+            colspan="6"
+            *ngFor="let data of this.chartResponse.bowelsNumberList">{{data}}</td>
+        </ng-template>
+        <td></td>
+
+
+      </tr>
+      <tr>
+        <td>尿量（ml）</td>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <td
+            colspan="6"
+            *ngFor="let data of this.chartResponse.urineVolumeList">{{data}}</td>
+        </ng-template>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td>其他</td>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <td
+            colspan="6"
+            *ngFor="let data of this.chartResponse.referenceList">{{data}}</td>
+        </ng-template>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="2">血压（mmhg）</td>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <td
+            colspan="6"
+            *ngFor="let data of this.chartResponse.bloodPressureList">{{data}}</td>
+        </ng-template>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="2">体重（Kg）</td>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <td
+            colspan="6"
+            *ngFor="let data of this.chartResponse.weightList">{{data}}</td>
+        </ng-template>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="2">药物过敏</td>
+        <ng-template [ngIf]="this.chartResponse != undefined">
+          <td
+            colspan="6"
+            *ngFor="let data of this.chartResponse.allergyList">{{data}}</td>
+        </ng-template>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="45">
+          <img style="float: right" height="30" width="500" [src]=this.getSafeAllIcon()>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+
+<!--<div nz-row>-->
+<!--  <div nz-row>-->
+<!--    <nz-descriptions [nzColumn]="{ xxl: 8, xl: 8, lg: 8, md: 1, sm: 1, xs: 1 }">-->
+<!--      <nz-descriptions-item-->
+<!--        nzTitle="姓名">{{this.patientSignIn ? this.patientSignIn.patient.name : undefined}}</nz-descriptions-item>-->
+<!--      <nz-descriptions-item-->
+<!--        nzTitle="科室">{{this.patientSignIn ? this.patientSignIn.departmentTreatment.department.name : undefined}}</nz-descriptions-item>-->
+<!--      <nz-descriptions-item-->
+<!--        nzTitle="住院号">{{this.patientSignIn ? this.patientSignIn.signInNumberCode : undefined}}</nz-descriptions-item>-->
+<!--      <nz-descriptions-item-->
+<!--        nzTitle="入院日期">{{this.patientSignIn ? this.patientSignIn.signInDate : undefined}}</nz-descriptions-item>-->
+<!--      <nz-descriptions-item-->
+<!--        nzTitle="诊断">{{this.patientSignIn ? this.patientSignIn.diagnoseString : undefined}}</nz-descriptions-item>-->
+<!--    </nz-descriptions>-->
+<!--  </div>-->
+<!--  <div nz-row>-->
+<!--    <nz-table #weekTable nzSize="small"-->
+<!--              [nzBordered]="true"-->
+<!--              [nzShowPagination]="false"-->
+<!--              style="width: 994px"-->
+<!--              [nzNoResult]=emptyResult-->
+<!--    >-->
+<!--      <thead>-->
+<!--      <tr>-->
+<!--        <th width="97" >日期</th>-->
+<!--        <ng-template [ngIf]="this.chartResponse != undefined">-->
+<!--          <th width="121"-->
+<!--              *ngFor="let date of this.chartResponse.weekDateColumnList">-->
+<!--            {{this.datePipe.transform(date, 'yyyy-MM-dd') }}-->
+<!--          </th>-->
+<!--        </ng-template>-->
+<!--        <th width="44"></th>-->
+<!--      </tr>-->
+<!--      </thead>-->
+<!--      <tbody>-->
+<!--      <tr>-->
+<!--        <td class="dataRow">住院日数</td>-->
+<!--        <ng-template [ngIf]="this.chartResponse != undefined">-->
+<!--          <td *ngFor="let day of this.chartResponse.signInDaysList">{{day}}</td>-->
+<!--        </ng-template>-->
+<!--        <td></td>-->
+<!--      </tr>-->
+<!--      <tr>-->
+<!--        <td colspan="9" >-->
+<!--          <div echarts [options]="option" (chartInit)="onChartInit($event)"-->
+<!--               style="height: 800px; width: 959px"></div>-->
+<!--        </td>-->
+<!--      </tr>-->
+<!--      <tr class="dataRow">-->
+<!--        <td>入量（ml）</td>-->
+<!--        <ng-template [ngIf]="this.chartResponse != undefined">-->
+<!--          <td *ngFor="let data of this.chartResponse.inVolumeList">{{data}}</td>-->
+<!--        </ng-template>-->
+<!--        <td></td>-->
+<!--      </tr>-->
+<!--      <tr>-->
+<!--        <td class="dataRow">大便（次）</td>-->
+<!--        <ng-template [ngIf]="this.chartResponse != undefined">-->
+<!--          <td *ngFor="let data of this.chartResponse.bowelsNumberList">{{data}}</td>-->
+<!--        </ng-template>-->
+<!--        <td></td>-->
+<!--      </tr>-->
+<!--      <tr class="dataRow">-->
+<!--        <td>尿量（ml）</td>-->
+<!--        <ng-template [ngIf]="this.chartResponse != undefined">-->
+<!--          <td *ngFor="let data of this.chartResponse.urineVolumeList">{{data}}</td>-->
+<!--        </ng-template>-->
+<!--        <td></td>-->
+<!--      </tr>-->
+<!--      <tr>-->
+<!--        <td class="dataRow">其他</td>-->
+<!--        <ng-template [ngIf]="this.chartResponse != undefined">-->
+<!--          <td *ngFor="let data of this.chartResponse.referenceList">{{data}}</td>-->
+<!--        </ng-template>-->
+<!--        <td></td>-->
+<!--      </tr>-->
+<!--      <tr>-->
+<!--        <td class="dataRow">血压（mmhg）</td>-->
+<!--        <ng-template [ngIf]="this.chartResponse != undefined">-->
+<!--          <td *ngFor="let data of this.chartResponse.bloodPressureList">{{data}}</td>-->
+<!--        </ng-template>-->
+<!--        <td></td>-->
+<!--      </tr>-->
+<!--      <tr>-->
+<!--        <td class="dataRow">体重（Kg）</td>-->
+<!--        <ng-template [ngIf]="this.chartResponse != undefined">-->
+<!--          <td *ngFor="let data of this.chartResponse.weightList">{{data}}</td>-->
+<!--        </ng-template>-->
+<!--        <td></td>-->
+<!--      </tr>-->
+<!--      <tr>-->
+<!--        <td class="dataRow">药物过敏</td>-->
+<!--        <ng-template [ngIf]="this.chartResponse != undefined">-->
+<!--          <td *ngFor="let data of this.chartResponse.allergyList">{{data}}</td>-->
+<!--        </ng-template>-->
+<!--        <td></td>-->
+<!--      </tr>-->
+<!--      </tbody>-->
+<!--    </nz-table>-->
+<!--  </div>-->
+<!--</div>-->
+
+<ng-template #emptyResult></ng-template>

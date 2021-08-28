@@ -1,0 +1,94 @@
+<nz-table [nzData]="transferForm.get('transferLines').controls" nzSize="small"
+          nzShowPagination="false"
+>
+  <thead>
+  <tr>
+    <th [hidden]="true"></th>
+    <th>名称</th>
+    <th>规格</th>
+    <th>数量</th>
+    <th>单位</th>
+    <th *ngIf="this.transfer && (this.transfer.transferStatus == '已创建'|| this.transfer.uuid == undefined)"></th>
+  </tr>
+  </thead>
+  <tbody *ngFor="let lineControl of transferForm.get('transferLines').controls; let i= index">
+  <td [hidden]="true">
+    {{lineControl.value.lineId}}
+  </td>
+  <tr [formGroup]="lineControl">
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else itemSelect">
+        {{this.getRowSelectedItemProperty(i, "name")}}
+      </ng-container>
+      <ng-template #itemSelect>
+        <nz-form-control>
+          <app-common-dynamic-select
+            (onSearchEvent)="searchEntity($event, i)"
+            formControlName="selectEntity"
+            [dataList]="this.editCache[i].rowSelectionList.entityList"
+            [totalDataCount]="this.editCache[i].rowSelectionList.entityListTotalCount"
+            [dataColumns]="this.dropDownColumnList"
+            (onSelectedItemChangedEvent)="this.selectedItemChanged($event, i)"
+            [pageCount]=this.editCache[i].rowSelectionList.entityListPageCount
+          >
+          </app-common-dynamic-select>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      {{ this.getRowSelectedItemProperty(i, "warehouseModel")}}
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else quantityInput">
+        {{lineControl.value.numberQuantity}}
+      </ng-container>
+      <ng-template #quantityInput>
+        <nz-form-control [nzSm]="12" [nzXs]="24">
+          <nz-input-number
+            nz-input
+            formControlName="numberQuantity"
+            [nzStep]="1"
+            [nzMin]=1
+          ></nz-input-number>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td>
+      <ng-container *ngIf="!editCache[i].inEdit; else uomSelect">
+        {{lineControl.value.selectUom ? lineControl.value.selectUom.code : undefined}}
+      </ng-container>
+      <ng-template #uomSelect>
+        <nz-form-control>
+          <nz-select
+            nzShowSearch
+            nzServerSearch
+            formControlName="selectUom"
+            [nzShowArrow]="false"
+            [nzFilterOption]="nzFilterOption"
+            [nzDropdownMatchSelectWidth]=false
+            style="width:50px;"
+          >
+            <nz-option *ngFor="let uom of this.editCache[i].rowSelectionList.uomList"
+                       [nzLabel]="uom.code"
+                       [nzValue]="uom"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </ng-template>
+    </td>
+    <td *ngIf="this.transfer && (this.transfer.transferStatus == '已创建'|| this.transfer.uuid == undefined)">
+      <ng-container *ngIf="!editCache[i].inEdit; else inEdit">
+        <button nz-button nzType="primary" (click)="editLineControl(i)"
+                [disabled]="hasTransferConfirmed()"
+        ><i nz-icon nzType="edit"></i></button>
+      </ng-container>
+      <ng-template #inEdit>
+        <button nz-button nzType="primary" (click)="commitLineControl(i)"
+                [disabled]="hasTransferConfirmed()"
+        ><i nz-icon nzType="save"></i></button>
+      </ng-template>
+      <button nz-button nzType="primary" (click)="removeLineControl(i)"
+              [disabled]="hasTransferConfirmed()"><i nz-icon nzType="delete"></i></button>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

@@ -1,0 +1,65 @@
+<div nz-row>
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   style="width: 300px; float: left;
+  margin-right: 10px;"></nz-range-picker>
+
+  <input nz-input placeholder="病人姓名/住院号" [(ngModel)]="searchCode"
+         style="width: 150px; float: left;
+  margin-right: 10px;">
+
+  <input nz-input placeholder="药品名称/搜索码" [(ngModel)]="medicineSearchCode"
+         style="width: 250px; float: left;
+  margin-right: 10px;">
+
+  <label nz-checkbox [(ngModel)]="this.filterPendingUploadOrder"
+         style="float: left;margin-left: 10px;">待传发药记录</label>
+
+  <button nz-button (click)="loadProcessedOrderList()">检索</button>
+</div>
+<div nz-row>
+  <nz-table #basicTable [nzData]="processedOrderList"
+            nzSize="small"
+            [nzTotal]="totalListCount"
+            [nzFrontPagination]=false
+            [(nzPageIndex)]="currentPageIndex"
+            [nzPageSize]="tablePageSize"
+            (nzPageIndexChange)=this.loadProcessedOrderList()
+  >
+    <thead>
+    <tr>
+      <th>发药单号</th>
+      <th>发药日期</th>
+      <th>是否发药</th>
+      <th>病人</th>
+      <th>药品名称</th>
+      <th>规格</th>
+      <th>厂家</th>
+      <th>价格</th>
+      <th>用法</th>
+      <th>发药数量</th>
+      <th>退药日期</th>
+      <th>医保上传</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let orderLine of basicTable.data">
+      <td>{{orderLine.orderNumber}}</td>
+      <td>{{orderLine.processedDate}}</td>
+      <td>{{orderLine.status}}</td>
+      <td>{{orderLine.patientName}}</td>
+      <td>{{orderLine.orderLineCommon.medicineName}}</td>
+      <td>{{orderLine.orderLineCommon.pharmacyModel}}</td>
+      <td>{{orderLine.orderLineCommon.manufacturer}}</td>
+      <td>{{orderLine.orderLineCommon.priceInfo}}</td>
+      <td>{{orderLine.orderLineCommon.useMethodInfo}}</td>
+      <td>{{orderLine.orderQuantityInfo}}</td>
+      <td>{{orderLine.returnOrderProcessedDate}}</td>
+      <td
+        nz-popover
+        [nzPopoverTitle]="orderLine.uploadStatus == '上传出错'?'错误信息':null"
+        [nzPopoverContent]="orderLine.uploadStatus =='上传出错'?orderLine.uploadError:null"
+      >{{orderLine.uploadStatus}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

@@ -1,0 +1,44 @@
+<div nz-row>
+  <div nz-col nzSpan="12">
+    <input nz-input placeholder="病人姓名/住院号" [(ngModel)]="searchCode"
+           style="width: 200px ;float: left;
+  margin-right: 10px;"
+    />
+
+    <button nz-button nzType="primary" (click)="this.loadPatientSignInList()"
+            style="float: left;margin-left: 10px"
+    >查询
+    </button>
+  </div>
+</div>
+
+<nz-table #basicTable [nzData]="signInList" nzSize="small"
+          [nzTotal]="totalPatientSignInListCount"
+          [nzFrontPagination]=false
+          [(nzPageIndex)]="currentPageIndex"
+          [nzPageSize]="tablePageSize"
+          (nzPageIndexChange)=this.loadPatientSignInList()
+>
+  <thead>
+  <tr>
+    <th>病人姓名</th>
+    <th>住院号码</th>
+    <th>所属科室</th>
+    <th>入院日期</th>
+    <th>当前床位</th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let patientSignIn of basicTable.data">
+    <td>{{patientSignIn.patientName}}</td>
+    <td>{{patientSignIn.signInNumber}}</td>
+    <td>{{patientSignIn.department}}</td>
+    <td>{{patientSignIn.signInDate}}</td>
+    <td>{{patientSignIn.currentBed}}</td>
+    <td>
+      <button nz-button nzSize="small" (click)='signInSelected(patientSignIn)'>分配</button>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

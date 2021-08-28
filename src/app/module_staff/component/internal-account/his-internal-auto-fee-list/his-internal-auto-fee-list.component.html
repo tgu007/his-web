@@ -1,0 +1,58 @@
+<div nz-row>
+  <button
+    nz-button nzType="primary" (click)="initAutoFeeDetailModal()"
+    style=" float: left; margin-left: 10px;">添加自动计费
+  </button>
+
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="autoFeeList" nzSize="small" style="background-color:white"
+              [nzTotal]="totalDataCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=this.loadAutoFeeList()
+    >
+      <thead>
+      <tr>
+        <th>收费项目</th>
+        <th>收费单位</th>
+        <th>每日收费次数</th>
+        <th>创建人</th>
+        <th>创建时间</th>
+        <th>启用</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data" nzShowRowSelection>
+        <td>{{data.item.name}}</td>
+        <td>{{data.item.uom}}</td>
+        <td>{{data.quantity}}</td>
+        <td>{{data.createdBy}}</td>
+        <td>{{data.whenCreated}}</td>
+        <td><label nz-checkbox [(ngModel)]="data.enabled" nzDisabled></label></td>
+        <td>
+          <button
+            nz-button nzSize="small" nzType="primary" (click)="initAutoFeeDetailModal(data)">修改</button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="autoFeeDetailModalVisible"
+  nzTitle=自动收费项目设置
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveAutoFee()"
+  nzWidth="1000"
+  nzOkText="保存"
+  nzCancelText="关闭"
+  [nzOkLoading]="this.autoFeeDetailComponent.isSaving"
+>
+  <app-his-internal-auto-fee-detail  [patientSignIn]="this.patientSignIn" (autoFeeSavedEvent) = "onAutoFeeSaved($event)"></app-his-internal-auto-fee-detail>
+</nz-modal>

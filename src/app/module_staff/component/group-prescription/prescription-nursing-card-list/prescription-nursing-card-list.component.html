@@ -1,0 +1,379 @@
+<nz-layout>
+  <nz-sider nzCollapsible
+            [(nzCollapsed)]="this.collapsed"
+            nzTheme="light"
+            [nzCollapsedWidth]="30"
+            [nzTrigger]="null"
+  >
+
+    <app-patient-select [hidden]="this.collapsed" [selectAll]="true" [loadAllOnInit]=false></app-patient-select>
+  </nz-sider>
+  <i
+    nz-icon
+    [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+    (click)="this.collapsed = !this.collapsed"
+  ></i>
+  <nz-layout class="inner-layout">
+    <div nz-row>
+      <nz-select
+        nzShowSearch
+        nzPlaceHolder="选择执卡片类型"
+        [(ngModel)]="selectCardType"
+        style="width: 150px"
+        (ngModelChange)="this.loadCardList()"
+      >
+        <nz-option *ngFor="let cardType of this.cardTypeList" [nzValue]="cardType"
+                   [nzLabel]="cardType.label"></nz-option>
+      </nz-select>
+      <nz-date-picker
+        nzFormat="yyyy-MM-dd"
+        nzPlaceHolder="选择日期"
+        [(ngModel)]="dateCardDate"
+        (ngModelChange)="this.loadCardList()"
+        [nzAllowClear]="false"
+      ></nz-date-picker>
+      <ng-template [ngIf]="this.selectCardType && this.selectCardType.displayFormat =='card'">
+        <nz-input-number
+          nz-input
+          [(ngModel)]="positionIndex"
+          [nzStep]="1"
+          [nzMin]=1
+          nzPlaceHolder="空白位置"
+          style=" margin-left: 10px; width:150px"
+        ></nz-input-number>
+      </ng-template>
+      <button nz-button nzType="primary" (click)="printClicked()"
+              style=" margin-left: 10px;"
+      >
+        打印
+      </button>
+
+    </div>
+    <div nz-row>
+      <nz-spin [nzSpinning]="this.isLoading">
+        <ng-container *ngIf="this.selectCardType && this.selectCardType.displayFormat =='card'; else tableFormat">
+          <ng-container *ngFor="let patientCard of this.cardList; let i = index">
+            <app-prescription-nursing-card-detail [patientCard]="patientCard"
+                                                  [cardDate]="this.dateCardDate"></app-prescription-nursing-card-detail>
+          </ng-container>
+        </ng-container>
+        <ng-template #tableFormat>
+          <ng-template [ngIf]=" this.selectCardType && this.selectCardType.name =='treatment'">
+            <nz-table #basicTable [nzData]="cardList" nzSize="small"
+                      [nzShowPagination]=false
+            >
+              <thead>
+              <tr>
+                <th nzWidth="30px"></th>
+                <th>项目名称</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-template ngFor let-treatmentCard [ngForOf]="basicTable.data">
+                <tr>
+                  <td
+                    [nzShowExpand]="true"
+                    [(nzExpand)]="mapOfTreatmentExpandData[treatmentCard.treatmentId]"
+                  ></td>
+                  <td>  {{treatmentCard.treatmentName}}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                <tr [nzExpand]="mapOfTreatmentExpandData[treatmentCard.treatmentId]"
+                >
+                  <th></th>
+                  <th>病人</th>
+                  <th>数量</th>
+                  <th>频次</th>
+                  <th>首日</th>
+                  <th>备注</th>
+                  <th>签名</th>
+                  <th>签名</th>
+                  <th>签名</th>
+                  <th>签名</th>
+                </tr>
+                <tr [nzExpand]="mapOfTreatmentExpandData[treatmentCard.treatmentId]"
+                    *ngFor="let patientTreatmentCard of treatmentCard.patientList">
+                  <td></td>
+                  <td>
+                    {{patientTreatmentCard.patientInfo}}
+                  </td>
+                  <td>
+                    {{patientTreatmentCard.quantityInfo}}
+                  </td>
+                  <td>
+                    {{patientTreatmentCard.frequency}}
+                  </td>
+                  <td>
+                    <label nz-checkbox [(ngModel)]="patientTreatmentCard.firstDay" nzDisabled>
+                      {{patientTreatmentCard.firstDay ? patientTreatmentCard.firstDayQuantityInfo + '次' : ''}}
+                    </label>
+                  </td>
+                  <td>
+                    {{patientTreatmentCard.reference}}
+                  </td>
+                  <td>
+                    <ng-template [ngIf]="!patientTreatmentCard.signatureOne">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('医嘱', undefined, 1, patientTreatmentCard, 'signatureOne',patientTreatmentCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="patientTreatmentCard.signatureOne">
+                      {{patientTreatmentCard.signatureOne.signedBy + patientTreatmentCard.signatureOne.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == patientTreatmentCard.signatureOne.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(patientTreatmentCard.signatureOne,  patientTreatmentCard, undefined, 'signatureOne')">
+                        删除
+                      </button>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <ng-template [ngIf]="!patientTreatmentCard.signatureTwo">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('医嘱', undefined, 2, patientTreatmentCard, 'signatureTwo',patientTreatmentCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="patientTreatmentCard.signatureTwo">
+                      {{patientTreatmentCard.signatureTwo.signedBy + patientTreatmentCard.signatureTwo.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == patientTreatmentCard.signatureTwo.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(patientTreatmentCard.signatureTwo,  patientTreatmentCard, undefined, 'signatureTwo')">
+                        删除
+                      </button>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <ng-template [ngIf]="!patientTreatmentCard.signatureThree">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('医嘱', undefined, 3, patientTreatmentCard, 'signatureThree',patientTreatmentCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="patientTreatmentCard.signatureThree">
+                      {{patientTreatmentCard.signatureThree.signedBy + patientTreatmentCard.signatureThree.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == patientTreatmentCard.signatureThree.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(patientTreatmentCard.signatureThree, patientTreatmentCard, undefined, 'signatureThree')">
+                        删除
+                      </button>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <ng-template [ngIf]="!patientTreatmentCard.signatureFour">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('医嘱', undefined, 4, patientTreatmentCard, 'signatureFour',patientTreatmentCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="patientTreatmentCard.signatureFour">
+                      {{patientTreatmentCard.signatureFour.signedBy + patientTreatmentCard.signatureFour.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == patientTreatmentCard.signatureFour.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(patientTreatmentCard.signatureFour,  patientTreatmentCard, undefined, 'signatureFour')">
+                        删除
+                      </button>
+                    </ng-template>
+                  </td>
+                </tr>
+              </ng-template>
+              </tbody>
+            </nz-table>
+          </ng-template>
+          <ng-template [ngIf]=" this.selectCardType &&  this.selectCardType.name !='treatment'">
+            <nz-table #basicTable [nzData]="cardList" nzSize="small"
+                      [nzShowPagination]=false
+
+            >
+              <thead>
+              <tr>
+                <th nzWidth="30px"></th>
+                <th>病人</th>
+                <th>床位</th>
+                <th [hidden]="this.selectCardType && this.selectCardType.name == 'treatment'">摆药签名</th>
+                <th>复核签名</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-template ngFor let-patientCard [ngForOf]="basicTable.data">
+                <tr>
+                  <td
+                    [nzShowExpand]="true"
+                    [(nzExpand)]="mapOfExpandData[patientCard.patientSignInId]"
+                  ></td>
+                  <td>{{patientCard.patientName}}</td>
+                  <td>{{patientCard.bedInfo}}</td>
+                  <td [hidden]="this.selectCardType && this.selectCardType.name == 'treatment'">
+                    <ng-template [ngIf]="!patientCard.signatureOne">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('卡片', patientCard, 1, undefined, 'signatureOne', patientCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="patientCard.signatureOne ">
+                      {{patientCard.signatureOne.signedBy + patientCard.signatureOne.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == patientCard.signatureOne.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(patientCard.signatureOne,  undefined, patientCard, 'signatureOne')">删除
+                      </button>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <ng-template [ngIf]="!patientCard.signatureTwo">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('卡片', patientCard, 2, undefined, 'signatureTwo',patientCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="patientCard.signatureTwo">
+                      {{patientCard.signatureTwo.signedBy + patientCard.signatureTwo.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == patientCard.signatureTwo.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(patientCard.signatureTwo,  undefined, patientCard, 'signatureTwo')">删除
+                      </button>
+                    </ng-template>
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                <tr [nzExpand]="mapOfExpandData[patientCard.patientSignInId]"
+                >
+                  <th></th>
+                  <th>名称</th>
+                  <th [hidden]="patientCard.hideServeInfo">每次剂量</th>
+                  <th [hidden]="patientCard.hideQuantityInfo">数量</th>
+                  <th [hidden]="patientCard.hideDropSpeed">滴速</th>
+                  <th [hidden]="patientCard.hideUseMethod">途径</th>
+                  <th>频次</th>
+                  <th>首日</th>
+                  <th [hidden]="patientCard.hideSelfMedicine">自备药</th>
+                  <th>备注</th>
+                  <th>签名</th>
+                  <th>签名</th>
+                  <th>签名</th>
+                  <th>签名</th>
+                </tr>
+                <tr [nzExpand]="mapOfExpandData[patientCard.patientSignInId]"
+                    *ngFor="let detail of patientCard.nursingCardRespDtoList">
+                  <td></td>
+                  <td>
+                    <nz-tag *ngIf="detail.groupId" [nzColor]="detail.groupColour"
+                    >组{{detail.groupIndex}}
+                    </nz-tag>
+                    {{detail.entityName}}</td>
+                  <td [hidden]="patientCard.hideServeInfo">{{detail.serveInfo}}</td>
+                  <td [hidden]="patientCard.hideQuantityInfo">{{detail.quantityInfo}}</td>
+                  <td [rowSpan]="detail.rowSpan"
+                      [hidden]="patientCard.hideDropSpeed || detail.hideColumn">{{detail.dropSpeed}}</td>
+                  <td [rowSpan]="detail.rowSpan"
+                      [hidden]="patientCard.hideUseMethod || detail.hideColumn">{{detail.useMethod}}</td>
+                  <td [rowSpan]="detail.rowSpan" [hidden]="detail.hideColumn">{{detail.frequency}}</td>
+                  <td><label nz-checkbox [(ngModel)]="detail.firstDay" nzDisabled>
+                    {{detail.firstDay ? detail.firstDayQuantityInfo + '次' : ''}}
+                  </label></td>
+                  <td [hidden]="patientCard.hideSelfMedicine"><label nz-checkbox [(ngModel)]="detail.selfMedicine"
+                                                                     nzDisabled></label></td>
+                  <td>{{detail.reference}}</td>
+                  <td>
+                    <ng-template [ngIf]="!detail.signatureOne">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('医嘱', patientCard, 1, detail, 'signatureOne',patientCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="detail.signatureOne">
+                      {{detail.signatureOne.signedBy + detail.signatureOne.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == detail.signatureOne.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(detail.signatureOne,  detail, undefined, 'signatureOne')">删除
+                      </button>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <ng-template [ngIf]="!detail.signatureTwo">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('医嘱', patientCard, 2, detail, 'signatureTwo',patientCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="detail.signatureTwo">
+                      {{detail.signatureTwo.signedBy + detail.signatureTwo.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == detail.signatureTwo.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(detail.signatureTwo,  detail, undefined, 'signatureTwo')">删除
+                      </button>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <ng-template [ngIf]="!detail.signatureThree">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('医嘱', patientCard, 3, detail, 'signatureThree',patientCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="detail.signatureThree">
+                      {{detail.signatureThree.signedBy + detail.signatureThree.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == detail.signatureThree.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(detail.signatureThree, detail, undefined, 'signatureThree')">删除
+                      </button>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <ng-template [ngIf]="!detail.signatureFour">
+                      <button nz-button nzSize="small" nzType="primary"
+                              (click)="signCard('医嘱', patientCard, 4, detail, 'signatureFour',patientCard.patientSignInId)">
+                        签名
+                      </button>
+                    </ng-template>
+                    <ng-template [ngIf]="detail.signatureFour">
+                      {{detail.signatureFour.signedBy + detail.signatureFour.signedTime}}
+                      <button
+                        *ngIf="this.sessionService.loginUser.accountId == detail.signatureFour.signedById"
+                        nz-button nzSize="small" nzType="primary"
+                        (click)="cancelSignature(detail.signatureFour,  detail, undefined, 'signatureFour')">删除
+                      </button>
+                    </ng-template>
+                  </td>
+                </tr>
+              </ng-template>
+              </tbody>
+            </nz-table>
+          </ng-template>
+        </ng-template>
+      </nz-spin>
+
+    </div>
+
+  </nz-layout>
+</nz-layout>

@@ -1,0 +1,367 @@
+<nz-layout>
+
+  <nz-sider nzCollapsible
+            [(nzCollapsed)]="this.collapsed"
+            nzTheme="light"
+            [nzCollapsedWidth]="30"
+            [nzTrigger]="null"
+            [nzWidth]="300"
+  >
+    <div nz-row>
+      <button
+        *ngIf="this.hasEditTemplatePermission(this.selectedMedicalRecordType)"
+        nz-button nzType="primary" (click)="this.copyLastSignInMedicalRecord()"
+        style="float: left; margin-left: 10px"
+        [nzLoading]="this.isBusy"
+        [hidden]="this.collapsed"
+      >复制上次入院病历
+      </button>
+    </div>
+    <div nz-row>
+      <ul nz-menu nzMode="inline" [hidden]="this.collapsed">
+        <nz-spin [nzSpinning]="this.isSiderBusy">
+          <div *ngFor="let medicalRecordType of this.medicalRecordTypeList">
+            <ng-template [ngIf]=!medicalRecordType.fixedFormat>
+              <div nz-col nzSpan="3" style="margin-top: 15px">
+                <nz-badge [nzCount]="medicalRecordType.recordCount" [nzStyle]="{ backgroundColor: '#52c41a' }">
+                </nz-badge>
+              </div>
+              <div nz-col nzSpan="21" style="float:left;padding-left: 0px;">
+                <li
+                  [nzDisabled]="this.inEdit"
+                  nz-submenu
+                  [nzTitle]="medicalRecordType.name"
+                  [(nzOpen)]="medicalRecordType.expand"
+                  (nzOpenChange)="medicalRecordTypeExpandChanged(medicalRecordType)"
+                >
+                  <div nz-row>
+                    <button nz-button nzType="primary" nzSize="small"
+                            (click)="this.showTemplateSelection(medicalRecordType)"
+                            [disabled]="this.inEdit"
+                            [hidden]=!this.hasEditTemplatePermission(medicalRecordType)
+                            style="margin-left: 20px;"
+
+                    >新病历
+                    </button>
+                  </div>
+                  <ul nz-menu nzMode="vertical">
+                    <ng-container *ngFor="let medicalRecord of medicalRecordType.medicalRecordList">
+                      <div nz-row style="width: 500px">
+                        <button
+                          nz-button nzType="primary" nzSize="small"
+                          [disabled]="this.inEdit"
+                          style="display: inline; margin-left: 0px"
+                          nz-popconfirm
+                          nzTitle="删除后无法恢复，确认删除?"
+                          nzPopconfirmPlacement="bottom"
+                          (nzOnConfirm)="this.deleteMedicalRecord(medicalRecord.uuid, medicalRecordType)"
+                          [hidden]=!this.hasEditTemplatePermission(medicalRecordType)
+                        >
+                          <i nz-icon nzType="delete"></i>
+                        </button>
+                        <li nz-menu-item
+                            [nzDisabled]="this.inEdit"
+                            (click)="medicalRecordClicked(medicalRecord, medicalRecordType)"
+                            style="display: inline;"
+                        >
+                          <i nz-icon nzType="file-text"></i>
+                          <strong>{{medicalRecord.name}}</strong>
+                        </li>
+                      </div>
+                    </ng-container>
+                  </ul>
+                </li>
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]=medicalRecordType.fixedFormat>
+              <div nz-col nzSpan="3" style="padding-top: 30px;">
+              </div>
+              <div nz-col nzSpan="21" style="padding-left: 0px">
+                <li nz-menu-item
+                    *ngFor="let medicalRecord of medicalRecordType.medicalRecordList"
+                    [nzDisabled]="this.inEdit"
+                    (click)="medicalRecordClicked(medicalRecord, medicalRecordType)"
+                    style="display: inline; padding-left: 60px"
+                >
+                  <i nz-icon nzType="table" *ngIf="medicalRecordType.fixedFormat"></i>
+                  <strong>{{medicalRecord.name}}</strong>
+                </li>
+              </div>
+            </ng-template>
+          </div>
+        </nz-spin>
+      </ul>
+    </div>
+  </nz-sider>
+
+  <i
+    nz-icon
+    [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+    (click)="this.collapsed = !this.collapsed"
+  ></i>
+  <nz-layout class="inner-layout">
+    <nz-spin [nzSpinning]="this.isBusy">
+      <div *ngIf="this.selectedMedicalRecordType && !this.selectedMedicalRecordType.fixedFormat">
+        <nz-anchor style="background-color: black">
+          <div style="background-color: aliceblue">
+            <div nz-row>
+              <div nz-col nzSpan="21" [nzOffset]="this.collapsed?3:0">
+                <ng-template
+                  [ngIf]=this.hasEditTemplatePermission(this.selectedMedicalRecordType)>
+                  <button
+                    nz-button nzType="primary" (click)="this.startEdit()"
+                    [disabled]="this.inEdit || !this.selectedDocument"
+                    style="float: left; margin-left: 10px"
+                  >编辑
+                  </button>
+
+
+                  <button nz-button nzType="primary"
+                          [disabled]="!(this.inEdit)"
+                          (click)="this.saveDocumentClicked()"
+                          style="float: left; margin-left: 10px"
+                  >
+                    {{this.selectedDocument ? this.selectedDocument.uuid ? '更新' : '创建' : '保存'}}{{this.documentType ? this.documentType == 'medicalRecord' ? '病历' : '模板' : '' }}
+                  </button>
+
+                  <button nz-button nzType="primary" (click)="cancelEditClicked()"
+                          [disabled]="!(this.inEdit)"
+                          style="float: left; margin-left: 10px"
+                  >取消修改
+                  </button>
+
+                  <nz-form-label
+                    nzFor="txtMedicalRecordName"
+                    style=" float: left; margin-left: 10px;"
+                  >  {{this.documentType ? this.documentType == 'medicalRecord' ? '病历' : '模板' : '' }}文档名
+                  </nz-form-label>
+                  <input
+                    [disabled]="!this.selectedMedicalRecordType"
+                    nz-input
+                    [(ngModel)]="this.txtDocumentName"
+                    style="width: 300px; float: left;"
+                  />
+
+                  <button
+                    nz-button nzType="primary" (click)="this.newTimeTag()"
+                    [disabled]="!(this.inEdit) ||!this.selectedDocument.uuid"
+                    [nzLoading]="this.addingTag"
+                    style="float: left; margin-left: 10px"
+                  >时间戳
+                  </button>
+
+
+                </ng-template>
+                <button
+                  nz-button nzType="primary" (click)="this.printClicked()"
+                  [disabled]="!this.selectedDocument"
+                  style="float: left; margin-left: 10px"
+                >打印
+                </button>
+              </div>
+
+
+              <!--          <button nz-button nzType="primary" (click)="this.execuEditorCommand('preview')"-->
+              <!--                  style="float: left; margin-left: 10px"-->
+              <!--          >全屏浏览-->
+              <!--          </button>-->
+
+              <!--          <button nz-button nzType="primary" (click)="this.executeEditorCommand('print')"-->
+              <!--                  style="float: left; margin-left: 10px"-->
+              <!--          >打印-->
+              <!--          </button>-->
+
+
+            </div>
+            <div nz-row>
+              <div nz-col nzSpan="3" *ngIf="this.collapsed">
+                <div style="background-color: aliceblue">
+                  <div nz-row>
+                    <nz-table #tagTable [nzData]="this.tagList" nzSize="small"
+                              [nzPageSize]="tablePageSize"
+                    >
+                      <thead>
+                      <tr>
+                        <th>时间戳</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <ng-template ngFor let-data [ngForOf]="tagTable.data">
+                        <tr>
+                          <td>{{ this.datePipe.transform(data.tagTime, 'yyyy-MM-dd HH:mm')}}
+                            <button nz-button nzType="primary" nzSize="small" (click)="deleteTag(data)"><i nz-icon
+                                                                                                           nzType="delete"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </ng-template>
+                      </tbody>
+                    </nz-table>
+                  </div>
+                </div>
+              </div>
+
+              <div nz-col nzSpan="15" style="margin-left: 10px; float: left">
+                <ueditor
+                  [loadingTip]="'加载中……'"
+                  [config]="this.getConfig()"
+                  (onReady)="onReady($event)"
+                ></ueditor>
+              </div>
+
+              <div nz-col nzSpan="5" [nzOffset]="!this.collapsed?3:0">
+                <div style="background-color: aliceblue">
+                  <div nz-row>
+                    <input nz-input [(ngModel)]="filterDescription"
+                           placeholder="搜索"
+                           style="float: left;margin-right: 10px; width:150px"
+                           (ngModelChange)="this.loadPatientPrescription()"
+                    />
+
+                    <button nz-button nzSize="small" nzType="primary" nzShape="circle"
+                            (click)="this.loadPatientPrescription()"
+                            style=" float: left;"
+                    ><i
+                      nz-icon nzType="reload"></i>
+                    </button>
+
+                    <label nz-checkbox [(ngModel)]="this.oneOff"
+                           (ngModelChange)="this.loadPatientPrescription()"
+                           style="float: left;margin-left: 10px;">临时</label>
+
+                    <label nz-checkbox [(ngModel)]="this.orderDesc"
+                           (ngModelChange)="this.loadPatientPrescription()"
+                           style="float: left;margin-left: 10px;">排序</label>
+                  </div>
+                  <nz-alert nzType="info" nzMessage="双击列插入到病历中" nzShowIcon></nz-alert>
+                  <div nz-row>
+                    <nz-spin [nzSpinning]="this.prescriptionLoading">
+                      <nz-table #basicTable [nzData]="prescriptionList" nzSize="small"
+                                [nzPageSize]="tablePageSize"
+                                (nzPageIndexChange)=this.loadPatientPrescription()
+                                nzPaginationPosition="top"
+                      >
+                        <thead>
+                        <tr>
+                          <th
+                          >名称
+                          </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-template ngFor let-data [ngForOf]="basicTable.data">
+                          <tr (dblclick)="this.insertPrescription(data)">
+                            <td
+                              [nzTooltipTitle]="'开嘱日期：' + data.startDate"
+                              nz-tooltip
+                            >{{data.description}}</td>
+                          </tr>
+                        </ng-template>
+                        </tbody>
+                      </nz-table>
+                    </nz-spin>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </nz-anchor>
+      </div>
+      <div *ngIf="!this.selectedMedicalRecordType || this.selectedMedicalRecordType.fixedFormat">
+        <app-medical-record-main [medicalRecord]=this.fixedFormatMedicalRecord
+                                 [patientSignIn]=this.patientSignIn
+                                 (formPristineChanged)="onMainMedicalRecordInEditChanged($event)"
+        ></app-medical-record-main>
+      </div>
+    </nz-spin>
+  </nz-layout>
+</nz-layout>
+
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="templateSelectionModalVisible"
+  nzTitle="选择模板"
+  (nzOnCancel)="cancelTemplateSelection()"
+  nzWidth="600"
+  nzCancelText="关闭"
+  [nzOkText]=null
+>
+  <div nz-row>
+    <button nz-button nzType="primary" nzSize="small"
+            (click)="this.newEmptyMedicalRecord()"
+            style="margin-left: 20px;"
+
+    >新建空白病历
+    </button>
+  </div>
+  <div nz-row>
+    <nz-spin [nzSpinning]="this.isBusy">
+      <nz-table #basicTable [nzData]="this.modalTemplateList" nzSize="small" style="background-color:white"
+      >
+        <thead>
+        <tr>
+          <th>模板名称</th>
+          <th>模板类型</th>
+          <th>制作人</th>
+          <th></th>
+          <!--          <th></th>-->
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data">
+          <td>{{data.name}}</td>
+          <td>{{data.permissionType}}</td>
+          <td>{{data.writer}}</td>
+          <td>
+            <button nz-button nzType="primary" nzSize="small" (click)="this.newRecordFromTemplate(data)">选择
+            </button>
+          </td>
+          <!--          <td>-->
+          <!--            <button nz-button nzType="primary" nzSize="small"-->
+          <!--                    (click)="this.editMedicalRecordTemplate(data)"-->
+          <!--                    >修改模板-->
+          <!--            </button>-->
+          <!--          </td>-->
+        </tr>
+        </tbody>
+      </nz-table>
+    </nz-spin>
+  </div>
+</nz-modal>
+
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="showLastSignInRecordList"
+  nzTitle="选择要复制的病历"
+  (nzOnCancel)="cancelClone()"
+  nzWidth="600"
+  nzCancelText="取消"
+  [nzOkText]="'复制'"
+  (nzOnOk)="this.cloneClicked()"
+  [nzOkLoading]="this.isBusy"
+  *ngIf="this.lastSignInRecordList"
+>
+  <div nz-row>
+    <nz-table #basicTable [nzData]="this.lastSignInRecordList" nzSize="small" style="background-color:white"
+    >
+      <thead>
+      <tr>
+        <th></th>
+        <th>病历名称</th>
+        <th>病历类型</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.uuid]"></td>
+        <td>{{data.name}}</td>
+        <td>{{data.typeName}}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</nz-modal>

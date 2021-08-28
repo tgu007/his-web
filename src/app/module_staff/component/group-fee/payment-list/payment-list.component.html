@@ -1,0 +1,101 @@
+<button nz-button nzType="primary" (click)="newPaymentClicked()">新增缴费</button>
+<div nz-row>
+  <nz-descriptions [nzColumn]="{ xxl: 3, xl: 6, lg: 6, md: 6, sm: 1, xs: 1 }">
+    <nz-descriptions-item nzTitle="费用总额">
+      {{this.patientSignIn ? this.patientSignIn.totalFeeAmount : undefined}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="报销总额">
+      {{this.patientSignIn ? this.patientSignIn.coveredFeeAmount : undefined}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="自费总额">
+      {{this.patientSignIn ? this.patientSignIn.selfPayFeeAmount : undefined}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="未上传费用">
+      {{this.patientSignIn ? this.patientSignIn.pendingFeeAmount : undefined}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="已付金额">
+      {{this.patientSignIn ? this.patientSignIn.totalPaidAmount : undefined}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="余额">
+      {{this.patientSignIn ? this.patientSignIn.accountBalance : undefined}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</div>
+<div nz-row>
+  <nz-table #basicTable [nzData]="paymentList"
+            [nzTotal]="totalDataCount"
+            [nzFrontPagination]=false
+            [(nzPageIndex)]="currentPageIndex"
+            [nzPageSize]="tablePageSize"
+            (nzPageIndexChange)=reloadPaymentList()
+            nzSize="small"
+            style="background-color:white"
+  >
+    <thead>
+    <tr>
+      <th>类型</th>
+      <th>状态</th>
+      <th>收费人</th>
+      <th>日期</th>
+      <th>收据号</th>
+      <th>原始收据号</th>
+      <th>金额</th>
+      <th>金额中文</th>
+      <th>支付方式</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let payment of basicTable.data">
+      <td>
+        <p [ngStyle]=this.getStatusColour(payment)>
+          {{payment.paymentType}}
+        </p>
+      </td>
+      <td>{{payment.status}}</td>
+      <td>{{payment.whoCreated}}</td>
+      <td>{{payment.whenCreated}}</td>
+      <td>{{payment.paymentNumber}}</td>
+      <td>{{payment.originPaymentNumber}}</td>
+      <td>
+        <p [ngStyle]=this.getStatusColour(payment)>
+          {{payment.amount}}
+        </p>
+      </td>
+      <td>
+        <p [ngStyle]=this.getStatusColour(payment)>
+          {{this.feeService.toChineseNumeral(payment.amount)}}
+        </p>
+      </td>
+      <td>{{payment.paymentMethod.name}}</td>
+      <td>
+        <button *ngIf="payment.status =='待缴费' || payment.status =='待退费'"
+                nz-button nzSize="small" nzType="primary" (click)="confirmPayment(payment)">确认
+        </button>
+        <button *ngIf="payment.status =='待缴费' || payment.status =='待退费'"
+                nz-button nzSize="small" nzType="primary" (click)="cancelPayment(payment)">取消
+        </button>
+        <button *ngIf="payment.status =='已缴费'"
+                nz-button nzSize="small" nzType="primary" (click)="refundPayment(payment)">退费
+        </button>
+        <button *ngIf="payment.status =='已缴费'|| payment.status =='已退费'"
+                nz-button nzSize="small" nzType="primary" (click)="printPayment(payment)">打印
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="newPaymentModalVisible"
+  nzTitle="新增缴费"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveNewPayment()"
+  nzWidth="1000"
+  nzOkText="保存"
+  nzCancelText="关闭"
+>
+  <app-payment-detail (newPaymentSavedEvent)="onNewPaymentSaved()"
+                      [patientSignInId]="this.patientSignIn.uuid"></app-payment-detail>
+</nz-modal>

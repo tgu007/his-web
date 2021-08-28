@@ -1,0 +1,38 @@
+<div class="page">
+  <ng-template #emptyResult></ng-template>
+  <div nz-row>
+    <p style="margin-left: 20px; float:left;">退药单号：{{this.printData.order.origin.title}}</p>
+    <p style="margin-left: 20px; float:left;">{{this.printData.order.origin.wardName}}</p>
+    <p style="margin-left: 20px; float:left;">提交人：{{this.printData.order.origin.submitBy}}</p>
+  </div>
+
+  <div nz-row>
+    <nz-table #tblReturnOrderLineSummary
+              [nzData]="this.printData.returnOrderLineSummaryList"
+              nzSize="small"
+              [nzShowPagination]="false"
+              nzPageSize="999999"
+              [nzNoResult]=emptyResult>
+      <thead>
+      <tr>
+        <th>药品名称</th>
+        <th>规格</th>
+        <th>退药数量</th>
+        <th></th>
+        <th></th>
+      </tr>
+      </thead>
+      <ng-template ngFor let-data [ngForOf]="tblReturnOrderLineSummary.data">
+
+        <tbody>
+        <tr>
+          <td>{{data.medicineName}}</td>
+          <td>{{data.pharmacyModel}}</td>
+          <td>{{data.orderQuantityInfo}}</td>
+        </tr>
+        </tbody>
+      </ng-template>
+    </nz-table>
+  </div>
+</div>
+

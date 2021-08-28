@@ -1,0 +1,78 @@
+<!--    (ngModelChange)="this.selectWardChanged()"-->
+<!--<div nz-row>-->
+<!--  <nz-select-->
+<!--    style="width:100pt;"-->
+<!--    [(ngModel)]="this.selectWard"-->
+<!--    [hidden]="!this.showBatchInputTab"-->
+<!--  >-->
+<!--    <nz-option *ngFor="let ward of this.wardList" [nzValue]="ward.uuid"-->
+<!--               [nzLabel]="ward.name"></nz-option>-->
+<!--  </nz-select>-->
+<!--</div>-->
+<ul nz-menu nzMode="horizontal" style="width: 300px; margin-top: 5px; margin-bottom: 5px;">
+  <li nz-menu-item (click)="this.menuClicked(0)" [nzSelected]="this.selectedTabIndex ==0"
+      [hidden]="!this.showBatchInputTab">批量录入
+  </li>
+  <li nz-menu-item (click)="this.menuClicked(1)" [nzSelected]="this.selectedTabIndex ==1">列表</li>
+  <li nz-menu-item (click)="this.menuClicked(2)" [nzSelected]="this.selectedTabIndex ==2">图表</li>
+</ul>
+
+<app-temp-record-list-batch [hidden]="this.selectedTabIndex != 0"
+                            (tempRecordSavedEvent)="this.batchInputSaved()"
+                            [showBatchInputTab]="this.showBatchInputTab"
+></app-temp-record-list-batch>
+
+<nz-layout>
+  <nz-sider nzCollapsible
+            [(nzCollapsed)]="this.collapsed"
+            nzTheme="light"
+            [nzCollapsedWidth]="30"
+            [nzTrigger]="null"
+            [hidden]="(this.selectedTabIndex== 0 && this.showBatchInputTab) || !this.showBatchInputTab"
+  >
+
+    <app-patient-select [loadAllOnInit]="false" [hidden]="this.collapsed" [selectAll]="false"
+                        [allowMultiple]="false" [checkable]="false" [triggerOnNode]="true"
+    ></app-patient-select>
+  </nz-sider>
+  <i
+    nz-icon
+    [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"
+    (click)="this.collapsed = !this.collapsed"
+    [hidden]="(this.selectedTabIndex== 0 && this.showBatchInputTab) || !this.showBatchInputTab"
+  ></i>
+  <nz-layout class="inner-layout">
+    <nz-spin [nzSpinning]="this.loading">
+      <app-temp-record-table-list (newTempRecordEvent)="this.newTempRecord()"
+                                  [patientSignIn]="this.patientSignIn"
+                                  (editTempRecordEvent)="this.editTempRecord($event)"
+                                  (refreshRequiredEvent)="this.reloadUi(false, false)"
+                                  [hidden]="this.selectedTabIndex != 1"
+      ></app-temp-record-table-list>
+      <app-temp-record-chart (newTempRecordEvent)="this.newTempRecord()"
+                             [patientSignIn]="this.patientSignIn"
+                             [hidden]="this.selectedTabIndex != 2"
+      ></app-temp-record-chart>
+    </nz-spin>
+  </nz-layout>
+</nz-layout>
+
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="detailModalVisible"
+  nzTitle=体温单
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="saveTempRecord()"
+  nzWidth="1200"
+  nzOkText="保存"
+  nzCancelText="关闭"
+>
+  <app-temp-record-detail [patientSignIn]="this.patientSignIn"
+                          (tempRecordSavedEvent)="reloadUi(false, false)"></app-temp-record-detail>
+</nz-modal>
+
+
+
+
+

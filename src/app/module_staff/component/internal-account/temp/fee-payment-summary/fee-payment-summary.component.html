@@ -1,0 +1,35 @@
+<div nz-row>
+  <button nz-button nzType="primary" nzShape="circle" (click)="this.loadFeePaymentList()"
+          style=" float: left; margin-left: 10px;"><i nz-icon nzType="reload"></i>
+  </button>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable
+              [nzData]="feePaymentList"
+              [nzPageSize]="tablePageSize"
+              nzSize="small"
+              style="background-color:white"
+    >
+      <thead>
+      <tr>
+
+        <th>住院号</th>
+        <th>病人信息</th>
+        <th>费用总和</th>
+        <th>缴费总和</th>
+        <th>欠费金额</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data" nzShowRowSelection>
+        <td>{{data.singInNumber}}</td>
+        <td>{{data.patientInfo}}</td>
+        <td>{{data.totalFeeAmount}}</td>
+        <td>{{data.totalPaidAmount}}</td>
+        <td>{{data.balanceAmount}}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>

@@ -1,0 +1,1089 @@
+<div nz-row
+     style="width: 90%; margin-left: 5%">
+  <button nz-button nzType="primary" (click)="  this.saveDrgRecord()"
+          [nzLoading]="this.isSaving"
+          style="float: left;"
+  >保存
+  </button>
+
+  <button nz-button nzType="primary" (click)="  this.uploadDrgRecord()"
+          [nzLoading]="this.isSaving"
+          style="float: left; margin-left: 10px"
+          *ngIf="this.drgRecord.uuid && !this.drgRecord.uploaded"
+  >{{this.drgRecord.uploaded ? '重新' : undefined}}上传
+  </button>
+
+  <button nz-button nzType="primary" (click)="  this.cancelDrgRecord()"
+          [nzLoading]="this.isSaving"
+          style="float: left; margin-left: 10px"
+          *ngIf="this.drgRecord.uploaded"
+  >作废
+  </button>
+
+</div>
+<div nz-row
+     *ngIf="this.drgRecord.uploaded && this.drgRecord.uploadResponse"
+     style="width: 90%; margin-left: 5%">
+  <nz-alert nzType="info" [nzMessage]=this.drgRecord.uploadResponse nzShowIcon></nz-alert>
+</div>
+
+<div
+  style="width: 90%; margin-left: 5%"
+>
+  <form nz-form [formGroup]="drgRecordForm"
+        nzLayout="inline"
+  >
+    <nz-collapse>
+      <nz-collapse-panel nzHeader="基本信息" nzActive>
+        <div nz-row>
+          <nz-form-item>
+            <nz-form-label nzFor="txtName">姓名</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                formControlName="txtName"
+              />
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label nzFor="numberHeight">身高</nz-form-label>
+            <nz-form-control>
+              <nz-input-number
+                nz-input
+                formControlName="numberHeight"
+                [nzStep]="1"
+                [nzMin]="1"
+              ></nz-input-number>
+              cm
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label nzFor="numberWeight">体重</nz-form-label>
+            <nz-form-control>
+              <nz-input-number
+                nz-input
+                formControlName="numberWeight"
+                [nzStep]="1"
+                [nzMin]="1"
+              ></nz-input-number>
+              kg
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label nzFor="numberPregnant">生育史（怀孕次数）</nz-form-label>
+            <nz-form-control>
+              <nz-input-number
+                nz-input
+                formControlName="numberPregnant"
+                [nzStep]="1"
+                [nzMin]="1"
+              ></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label nzFor="numberBirth">生育史（生育次数）</nz-form-label>
+            <nz-form-control>
+              <nz-input-number
+                nz-input
+                formControlName="numberBirth"
+                [nzStep]="1"
+                [nzMin]="1"
+              ></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label nzFor="selectMarriage">婚姻</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="selectMarriage"
+                style="width: 150px"
+              >
+                <ng-template [ngIf]="this.initPram">
+                  <nz-option *ngFor="let marriageStatus of this.initPram.marriageStatusList"
+                             [nzValue]="marriageStatus.id"
+                             [nzLabel]="marriageStatus.name"></nz-option>
+                </ng-template>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-row>
+          <nz-form-item>
+            <nz-form-label nzFor="dateNewBornBirthday">(新生儿) 新生儿出生日期</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker
+                nzShowTime
+                nzFormat="yyyy-MM-dd HH:mm:ss"
+                formControlName="dateNewBornBirthday"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="newBornWeight">出生体重</nz-form-label>
+            <nz-form-control>
+              <nz-input-number
+                nz-input
+                formControlName="newBornWeight"
+                [nzStep]="1"
+                [nzMin]="1"
+              ></nz-input-number>
+              g
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="newBornOutWeight">出院体重</nz-form-label>
+            <nz-form-control>
+              <nz-input-number
+                nz-input
+                formControlName="newBornOutWeight"
+                [nzStep]="1"
+                [nzMin]="1"
+              ></nz-input-number>
+              g
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-row>
+          <nz-form-item>
+            <nz-form-label nzFor="signInDate">入院时间</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker
+                nzShowTime
+                nzFormat="yyyy-MM-dd HH:mm:ss"
+                formControlName="signInDate"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="signOutDate">出院时间</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker
+                nzShowTime
+                nzFormat="yyyy-MM-dd HH:mm:ss"
+                formControlName="signOutDate"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="txtBedNumber">出院床号</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                formControlName="txtBedNumber"
+              />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="selectDoctor">责任医生</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="selectDoctor"
+                style="width: 200px"
+              >
+                <ng-template [ngIf]="this.initPram">
+                  <nz-option *ngFor="let doctor of this.initPram.doctorList"
+                             [nzValue]="doctor.uuid"
+                             [nzLabel]="doctor.name"></nz-option>
+                </ng-template>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-row>
+          <nz-form-item>
+            <nz-form-label nzFor="txtBinli">病理号</nz-form-label>
+            <nz-form-control>
+              <input
+                style="width: 400px"
+                nz-input
+                formControlName="txtBinli"
+                placeholder="多个用逗号隔开"
+              />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="selectAllergyMedicine">过敏药物</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                style="width: 300px"
+                formControlName="selectAllergyMedicine"
+              >
+                <ng-template [ngIf]="this.initPram">
+                  <nz-option *ngFor="let allergyMedicine of this.initPram.allergyMedicineList"
+                             [nzValue]="allergyMedicine.uuid"
+                             [nzLabel]="allergyMedicine.name"></nz-option>
+                </ng-template>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="selectBloodType">血型</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="selectBloodType"
+                style="width: 100px"
+              >
+                <ng-template [ngIf]="this.initPram">
+                  <nz-option *ngFor="let bloodType of this.initPram.bloodTypeList" [nzValue]="bloodType.uuid"
+                             [nzLabel]="bloodType.name"></nz-option>
+                </ng-template>
+              </nz-select>
+            </nz-form-control>
+            <nz-form-control>
+              <nz-select
+                formControlName="selectBloodTypeRh"
+                style="width: 100px; margin-left: 10px"
+              >
+                <ng-template [ngIf]="this.initPram">
+                  <nz-option *ngFor="let bloodTypeRH of this.initPram.bloodTypeRhList" [nzValue]="bloodTypeRH.uuid"
+                             [nzLabel]="bloodTypeRH.name"></nz-option>
+                </ng-template>
+
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-row>
+          <nz-form-item>
+            <nz-form-label nzFor="txtInfection">院内感染</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                formControlName="txtInfection"
+                style="width: 400px"
+              />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="selectSignOutMethod">离院方式</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="selectSignOutMethod"
+                style="width: 300px"
+              >
+                <ng-template [ngIf]="this.initPram">
+                  <nz-option *ngFor="let signOutMethod of this.initPram.signOutMethodList"
+                             [nzValue]="signOutMethod.uuid"
+                             [nzLabel]="signOutMethod.name"></nz-option>
+                </ng-template>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </nz-collapse-panel>
+
+      <nz-collapse-panel nzHeader="出院诊断(主要)">
+        <div nz-row>
+          <nz-form-item>
+            <nz-form-label nzFor="selectSpecialDisease">特殊病例</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="selectSpecialDisease"
+                style="width: 200px"
+              >
+                <ng-template [ngIf]="this.initPram">
+                  <nz-option *ngFor="let specialDisease of this.initPram.specialDiseaseList"
+                             [nzValue]="specialDisease.uuid"
+                             [nzLabel]="specialDisease.name"></nz-option>
+                </ng-template>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-row>
+          <nz-form-item>
+            <nz-form-label nzFor="selectSignInDiagnose">入院诊断</nz-form-label>
+            <app-common-dynamic-select
+              (onSelectedItemChangedEvent)="this.selectionChanged('selectSignInDiagnose', 'txtDiagnoseIn')"
+              (onSearchEvent)="searchDisease($event, 'selectSignInDiagnose')"
+              formControlName="selectSignInDiagnose"
+              [dataList]="diseaseSelection.selectSignInDiagnose.list"
+              [totalDataCount]="diseaseSelection.selectSignInDiagnose.dataCount"
+              [dataColumns]="['编码','名称']"
+              [pageCount]="diseaseSelection.selectSignInDiagnose.pageCount"
+              [selectionWidth]=this.selectionWidth
+
+            >
+            </app-common-dynamic-select>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="selectDiseaseInDirection">诊断方位</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="selectDiseaseInDirection"
+                style="width: 150px"
+              >
+                <ng-template [ngIf]="this.initPram">
+                  <nz-option *ngFor="let diagnoseDirection of this.initPram.diagnoseDirectionList"
+                             [nzValue]="diagnoseDirection.uuid"
+                             [nzLabel]="diagnoseDirection.name"></nz-option>
+                </ng-template>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="txtDiagnoseIn">诊断编码</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                formControlName="txtDiagnoseIn"
+                style="width: 200px"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-row>
+          <nz-form-item>
+            <nz-form-label nzFor="selectSignOutDiagnose">出院诊断</nz-form-label>
+            <app-common-dynamic-select
+              (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose', 'txtDiagnoseOut')"
+              (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose')"
+              formControlName="selectSignOutDiagnose"
+              [dataList]="diseaseSelection.selectSignOutDiagnose.list"
+              [totalDataCount]="diseaseSelection.selectSignOutDiagnose.dataCount"
+              [dataColumns]="['编码','名称']"
+              [pageCount]="diseaseSelection.selectSignOutDiagnose.pageCount"
+              [selectionWidth]=this.selectionWidth
+
+            >
+            </app-common-dynamic-select>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="selectDiseaseOutDirection">诊断方位</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="selectDiseaseOutDirection"
+                style="width: 150px"
+              >
+                <ng-template [ngIf]="this.initPram">
+                  <nz-option *ngFor="let diagnoseDirection of this.initPram.diagnoseDirectionList"
+                             [nzValue]="diagnoseDirection.uuid"
+                             [nzLabel]="diagnoseDirection.name"></nz-option>
+                </ng-template>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzFor="txtDiagnoseOut">诊断编码</nz-form-label>
+            <nz-form-control>
+              <input
+                nz-input
+                formControlName="txtDiagnoseOut"
+                style="width: 200px"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </nz-collapse-panel>
+
+      <nz-collapse-panel nzHeader="出院诊断(次要)">
+        <ng-template #emptyResult></ng-template>
+        <nz-table
+          nzSize="small"
+          nzBordered
+          [nzNoResult]=emptyResult
+        >
+          <thead>
+          <tr>
+            <th style="width: 40%">名称</th>
+            <th style="width: 10%">编码</th>
+            <th style="width: 40%">名称</th>
+            <th style="width: 10%">编码</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose1', 'txtDiagnoseOut1')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose1')"
+                formControlName="selectSignOutDiagnose1"
+                [dataList]="diseaseSelection.selectSignOutDiagnose1.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose1.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose1.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='1'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut1"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose9', 'txtDiagnoseOut9')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose9')"
+                formControlName="selectSignOutDiagnose9"
+                [dataList]="diseaseSelection.selectSignOutDiagnose9.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose9.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose9.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='9'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut9"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose2', 'txtDiagnoseOut2')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose2')"
+                formControlName="selectSignOutDiagnose2"
+                [dataList]="diseaseSelection.selectSignOutDiagnose2.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose2.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose2.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='2'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut2"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose10', 'txtDiagnoseOut10')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose10')"
+                formControlName="selectSignOutDiagnose10"
+                [dataList]="diseaseSelection.selectSignOutDiagnose10.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose10.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose10.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='10'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut10"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose3', 'txtDiagnoseOut3')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose3')"
+                formControlName="selectSignOutDiagnose3"
+                [dataList]="diseaseSelection.selectSignOutDiagnose3.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose3.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose3.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='3'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut3"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose11', 'txtDiagnoseOut11')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose11')"
+                formControlName="selectSignOutDiagnose11"
+                [dataList]="diseaseSelection.selectSignOutDiagnose11.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose11.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose11.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='11'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut11"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose4', 'txtDiagnoseOut4')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose4')"
+                formControlName="selectSignOutDiagnose4"
+                [dataList]="diseaseSelection.selectSignOutDiagnose4.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose4.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose4.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='4'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut4"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose12', 'txtDiagnoseOut12')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose12')"
+                formControlName="selectSignOutDiagnose12"
+                [dataList]="diseaseSelection.selectSignOutDiagnose12.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose12.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose12.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='12'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut12"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose5', 'txtDiagnoseOut5')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose5')"
+                formControlName="selectSignOutDiagnose5"
+                [dataList]="diseaseSelection.selectSignOutDiagnose5.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose5.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose5.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='5'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut5"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose13', 'txtDiagnoseOut13')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose13')"
+                formControlName="selectSignOutDiagnose13"
+                [dataList]="diseaseSelection.selectSignOutDiagnose13.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose13.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose13.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='13'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut13"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose6', 'txtDiagnoseOut6')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose6')"
+                formControlName="selectSignOutDiagnose6"
+                [dataList]="diseaseSelection.selectSignOutDiagnose6.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose6.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose6.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='6'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut6"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose14', 'txtDiagnoseOut14')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose14')"
+                formControlName="selectSignOutDiagnose14"
+                [dataList]="diseaseSelection.selectSignOutDiagnose14.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose14.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose14.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='14'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut14"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose7', 'txtDiagnoseOut7')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose7')"
+                formControlName="selectSignOutDiagnose7"
+                [dataList]="diseaseSelection.selectSignOutDiagnose7.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose7.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose7.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='7'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut7"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose15', 'txtDiagnoseOut15')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose15')"
+                formControlName="selectSignOutDiagnose15"
+                [dataList]="diseaseSelection.selectSignOutDiagnose15.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose15.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose15.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='15'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut15"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose8', 'txtDiagnoseOut8')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose8')"
+                formControlName="selectSignOutDiagnose8"
+                [dataList]="diseaseSelection.selectSignOutDiagnose8.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose8.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose8.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='8'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut8"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+            <td>
+              <app-common-dynamic-select
+                (onSelectedItemChangedEvent)="this.selectionChanged('selectSignOutDiagnose16', 'txtDiagnoseOut16')"
+                (onSearchEvent)="searchDisease($event, 'selectSignOutDiagnose16')"
+                formControlName="selectSignOutDiagnose16"
+                [dataList]="diseaseSelection.selectSignOutDiagnose16.list"
+                [totalDataCount]="diseaseSelection.selectSignOutDiagnose16.dataCount"
+                [dataColumns]="['编码','名称']"
+                [pageCount]="diseaseSelection.selectSignOutDiagnose16.pageCount"
+                [selectionWidth]="'100%'"
+                placeHolder='16'
+              >
+              </app-common-dynamic-select>
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtDiagnoseOut16"
+                  style="width: 100%"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </nz-collapse-panel>
+
+      <nz-collapse-panel nzHeader="手术及操作" nzActive>
+        <div nz-row>
+          <button type="button" (click)="this.drgRecordOperationComponent.addLineControl()"
+                  class="ant-btn ant-btn-primary">添加操作列
+          </button>
+        </div>
+
+        <div nz-row>
+          <app-drg-record-operation [drgRecordForm]="this.drgRecordForm"></app-drg-record-operation>
+        </div>
+      </nz-collapse-panel>
+
+      <nz-collapse-panel nzHeader="检查单" hidden>
+        <nz-table
+          nzSize="small"
+          nzBordered
+          [nzNoResult]=emptyResult
+        >
+          <tbody>
+          <tr>
+            <td>
+              检查单号
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtExamNumber"
+                  style="width: 200px"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              申请科室
+            </td>
+            <td>
+              <nz-form-control>
+                <nz-select
+                  formControlName="selectExamDepartment"
+                  style="width: 300px"
+                >
+                </nz-select>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              项目编码
+            </td>
+            <td>
+              <nz-form-control>
+                <input
+                  nz-input
+                  formControlName="txtExamCode"
+                  style="width: 200px"
+                />
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              申请医师
+            </td>
+            <td>
+              <nz-form-control>
+                <nz-select
+                  formControlName="selectCheckByDoctor"
+                  style="width: 150px"
+                >
+                </nz-select>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              申请时间
+            </td>
+            <td>
+              <nz-form-control>
+                <nz-date-picker
+                  nzShowTime
+                  nzFormat="MM-dd HH:mm"
+                  nzPlaceHolder="选择日期时间"
+                  formControlName="dateExamApplyDate"
+                  nzSize="small"
+                ></nz-date-picker>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              报告时间
+            </td>
+            <td>
+              <nz-form-control>
+                <nz-date-picker
+                  nzShowTime
+                  nzFormat="MM-dd HH:mm"
+                  nzPlaceHolder="选择日期时间"
+                  formControlName="dateExamReportDate"
+                  nzSize="small"
+                ></nz-date-picker>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              检查部位
+            </td>
+            <td>
+              <nz-form-control>
+                <nz-select
+                  formControlName="selectExamBodyPart"
+                  style="width: 400px"
+                >
+                </nz-select>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              异常提示
+            </td>
+            <td>
+              <nz-form-control>
+                <nz-select
+                  formControlName="selectExamException"
+                  style="width: 200px"
+                >
+                </nz-select>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              报告结果
+            </td>
+            <td>
+              <nz-form-control>
+              <textarea formControlName="txtExamResult" rows="5" nz-input
+                        style="width: 100%"
+              ></textarea>
+              </nz-form-control>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </nz-collapse-panel>
+
+      <nz-collapse-panel nzHeader="入院记录">
+        <nz-table
+          nzSize="small"
+          nzBordered
+          [nzNoResult]=emptyResult
+        >
+          <tbody>
+          <tr>
+            <td>
+              主诉
+            </td>
+            <td>
+              <nz-form-control>
+              <textarea formControlName="txtMedicalRecordMain" rows="3" nz-input
+                        style="width: 100%"
+              ></textarea>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              现病史
+            </td>
+            <td>
+              <nz-form-control>
+              <textarea formControlName="txtMedicalRecordXBS" rows="5" nz-input
+                        style="width: 100%"
+              ></textarea>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              手术史
+            </td>
+            <td>
+              <nz-form-control>
+              <textarea formControlName="txtMedicalRecordOperation" rows="3" nz-input
+                        style="width: 100%"
+              ></textarea>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              输血史
+            </td>
+            <td>
+              <nz-form-control>
+              <textarea formControlName="txtMedicalRecordShuXue" rows="3" nz-input
+                        style="width: 100%"
+              ></textarea>
+              </nz-form-control>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </nz-collapse-panel>
+
+      <nz-collapse-panel nzHeader="出院小结" hidden>
+        <nz-table
+          nzSize="small"
+          nzBordered
+          [nzNoResult]=emptyResult
+        >
+          <tbody>
+          <tr>
+            <td>
+              入院情况
+            </td>
+            <td>
+              <nz-form-control>
+              <textarea formControlName="txtMedicalCheckIn" rows="13" nz-input
+                        style="width: 100%"
+              ></textarea>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              诊疗过程
+            </td>
+            <td>
+              <nz-form-control>
+              <textarea formControlName="txtMedicalRecordTreatment" rows="13" nz-input
+                        style="width: 100%"
+              ></textarea>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              出院情况
+            </td>
+            <td>
+              <nz-form-control>
+              <textarea formControlName="txtMedicalRecordCheckOutCondition" rows="13" nz-input
+                        style="width: 100%"
+              ></textarea>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              出院归转
+            </td>
+            <td>
+              <nz-form-control>
+                <nz-select
+                  formControlName="selectCheckOutReason"
+                  style="width: 200px"
+                >
+                  <ng-template [ngIf]="this.initPram">
+                    <nz-option *ngFor="let signOutReasonList of this.initPram.signOutReasonList"
+                               [nzValue]="signOutReasonList.uuid"
+                               [nzLabel]="signOutReasonList.name"></nz-option>
+                  </ng-template>
+                </nz-select>
+              </nz-form-control>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              出院医嘱
+            </td>
+            <td>
+              <nz-form-control>
+              <textarea formControlName="txtMedicalRecordOutPrescription" rows="3" nz-input
+                        style="width: 100%"
+              ></textarea>
+              </nz-form-control>
+            </td>
+          </tr>
+          </tbody>
+        </nz-table>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </form>
+</div>

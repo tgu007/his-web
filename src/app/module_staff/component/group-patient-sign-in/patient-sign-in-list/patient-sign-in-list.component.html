@@ -1,0 +1,392 @@
+<div nz-row>
+  <div nz-row>
+    <nz-select
+      nzMode="multiple"
+      [(ngModel)]="selectStatus"
+      style=" float: left; margin-left: 10px; width:300px"
+    >
+      <nz-option nzLabel="待入院" nzValue="待入院"></nz-option>
+      <nz-option nzLabel="已入院" nzValue="已入院"></nz-option>
+      <nz-option nzLabel="待出院" nzValue="待出院"></nz-option>
+      <nz-option nzLabel="已出院" nzValue="已出院"></nz-option>
+    </nz-select>
+
+    <nz-select
+      nzMode="multiple"
+      [(ngModel)]="selectInsuranceType"
+      style=" float: left; margin-left: 10px; width:200px"
+    >
+      <nz-option nzLabel="医保" nzValue="医保"></nz-option>
+      <nz-option nzLabel="工伤" nzValue="工伤"></nz-option>
+      <nz-option nzLabel="自费" nzValue="自费"></nz-option>
+    </nz-select>
+
+
+    <input nz-input placeholder="病人姓名/住院号" [(ngModel)]="searchCode"
+           style=" float: left; margin-left: 10px; width:300px"/>
+
+    <button nz-button nzType="primary" (click)="reloadPatientSignInList()"
+            style=" float: left; margin-left: 10px; ">查询
+    </button>
+
+    <button nz-button nzSize="small" nzType="primary" nzShape="circle" (click)="reloadPatientSignInList()"
+            style=" float: left; margin-left: 10px;">
+      <i nz-icon nzType="reload"></i>
+    </button>
+
+    <label nz-checkbox [(ngModel)]="this.filterPendingUploadFee"
+           (ngModelChange)="this.reloadPatientSignInList()"
+           style="float: left;margin-left: 10px;">有待传费用</label>
+
+    <label nz-checkbox [(ngModel)]="this.patient3024Check"
+           (ngModelChange)="this.reloadPatientSignInList()"
+           style="float: left;margin-left: 10px;">康复3024检查</label>
+  </div>
+  <div nz-row>
+    <nz-spin [nzSpinning]="this.isLoading">
+      <nz-table #basicTable [nzData]="patientSignInList"
+                nzSize="small"
+                [nzTotal]="totalPatientSignInListCount"
+                [nzFrontPagination]=false
+                [(nzPageIndex)]="currentPageIndex"
+                [nzPageSize]="tablePageSize"
+                (nzPageIndexChange)=this.reloadPatientSignInList()
+                style="background-color:white"
+      >
+        <thead>
+        <tr>
+          <th>住院号</th>
+          <th>姓名</th>
+          <th>年龄</th>
+          <th>性别</th>
+          <th>科室</th>
+          <th>主治医生</th>
+          <th>诊断</th>
+          <th>床号</th>
+          <th>天数</th>
+          <th>医保类型</th>
+          <th>来自医院</th>
+          <th>入院日期</th>
+          <th>出院日期</th>
+          <th>总费用</th>
+          <th>备注</th>
+          <ng-template [ngIf]="this.patient3024Check">
+            <th>3402总费用</th>
+            <th>住院总费用</th>
+            <th>3402费用比</th>
+            <th>3402天数</th>
+            <th>住院天数</th>
+            <th>3402天数比</th>
+          </ng-template>
+          <ng-template [ngIf]="!this.patient3024Check">
+            <th>状态</th>
+            <th>费用待传</th>
+            <th>入院证</th>
+            <th></th>
+          </ng-template>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let patientSignIn of basicTable.data">
+          <td>{{patientSignIn.signInNumber}}</td>
+          <td>{{patientSignIn.patientName}}</td>
+          <td>{{patientSignIn.age}}</td>
+          <td>{{patientSignIn.gender}}</td>
+          <td>{{patientSignIn.department}}</td>
+          <td>{{patientSignIn.doctor}}</td>
+          <td>{{patientSignIn.mainDiagnose}}</td>
+          <td>{{patientSignIn.currentBed}}</td>
+          <td>{{patientSignIn.signInDays}}</td>
+          <td>{{patientSignIn.insuranceType}}</td>
+          <td>{{patientSignIn.fromHospital?.name}}</td>
+          <td>{{patientSignIn.signInDate}}</td>
+          <td>{{patientSignIn.signOutDate}}</td>
+          <td>{{patientSignIn.totalFee}}</td>
+          <td>{{patientSignIn.reference}}</td>
+          <ng-template [ngIf]="this.patient3024Check">
+            <td>{{patientSignIn.total3024Amount}}</td>
+            <td>{{patientSignIn.totalFeeAmount}}</td>
+            <td>
+            <span [ngStyle]="{'color':patientSignIn.amount3024Valid? 'green':'red'}">
+              {{patientSignIn.amount3024Percentage}}%
+            </span>
+            </td>
+            <td>{{patientSignIn.day3024Count}}</td>
+            <td>{{patientSignIn.signedInDays}}</td>
+            <td>
+            <span [ngStyle]="{'color':patientSignIn.day3024Valid? 'green':'red'}">
+              {{patientSignIn.day3024Percentage}}%
+            </span>
+            </td>
+          </ng-template>
+          <ng-template [ngIf]="!this.patient3024Check">
+            <td>{{patientSignIn.status}}</td>
+            <td><label nz-checkbox [(ngModel)]="patientSignIn.pendingFeeToUpload" nzDisabled></label></td>
+            <td>
+              <button nz-button nzSize="small" nzType="primary"
+                      (click)="editSignInDetail(patientSignIn)"
+                      nz-dropdown [nzDropdownMenu]="signInDocumentMenu"
+              >查看
+                <i
+                  nz-icon nzType="down"></i>
+              </button>
+              <nz-dropdown-menu #signInDocumentMenu="nzDropdownMenu">
+                <ul nz-menu>
+                  <li
+                    *ngIf="this.allowModifySignInDetail()"
+                    nz-menu-item (click)="cloneToNewSignIn(patientSignIn)"
+                    [hidden]="patientSignIn.status == '待入院'">
+                    <a>复制为新的入院证</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+            </td>
+            <td>
+
+              <button nz-button [nzLoading]="this.loadingDetail" nzSize="small" nz-dropdown [nzDropdownMenu]="menu">操作<i
+                nz-icon nzType="down"></i>
+              </button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>
+                  <li
+                    *ngIf="this.uiPermission.payment"
+                    nz-submenu nzTitle="缴费">
+                    <ul>
+                      <li nz-menu-item (click)="this.paymentClicked(patientSignIn)">
+                        <a>医疗费用缴费</a>
+                      </li>
+                      <li nz-menu-item
+                          *ngIf="!patientSignIn.selfPay"
+                          (click)="internalPaymentListClicked(patientSignIn)">非医疗缴费
+                      </li>
+                    </ul>
+                  </li>
+
+                  <li
+                    *ngIf="this.uiPermission.cancelSignIn"
+                    nz-menu-item (click)="cancelSignIn(patientSignIn.uuid)"
+                    [hidden]="patientSignIn.status != '待入院'">
+                    <a>取消入院</a>
+                  </li>
+                  <ng-template [ngIf]="this.uiPermission.confirmSignIn && patientSignIn.status == '待入院'" >
+                    <li
+                      *ngIf="this.patientSignIn.selfPay"
+                      nz-menu-item (click)="confirmSignIn(patientSignIn, false)"
+                    >
+                      <a>确认入院</a>
+                    </li>
+                    <li
+                      *ngIf="!this.patientSignIn.selfPay"
+                      nz-submenu nzTitle="确认入院">
+                      <ul>
+                        <li nz-menu-item (click)="this.confirmSignIn(patientSignIn, false)">
+                          <a>实体医保卡</a>
+                        </li>
+                        <li nz-menu-item (click)="this.confirmSignIn(patientSignIn, true)">
+                          <a>支付宝电子凭证</a>
+                        </li>
+                      </ul>
+                    </li>
+
+                  </ng-template>
+
+                  <!--                <li-->
+                  <!--                  *ngIf="this.uiPermission.confirmSignOut"-->
+                  <!--                  nz-menu-item (click)="this.confirmSignOut(patientSignIn.uuid)"-->
+                  <!--                  [hidden]="patientSignIn.status != '待出院'">-->
+                  <!--                  <a>确认出院</a>-->
+                  <!--                </li>-->
+                  <!--                  <li *ngIf="this.uiPermission.requestSignOut"-->
+                  <!--                      nz-menu-item-->
+                  <!--                      [hidden]="patientSignIn.status != '待出院'"-->
+                  <!--                      (click)="cancelSignOutClicked(patientSignIn)">-->
+                  <!--                    <a>取消出院</a>-->
+                  <!--                  </li>-->
+                  <li
+                    *ngIf="this.uiPermission.prescription"
+                    nz-menu-item (click)="prescriptionClicked(patientSignIn)">
+                    医嘱
+                  </li>
+                  <li
+                    *ngIf="this.uiPermission.nursingRecord"
+                    nz-submenu nzTitle="护理">
+                    <ul>
+                      <li nz-menu-item (click)="nursingRecordListClicked(patientSignIn)">护理记录单</li>
+                      <li nz-menu-item (click)="tempRecordListClicked(patientSignIn)">体温单</li>
+                    </ul>
+                  </li>
+                  <li
+                    *ngIf="this.uiPermission.medicalRecord"
+                    nz-menu-item (click)="medicalRecordClicked(patientSignIn)">病历
+                  </li>
+                  <li
+                    nz-menu-item (click)="this.printQrCode(patientSignIn)">
+                    <a>生成二维码</a>
+                  </li>
+                  <li
+                    nz-submenu nzTitle="医保">
+                    <ul>
+                      <li nz-menu-item
+                          *ngIf="(this.sessionService.getUserPermission().commonComponent.patientSignIn.drgRecord
+                          && patientSignIn.status == '已出院' && !patientSignIn.selfPay) ||
+                          (this.sessionService.getUserPermission().superAdmin)"
+                          (click)="drgRecordClicked(patientSignIn)">
+                        DRG上传
+                      </li>
+
+                      <li [hidden]="patientSignIn.status != '已入院'" nz-menu-item (click)="uploadFee(patientSignIn)">
+                        上传费用
+                      </li>
+                      <li [hidden]="patientSignIn.status != '已入院'" nz-menu-item
+                          (click)="deleteAllUploadFee(patientSignIn)">删除所有以上传费用
+                      </li>
+                      <li
+                        *ngIf="!patientSignIn.selfPay && patientSignIn.status != '已出院'"
+                        nz-menu-item (click)="ybSignInRecordClicked(patientSignIn)">医保备案信息
+                      </li>
+                      <li nz-menu-item
+                          *ngIf="!patientSignIn.selfPay"
+                          (click)="centerFeeValidation(patientSignIn)">医保对账
+                      </li>
+                      <ng-template [ngIf]="this.sessionService.getUserPermission().superAdmin">
+                        <li nz-menu-item (click)="selfYBSignIn(patientSignIn.uuid)">医保自费入院登记</li>
+                        <li nz-menu-item (click)="cancelYBSignIn(patientSignIn.uuid)">医保入院取消</li>
+                      </ng-template>
+                    </ul>
+                  </li>
+                  <li
+                    *ngIf="this.uiPermission.confirmSignOut"
+                    nz-menu-item (click)="this.settlementClicked(patientSignIn)"
+                    [hidden]="patientSignIn.status != '待出院'&& patientSignIn.status != '已出院'">
+                    <a>费用结算</a>
+                  </li>
+                  <li
+                    *ngIf="this.uiPermission.confirmSignOut"
+                    nz-menu-item (click)="this.printInvoice(patientSignIn)"
+                    [hidden]="patientSignIn.status != '已出院'">
+                    <a>发票打印</a>
+                  </li>
+
+                  <li nz-submenu nzTitle="医疗费用">
+                    <ul>
+                      <li
+                        *ngIf="this.sessionService.loginUser.uiPermission.commonComponent.fee"
+                        nz-menu-item (click)="feeListClicked(patientSignIn)">费用清单
+                      </li>
+                      <li
+                        *ngIf="this.uiPermission.feeCheck"
+                        nz-menu-item (click)="this.feeCheck(patientSignIn)"
+                      >
+                        <a>医嘱费用检查</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li
+                    *ngIf="this.uiPermission.internalCharge && !patientSignIn.selfPay"
+                    nz-submenu nzTitle="非医疗费用">
+                    <ul>
+                      <li nz-menu-item (click)="internalAutoFeeClicked(patientSignIn)">自动滚费设置</li>
+                      <li nz-menu-item (click)="internalChargeFeeListClicked(patientSignIn)">费用清单</li>
+                      <li nz-menu-item (click)="internalPaymentListClicked(patientSignIn)">缴费</li>
+                    </ul>
+                  </li>
+
+                </ul>
+              </nz-dropdown-menu>
+            </td>
+          </ng-template>
+        </tr>
+        </tbody>
+      </nz-table>
+    </nz-spin>
+  </div>
+  <!--<div nz-row>-->
+  <!--  <div nz-col nzSpan="12">-->
+  <!--    <button nz-button nzType="primary" (click)="exportToExcel()">导出到Excel</button>-->
+  <!--  </div>-->
+  <!--</div>-->
+  <nz-modal
+    [nzMaskClosable]=false
+    [(nzVisible)]="signInModalVisible"
+    nzTitle=入院证
+    (nzOnCancel)="handleCancel()"
+    nzWidth="1000"
+    [nzOkDisabled]=!this.allowModifySignInDetail()
+    [nzFooter]="signInModalFooter"
+  >
+    <app-patient-sign-in-detail (newSignInSaved)="onSignInSaved($event)"></app-patient-sign-in-detail>
+  </nz-modal>
+  <ng-template #signInModalFooter>
+    <button nz-button nzType="primary" (click)="handleCancel()">关闭</button>
+    <button nz-button nzType="primary" [disabled]=!this.allowModifySignInDetail()
+            [nzLoading]=this.patientSignInComponent.isSaving
+            (click)="this.saveNewSignIn()">保存
+    </button>
+    <button nz-button nzType="primary"
+            *ngIf="this.selectedPatientSignIn && this.selectedPatientSignIn.uuid"
+            (click)="this.printSignInDetailClicked()">打印
+    </button>
+  </ng-template>
+
+
+  <nz-modal
+    [nzMaskClosable]=false
+    [(nzVisible)]="qrCodeModalVisible"
+    nzTitle=二维码手环
+    nzWidth="1000"
+    (nzOnCancel)="handleCancel()"
+    [nzFooter]="modalFooter"
+  >
+    <div nz-row id="qrcode">
+      <div nz-col>
+        <img *ngIf="this.qrCodeBase64" [src]=this.getSafeQrCodeBase64()>
+        {{this.selectedPatientSignIn?.patientName}}
+      </div>
+    </div>
+  </nz-modal>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="primary" (click)="handleCancel()">关闭</button>
+    <button nz-button nzType="primary" (click)="this.printQrCodeClicked()">打印</button>
+  </ng-template>
+</div>
+
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="printInvoiceModalVisible"
+  nzTitle=确认当前发票号码
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="this.generateInvoice()"
+  nzWidth="500"
+  nzOkText="打印发票"
+  nzCancelText="取消"
+  [nzOkLoading]=this.generatingInvoice
+>
+  <nz-alert nzType="info" nzMessage="确认当前发票号是否准确，如不准确请先修改在按打印发票" nzShowIcon></nz-alert>
+  <div nz-row style="margin-top: 10px">
+    <nz-form-label
+      style="float: left;"
+    >当前发票号码
+    </nz-form-label>
+    <input
+      nz-input
+      [(ngModel)]="this.currentInvoiceNumber"
+      style="float: left;margin-left: 10px;width: 200px"
+    />
+  </div>
+</nz-modal>
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="ybSignInRecordModalVisible"
+  nzTitle=医保备案信息
+  (nzOnCancel)="handleCancel()"
+  nzWidth="1000"
+  nzOkText="保存"
+  nzCancelText="关闭"
+  [nzOkLoading]="this.ybSignInRecordComponent.saving"
+  (nzOnOk)="this.ybSignInRecordComponent.save()"
+>
+  <app-yb-sign-in-record (recordSaved)="this.reloadPatientSignInList()"></app-yb-sign-in-record>
+</nz-modal>

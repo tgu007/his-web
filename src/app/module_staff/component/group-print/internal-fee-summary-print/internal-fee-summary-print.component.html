@@ -1,0 +1,81 @@
+<ng-template #emptyResult></ng-template>
+
+
+<table style="border: none">
+  <THEAD style="!important;border:none;">
+  <div nz-row>
+   <span class="hospitalName">
+    {{this.hospitalName}}
+  </span>
+  </div>
+  <div nz-row>
+    <h2 class="title">
+      非医疗费用汇总清单
+    </h2>
+  </div>
+  <div nz-row>
+    <nz-descriptions [nzColumn]="{ xxl: 5, xl: 5, lg: 5, md: 1, sm: 1, xs: 1 }"
+                     style="width: 994px; margin-left: 40px"
+    >
+      <nz-descriptions-item
+        nzTitle="姓名">{{this.printData.patientSignIn ? this.printData.patientSignIn.patient.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="科室">{{this.printData.patientSignIn ? this.printData.patientSignIn.departmentTreatment.department.name : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="住院号">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInNumberCode : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="入院日期">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInDate : undefined}}</nz-descriptions-item>
+      <nz-descriptions-item
+        nzTitle="诊断">{{this.printData.patientSignIn ? this.printData.patientSignIn.diagnoseString : undefined}}</nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+  </THEAD>
+  <nz-table #basicTable
+            [nzData]="this.printData.internalFeeSummaryList"
+            nzSize="small"
+            [nzShowPagination]="false"
+            nzPageSize="999999"
+            nzBordered
+            [nzFooter]=summary
+            [nzNoResult]=emptyResult
+  >
+    <thead style="display: table-header-group">
+    <tr>
+      <th>项目名称</th>
+      <th>数量</th>
+      <th>单价</th>
+      <th>总价</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-data [ngForOf]="basicTable.data">
+      <tr>
+        <td>{{data.item.name}}</td>
+        <td>{{data.displayQuantityInfo}}</td>
+        <td>{{data.displayUnitAmount}}</td>
+        <td>{{data.totalAmount}}元</td>
+      </tr>
+    </ng-template>
+    </tbody>
+  </nz-table>
+</table>
+<ng-template #summary>
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      打印清单总额:{{this.getTotalValue()}}
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      费用总额：{{this.printData.patientSignIn.internalTotalFeeAmount}}元
+    </div>
+
+    <div nz-col nzSpan="6">
+      预交：{{this.printData.patientSignIn.internalTotalPaidAmount}}元
+    </div>
+
+    <div nz-col nzSpan="6">
+      余额:{{this.printData.patientSignIn.internalBalanceAmount}}元
+    </div>
+  </div>
+</ng-template>

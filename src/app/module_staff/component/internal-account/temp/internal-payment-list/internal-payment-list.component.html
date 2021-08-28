@@ -1,0 +1,128 @@
+<div nz-row>
+  <input nz-input [(ngModel)]="filterSignInNumber"
+         placeholder="住院号查询"
+         style=" float: left; margin-left: 10px; width:300px"/>
+
+  <input nz-input [(ngModel)]="filterPatientInfo"
+         placeholder="姓名查询"
+         style=" float: left; margin-left: 10px; width:300px"/>
+
+  <nz-select
+    nzMode="multiple"
+    nzPlaceHolder="Please select"
+    style="float: left;margin-right: 10px; width:160pt;"
+    [(ngModel)]="listOfSelectedPaymentStatus"
+  >
+    <nz-option nzLabel="待缴费" nzValue="待缴费"></nz-option>
+    <nz-option nzLabel="已作废" nzValue="已作废"></nz-option>
+    <nz-option nzLabel="已缴费" nzValue="已缴费"></nz-option>
+  </nz-select>
+
+  <button nz-button nzType="primary" (click)="searchPayment()"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询
+  </button>
+
+
+  <button
+    nz-button nzType="primary" (click)="initPaymentDetailModal()"
+    style=" float: left; margin-left: 10px;">添加缴费记录
+  </button>
+
+  <button nz-button nzType="primary" nzShape="circle" (click)="reloadPaymentClicked()"
+          style=" float: left; margin-left: 10px;"><i nz-icon nzType="reload"></i>
+  </button>
+</div>
+
+<div nz-row>
+  <nz-descriptions nzColumn="12">
+    <nz-descriptions-item nzTitle="费用总额">
+      {{this.totalFeeAmount}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="已付金额">
+      {{this.totalPaidAmount}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="余额">
+      {{this.balanceAmount}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</div>
+<div nz-row>
+  <nz-spin [nzSpinning]="this.isLoading">
+    <nz-table #basicTable [nzData]="paymentList" nzSize="small" style="background-color:white"
+              [nzTotal]="totalDataCount"
+              [nzFrontPagination]=false
+              [(nzPageIndex)]="currentPageIndex"
+              [nzPageSize]="tablePageSize"
+              (nzPageIndexChange)=this.loadPaymentList()
+    >
+      <thead>
+      <tr>
+        <th>住院号</th>
+        <th>病人信息</th>
+        <th>病区</th>
+        <th>缴费类型</th>
+        <th>缴费项目</th>
+        <th>缴费方式</th>
+        <th>缴费金额</th>
+        <th>收费人</th>
+        <th>收费时间</th>
+        <th>费用状态</th>
+        <th></th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data" nzShowRowSelection>
+        <td>{{data.singInNumber}}</td>
+        <td>{{data.patientInfo}}</td>
+        <td>{{data.ward}}</td>
+        <td>{{data.paymentType}}</td>
+        <td>{{data.item? data.item.name :undefined}}</td>
+        <td>{{data.paymentMethod.name}}</td>
+        <td>{{data.amount}}</td>
+        <td>{{data.createdBy}}</td>
+        <td>{{data.paymentDate}}</td>
+        <td>{{data.paymentStatus}}</td>
+        <td>
+          <button nz-button nzSize="small"
+                  nz-dropdown
+                  [nzDropdownMenu]="menu"
+                  [hidden]="data.paymentStatus == '已作废'"
+          >操作<i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item
+                  [hidden]="data.paymentStatus == '已缴费'"
+                  (click)="confirmPayment(data)">
+                <a>确认</a>
+              </li>
+              <li nz-menu-item (click)="this.cancelPayment(data)">
+                <a>作废</a>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </td>
+        <td>
+          <button *ngIf="data.paymentStatus =='已缴费'"
+                  nz-button nzSize="small" nzType="primary" (click)="printPayment(data)">打印</button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+
+</div>
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="paymentDetailModalVisible"
+  nzTitle=新增缴费记录
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="savePayment()"
+  nzWidth="1000"
+  nzOkText="保存"
+  nzCancelText="关闭"
+  [nzOkLoading]="this.paymentDetailComponent.isSaving"
+>
+  <app-internal-payment-detail (paymentSavedEvent) = "onPaymentSaved($event)"></app-internal-payment-detail>
+</nz-modal>

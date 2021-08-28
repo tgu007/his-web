@@ -1,0 +1,506 @@
+<nz-layout>
+  <nz-sider nzCollapsible
+            [(nzCollapsed)]="this.collapsed"
+            nzTheme="light"
+            [nzCollapsedWidth]="5"
+            [nzTrigger]="null"
+  >
+    <div nz-row [hidden]="this.collapsed">
+      <button nz-button [type]="" nzType="primary" nzSize="small" (click)="this.copyPrescription()"
+              [nzLoading]="this.cloning">开始复制
+      </button>
+      <button nz-button [type]="" nzType="primary" nzSize="small" (click)="this.collapsed = true">取消</button>
+    </div>
+    <div nz-row [hidden]="this.collapsed">
+      <app-patient-select [selectAll]="false"></app-patient-select>
+    </div>
+  </nz-sider>
+  <nz-layout class="inner-layout">
+    <div nz-row>
+      <button nz-button nz-dropdown
+              [nzDropdownMenu]=
+                "addNewMenu"
+              nzType="primary"
+              nzSize="default"
+              [nzDisabled]="this.patientSignIn.status != '已入院'"
+              *ngIf="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowEdit"
+              style=" float: left; margin-left: 10px;"
+      >新医嘱<i nz-icon
+             nzType="down"></i>
+      </button>
+      <nz-dropdown-menu #addNewMenu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-menu-item (click)="this.newPrescriptionClicked({type:'药品'})">
+            <a>药品</a>
+          </li>
+          <li nz-menu-item (click)="this.newPrescriptionClicked({type:'药品文字'})">
+            <a>药品（文字）</a>
+          </li>
+          <li nz-menu-item (click)="this.newPrescriptionClicked({type:'诊疗'})">
+            <a>诊疗</a>
+          </li>
+          <li nz-menu-item (click)="this.newPrescriptionClicked({type:'文字'})">
+            <a>文字</a>
+          </li>
+          <li nz-menu-item (click)="this.preDefinedClicked('treatment')" *ngIf="!this.isOneOff">
+            <a>预设诊疗</a>
+          </li>
+          <li nz-menu-item (click)="this.preDefinedMedicineClicked()"  *ngIf="this.isOneOff">
+            <a>预设中药组套</a>
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+
+      <button nz-button nz-dropdown
+              *ngIf="this.anyPrescriptionInEdit"
+              (click)="resumePrescriptionEdit()"
+              nzType="primary"
+              [nzDropdownMenu]="cancelMenu"
+              style=" float: left; margin-left: 10px;"
+      >继续编辑
+      </button>
+      <nz-dropdown-menu #cancelMenu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-menu-item (click)="this.cancelResumeEdit()">
+            <a>取消</a>
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+
+      <button nz-button
+              *ngIf="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.batchOperation"
+              nz-dropdown [nzDropdownMenu]="menu" nzType="primary" nzSize="default"
+              style=" float: left; margin-left: 10px;"
+      >批量操作<i nz-icon
+              nzType="down"></i>
+      </button>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-submenu nzTitle="组套"
+              [nzDisabled]="this.patientSignIn.status != '已入院'"
+              *ngIf="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowEdit"
+          >
+
+            <ul>
+              <li nz-menu-item (click)="groupPrescription(true)">
+                <a>设置组套</a>
+              </li>
+              <li nz-menu-item (click)="groupPrescription(false)">
+                <a>移除组套项</a>
+              </li>
+            </ul>
+          </li>
+          <li nz-submenu nzTitle="状态" [nzDisabled]="this.patientSignIn.status != '已入院'">
+            <ul>
+              <ng-template
+                [ngIf]="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowConfirm">
+                <li nz-menu-item (click)="this.updatePrescriptionStatus(undefined, 'approve')">
+                  <a>通过</a>
+                </li>
+                <li nz-menu-item (click)="this.confirmDisablePrescription(undefined)">
+                  <a>确认停嘱</a>
+                </li>
+              </ng-template>
+              <ng-template
+                [ngIf]="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowEdit">
+                <li nz-menu-item (click)="this.updatePrescriptionStatus(undefined, 'submit')">
+                  <a>提交</a>
+                </li>
+                <li nz-menu-item (click)="this.updatePrescriptionStatus(undefined, 'reject')">
+                  <a>撤回</a>
+                </li>
+                <li nz-menu-item (click)="this.disablePrescription(undefined)">
+                  <a>停止</a>
+                </li>
+                <li nz-menu-item (click)="this.cancelPrescription(undefined)">
+                  <a>作废</a>
+                </li>
+                <li nz-menu-item (click)="this.updatePrescriptionStatus(undefined, 'delete')">
+                  <a>删除</a>
+                </li>
+              </ng-template>
+            </ul>
+          </li>
+          <li nz-menu-item (click)="copyPrescriptionClicked()"
+              *ngIf="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowEdit"
+          >
+            <a>复制到其他病人</a>
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+
+      <button nz-button
+              nzType="primary" nzSize="default"
+              [nzLoading]="this.isLoading"
+              (click)="this.printClicked()"
+              style=" float: left; margin-left: 10px;"
+      >{{this.printButtonText}}
+      </button>
+
+      <ng-template
+        [ngIf]="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowEdit">
+        <button nz-button
+                *ngIf="!this.startDateInEdit"
+                nzType="primary" nzSize="default"
+                [nzLoading]="this.isLoading"
+                (click)="this.startEditStartDate()"
+                style=" float: left; margin-left: 10px;"
+        > 调整医嘱开始日期
+        </button>
+
+        <button nz-button
+                *ngIf="this.startDateInEdit"
+                nzSize="default"
+                [nzLoading]="this.isLoading"
+                (click)="this.saveEditedStartDate()"
+                style=" float: left; margin-left: 10px;"
+        >保存医嘱开始日期
+        </button>
+      </ng-template>
+
+      <button nz-button
+              nzType="primary" nzSize="default"
+              [nzLoading]="this.isLoading"
+              (click)="this.printLabRequest()"
+              style=" float: left; margin-left: 10px;"
+      > 化验申请单打印
+      </button>
+
+    </div>
+    <div nz-row>
+      <label nz-checkbox [(ngModel)]="this.orderDesc"
+             (ngModelChange)="this.subscribePatientPrescriptionList()"
+             style="float: left;margin-left: 10px;">时间倒排序</label>
+
+      <nz-select
+        nzMode="multiple"
+        nzPlaceHolder="Please select"
+        [(ngModel)]="listOfSelectedPrescriptionStatus"
+        (ngModelChange)="subscribePatientPrescriptionList()"
+        style=" float: left; margin-left: 10px;"
+      >
+        <nz-option *ngIf="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowEdit"
+                   nzLabel="已创建" nzValue="已创建"></nz-option>
+        <nz-option nzLabel="已提交" nzValue="已提交"></nz-option>
+        <nz-option nzLabel="执行中" nzValue="执行中"></nz-option>
+        <nz-option nzLabel="已停用" nzValue="已停用"></nz-option>
+        <nz-option nzLabel="待停用" nzValue="待停用"></nz-option>
+        <nz-option nzLabel="已作废" nzValue="已作废"></nz-option>
+      </nz-select>
+
+      <button nz-button nzSize="small" nzType="primary" nzShape="circle"
+              (click)="this.reload()"
+              style=" float: left; margin-left: 10px;"
+      ><i
+        nz-icon nzType="reload"></i>
+      </button>
+
+      <nz-range-picker [(ngModel)]="filterDateRange"
+                       style="float: left;margin-right: 10px;"
+      ></nz-range-picker>
+
+      <input nz-input [(ngModel)]="filterDescription"
+             placeholder="输入拼音代码搜索"
+             style="float: left;margin-right: 10px; width:250px"
+      />
+
+      <button nz-button (click)="this.subscribePatientPrescriptionList()"
+              nzType="primary"
+              style="float: left;margin-right: 10px;"
+      >检索
+      </button>
+
+
+    </div>
+    <div nz-row style="background-color:white">
+      <nz-spin [nzSpinning]="this.isLoading">
+        <nz-table #basicTable [nzData]="prescriptionList" nzSize="small"
+                  [(nzPageIndex)]="currentPageIndex"
+                  [nzTotal]="totalPrescriptionListCount"
+                  [nzFrontPagination]=false
+                  [nzPageSize]="tablePageSize"
+                  (nzPageIndexChange)=this.subscribePatientPrescriptionList()
+                  [nzPaginationPosition]="'both'"
+                  [nzShowPagination]="this.showPagination"
+        >
+          <thead>
+          <tr>
+            <th nzWidth="30px"></th>
+            <th
+              nzWidth="30px"
+              [(nzChecked)]="allChecked"
+              [nzIndeterminate]="false"
+              (nzCheckedChange)="checkAll($event)"
+              nzShowCheckbox
+            ></th>
+            <!--    <th>类型</th>-->
+            <th>名称</th>
+            <th>用药剂量</th>
+            <th>每次数量</th>
+            <th>频次</th>
+            <th>首日次数</th>
+            <th>途径</th>
+            <th>滴速</th>
+            <th *ngIf="this.isOneOff">应发数量</th>
+            <th>已发药</th>
+            <th>备注</th>
+            <th>开始时间</th>
+            <th>开嘱人</th>
+            <th>停止时间</th>
+            <th>{{this.isOneOff ? '执行人' : '停嘱人'}}</th>
+            <th>状态</th>
+            <!--    <th>开嘱医生</th>-->
+            <th *ngIf="this.showAdjustQuantity">调整次数</th>
+            <th *ngIf="!this.showAdjustQuantity"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <ng-template ngFor let-data [ngForOf]="basicTable.data">
+            <tr
+            >
+              <td
+                [nzShowExpand]="data.changeLogRespDtoList.length > 0"
+                [(nzExpand)]="mapOfExpandData[data.uuid]"
+              ></td>
+              <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.uuid]"></td>
+              <!--      <td>{{data.type}}</td>-->
+              <td [colSpan]="data.type =='文字' ? 3:1"
+                  nz-popover
+                  [nzPopoverContent]="data.popUpInfo"
+              >
+                <!--                <nz-badge *ngIf="data.groupId" [nzColor]="data.groupColour" [nzText]="data.description"></nz-badge>-->
+                <nz-tag *ngIf="data.groupId" [nzColor]="data.groupColour"
+                >组{{data.groupIndex}}
+                </nz-tag>
+                <p [ngStyle]=this.getStatusColour(data)>
+                  {{data.description}}</p>
+              </td>
+              <td [hidden]="data.type =='文字'"
+              >{{data.serveInfo}}</td>
+              <td [hidden]="data.type =='文字'">{{data.quantityInfo}}</td>
+              <td>{{data.frequency}}</td>
+              <td>{{data.firstDayQuantityInfo && data.firstDayQuantityInfo != 0 ? data.firstDayQuantityInfo + '次' : undefined}}</td>
+              <td>{{data.useMethod}}</td>
+              <td>{{data.dropSpeed}}</td>
+              <td *ngIf="this.isOneOff">{{data.fixedQuantityInfo}}</td>
+              <!--            <td>{{data.unitPrice}}</td>-->
+              <td>
+                <span *ngIf="data.type == '药品文字'" style="color:red">不发药{{data.selfPrepared ? '（自备）' : ''}}</span>
+                {{data.issueQuantityInfo}}</td>
+              <td>{{data.reference}}</td>
+              <!--              <td>{{this.datePipe.transform(data.startDate, 'yy-MM-dd')}}</td>-->
+              <td>
+                <ng-container *ngIf="data.startDate && this.startDateInEdit; else displayStartDate">
+                  <nz-date-picker
+                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                    nzPlaceHolder="修改日期"
+                    [(ngModel)]="data.startDate"
+                    (ngModelChange)="this.startDateChanged(data)"
+                    nzShowTime="true"
+                    nzSize="small"
+                    [nzAllowClear]="false"
+                  ></nz-date-picker>
+                </ng-container>
+                <ng-template #displayStartDate>
+                  {{this.datePipe.transform(data.startDate, 'yy/MM/dd HH:mm')}}
+                </ng-template>
+              </td>
+              <td>{{data.whoCreated}}</td>
+              <!--              <td>{{this.datePipe.transform(data.endDate, 'yy-MM-dd')}}</td>-->
+              <td>{{this.datePipe.transform(data.endDate, 'yy/MM/dd HH:mm')}}</td>
+              <td>{{data.stoppedBy}}</td>
+              <td
+              ><p [ngStyle]=this.getStatusColour(data)>
+                {{data.status}}</p></td>
+              <td *ngIf="data.showAdjustQuantity">
+                <nz-input-number
+                  nz-input
+                  [(ngModel)]="data.adjustQuantity"
+                  [nzStep]="1"
+                  [nzMin]="0"
+                  nzSize="small"
+                  nzPrecision=0
+                ></nz-input-number>
+                <button (click)="this.confirmQuantityAdjust(data)"
+                        nz-button nzSize="small">确认
+                </button>
+                <button (click)="this.cancelQuantityAdjust(data)"
+                        nz-button nzSize="small"
+                >取消
+                </button>
+              </td>
+              <!--            <td>{{data.startDate}}</td>-->
+              <!--            <td>{{data.whoCreated}}</td>-->
+              <td *ngIf="!this.showAdjustQuantity">
+                <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="menu"
+                        [nzDisabled]="this.patientSignIn.status != '已入院'"
+
+                >操作<i nz-icon nzType="down"></i>
+                </button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <ul nz-menu nzMode="horizontal">
+                    <ul>
+                      <ng-template
+                        [ngIf]="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowConfirm">
+                        <li *ngIf="data.status =='已提交'" nz-menu-item
+                            (click)="this.updatePrescriptionStatus(data, 'approve')">通过
+                        </li>
+                        <li *ngIf="data.status =='已提交'" nz-menu-item
+                            (click)="this.updatePrescriptionStatus(data, 'reject')">退回
+                        </li>
+                        <li *ngIf="data.type =='诊疗' && data.status =='执行中' && !data.oneOff" nz-menu-item
+                            (click)="this.adjustTreatmentPrescriptionQuantityClicked(data)">调整执行数量
+                        </li>
+
+                        <li *ngIf="data.status =='待停用' && !data.oneOff" nz-menu-item
+                            (click)="this.confirmDisablePrescription(data)">确认停嘱
+                        </li>
+
+                      </ng-template>
+                      <ng-template
+                        [ngIf]="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowEdit">
+                        <li *ngIf="data.status =='已创建'" nz-menu-item
+                            (click)="editPrescription(data)"
+                        >修改
+                        </li>
+                        <li *ngIf="data.status =='已提交'" nz-menu-item
+                            (click)="this.updatePrescriptionStatus(data, 'reject')"
+                        >撤回
+                        </li>
+
+                        <li *ngIf="data.status =='已创建'" nz-menu-item
+                            (click)="this.updatePrescriptionStatus(data, 'submit')">提交
+                        </li>
+                        <!--              <li *ngIf="data.status =='执行中' && data.type == '治疗'" nz-menu-item (click)="executePrescription(data)">执行</li>-->
+                        <li *ngIf="data.status =='已创建'" nz-menu-item
+                            (click)="this.updatePrescriptionStatus(data, 'delete')">删除
+                        </li>
+                        <li *ngIf="data.status =='执行中' && !data.oneOff" nz-menu-item
+                            (click)="this.disablePrescription(data)">停嘱
+                        </li>
+                        <li *ngIf="data.status =='执行中'" nz-menu-item
+                            (click)="this.cancelPrescription(data)">作废
+                        </li>
+                        <li *ngIf="data.printSlipTypeOne" nz-menu-item
+                            (click)="this.printSlip(data, 'prescriptionSlipTypeOne')">打印处方
+                        </li>
+                        <li *ngIf="data.printSlipTypeTwo" nz-menu-item
+                            (click)="this.printSlip(data, 'prescriptionSlipTypeTwo')">打印处方
+                        </li>
+                        <li *ngIf="data.printSlipChinese" nz-menu-item
+                            (click)="this.printChineseMedicineSlip(data)">打印处方
+                        </li>
+
+                        <li *ngIf="data.status =='已停用' && !data.oneOff" nz-menu-item
+                            (click)="this.restoreDisablePrescription(data)">恢复到执行中
+                        </li>
+                      </ng-template>
+
+                    </ul>
+                  </ul>
+                </nz-dropdown-menu>
+              </td>
+            </tr>
+            <tr [nzExpand]="mapOfExpandData[data.uuid]">
+
+              <th></th>
+              <th></th>
+              <th colspan="2">操作类型</th>
+              <th colspan="3">操作人</th>
+              <th colspan="3">操作时间</th>
+              <th></th>
+            </tr>
+            <tr [nzExpand]="mapOfExpandData[data.uuid]" *ngFor="let log of data.changeLogRespDtoList">
+              <td></td>
+              <td></td>
+              <td colspan="2"> {{log.action}}</td>
+              <td colspan="3">
+                {{log.whoCreated}}
+                <ng-template
+                  [ngIf]="this.sessionService.getUserPermission().commonComponent.patientSignIn.prescription.allowConfirm
+                    &&(log.action == '通过' || log.action == '停嘱确认')"
+                >
+                  <button
+                    nz-button nzType="primary"
+                    (click)="this.updateLogToCurrentUser(log.uuid)"
+                    nzSize="small"
+                  >更新为当前用户
+                  </button>
+                </ng-template>
+              </td>
+              <ng-container *ngIf="!editCache[log.uuid].inEdit; else dateInput">
+                <td colspan="3">{{log.whenCreated}}</td>
+              </ng-container>
+              <ng-template #dateInput>
+                <td colspan="3">
+                  <nz-date-picker
+                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                    nzPlaceHolder="修改日期"
+                    [(ngModel)]="log.whenCreated"
+                    nzShowTime="true"
+                    nzSize="small"
+                  ></nz-date-picker>
+                </td>
+
+              </ng-template>
+              <td>
+                <ng-template [ngIf]="log.whoCreated == this.sessionService.loginUser.name">
+                  <ng-container *ngIf="!editCache[log.uuid].inEdit; else inEdit">
+                    <button nz-button nzType="primary" (click)="editLineControl(log.uuid)"
+                    ><i nz-icon nzType="edit"></i></button>
+                  </ng-container>
+                  <ng-template #inEdit>
+                    <button nz-button nzType="primary" (click)="commitLineControl(log)"
+                    ><i nz-icon nzType="save"></i></button>
+                  </ng-template>
+                </ng-template>
+              </td>
+            </tr>
+          </ng-template>
+          </tbody>
+        </nz-table>
+      </nz-spin>
+    </div>
+  </nz-layout>
+</nz-layout>
+
+
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="preDefinedGroupModalVisible"
+  [nzTitle]="'预设诊疗'"
+  (nzOnClose)="closeDrawer()"
+>
+  <app-pre-defined-prescription-group
+    [patientSignIn]="this.patientSignIn"
+    [type]="this.predefinedGroupType"
+    [oneOff]="this.isOneOff"
+    (prescriptionGeneratedEvent)="this.prescriptionGenerated()"
+  ></app-pre-defined-prescription-group>
+  <div class="footer" style="margin-top: 20px">
+    <button nz-button type="button" (click)="closeDrawer()" class="ant-btn" style="margin-right: 8px;"><span>关闭</span>
+    </button>
+  </div>
+</nz-drawer>
+
+
+<nz-drawer
+  [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom': '53px' }"
+  [nzMaskClosable]="false"
+  [nzWidth]="720"
+  [nzVisible]="this.preDefinedMedicineGroupModalVisible"
+  [nzTitle]="'预设中药组套'"
+  (nzOnClose)="closeDrawer()"
+>
+  <app-pre-defined-medicine-prescription
+    [patientSignIn]="this.patientSignIn"
+    (prescriptionGeneratedEvent)="this.prescriptionGenerated()"
+  ></app-pre-defined-medicine-prescription>
+  <div class="footer" style="margin-top: 20px">
+    <button nz-button type="button" (click)="closeDrawer()" class="ant-btn" style="margin-right: 8px;"><span>关闭</span>
+    </button>
+  </div>
+</nz-drawer>
+
