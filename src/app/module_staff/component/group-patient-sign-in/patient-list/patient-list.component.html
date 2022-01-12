@@ -1,19 +1,29 @@
 <div nz-row>
-  <div nz-col nzSpan="4">
-    <button nz-button nzType="primary" (click)="addPatient()">添加病人</button>
-    <!--    <button nz-button nzType="primary" (click)="exportToExcel()">导出到Excel</button>-->
-  </div>
-  <div nz-col nzSpan="4">
-    <input nz-input placeholder="病人姓名" [(ngModel)]="searchPatientName"/>
-  </div>
-  <div nz-col nzSpan="2">
-    <button nz-button nzType="primary" (click)="reloadPatientList()">查询</button>
-  </div>
-  <div nz-col nzSpan="2">
-    <button nz-button nzSize="small" nzType="primary" nzShape="circle" (click)="this.reloadPatientList()"><i nz-icon
-                                                                                                             nzType="reload"></i>
-    </button>
-  </div>
+  <button nz-button nzType="primary" (click)="addPatient()"
+          style="float: left;margin-left: 10px;"
+  >添加病人
+  </button>
+
+  <input nz-input placeholder="病人姓名"
+         style="float: left;margin-left: 10px; width: 200px"
+         [(ngModel)]="searchPatientName"/>
+
+  <button nz-button nzType="primary"
+          style="float: left;"
+          (click)="reloadPatientList()">查询
+  </button>
+
+  <button nz-button nzSize="small"
+          style="float: left;margin-left: 10px;"
+          nzType="primary" nzShape="circle" (click)="this.reloadPatientList()">
+    <i nz-icon nzType="reload"></i>
+  </button>
+
+  <button nz-button nzType="primary" (click)="insuranceCheck()"
+          style="float: left;margin-left: 10px;"
+  >医保查询
+  </button>
+
 </div>
 <div nz-row>
   <nz-spin [nzSpinning]="this.isLoading">
@@ -52,8 +62,7 @@
         </td>
         <td>
           <button *ngIf="this.uiPermission.commonComponent.patient.allowSignIn"
-                  nz-button nzType="primary" nzSize="small" (click)="addSignIn(patient)"
-                  [hidden]="patient.currentSignInId">办理入院
+                  nz-button nzType="primary" nzSize="small" (click)="addSignIn(patient)">办理入院
           </button>
           <button nz-button nzType="primary" nzSize="small" (click)="editSignIn(patient)"
                   [hidden]="!patient.currentSignInId">入院证
@@ -103,3 +112,15 @@
           (click)="this.printSignInDetailClicked()">打印
   </button>
 </ng-template>
+
+<nz-modal
+  [(nzVisible)]="insuranceCheckModalVisible"
+  nzTitle=医保查询
+  (nzOnCancel)="handleCancel()"
+  nzWidth="1000"
+  [nzMaskClosable]="false"
+  nzOkDisabled
+  nzCancelText="关闭"
+>
+  <app-patient-insurance-info></app-patient-insurance-info>
+</nz-modal>

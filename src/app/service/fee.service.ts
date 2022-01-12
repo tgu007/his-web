@@ -72,8 +72,8 @@ export class FeeService {
     return this.appService.httpPost(`api/fee/payment/list/${signInId}/${pageIndex}`);
   }
 
-  getAllPaymentList(filter: any, pageIndex: any) {
-    return this.appService.httpPost(`api/fee/payment/list/all/${pageIndex}`, filter);
+  getAllPaymentList(filter: any) {
+    return this.appService.httpPost(`api/fee/payment/list/all`, filter);
   }
 
   getPaymentMethodList() {
@@ -137,6 +137,10 @@ export class FeeService {
     return this.appService.httpPost(`api/fee/invoice/generate/${patientSignInId}/${currentInvoiceNumber}`);
   }
 
+  getSettlementSummary(patientSignInId: any) {
+    return this.appService.httpPost(`api/fee/invoice/settle/hy/summary/${patientSignInId}`);
+  }
+
 
   autoFeeManualRun(autoFeeId: any) {
     return this.appService.httpPost(`api/fee/auto/${autoFeeId}/manual_run`);
@@ -150,4 +154,5 @@ export class FeeService {
   nightlyJobManualRun() {
     return this.appService.httpPost('api/fee/daily_run/manual');
   }
+
 }

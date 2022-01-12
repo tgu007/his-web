@@ -1,0 +1,162 @@
+<ng-template ngFor let-patientSignIn [ngForOf]="this.printData.patientSignInList">
+  <div style="page-break-after: always" *ngIf="!patientSignIn.selfPay && patientSignIn.preSettlement">
+    <div nz-row>
+   <span class="hospitalName">
+    {{this.hospitalName}}
+  </span>
+    </div>
+    <div nz-row>
+      <h2 class="title">
+        每日预结算清单
+      </h2>
+    </div>
+
+
+    <div nz-row>
+      <nz-descriptions [nzColumn]="{ xxl: 5, xl: 5, lg: 5, md: 1, sm: 1, xs: 1 }"
+                       style="width: 994px; margin-left: 40px"
+      >
+        <nz-descriptions-item
+          nzTitle="姓名"
+        ><p>
+          {{patientSignIn.patient.name}}
+        </p>
+        </nz-descriptions-item>
+        <nz-descriptions-item
+          nzTitle="科室">
+          <p>
+            {{patientSignIn.departmentTreatment.department.name}}
+          </p>
+        </nz-descriptions-item>
+        <nz-descriptions-item
+          nzTitle="住院号">
+          <p>
+            {{patientSignIn.signInNumberCode}}
+          </p>
+        </nz-descriptions-item>
+        <nz-descriptions-item
+          nzTitle="入院日期">
+          <p>
+            {{patientSignIn.signInDate}}
+          </p>
+        </nz-descriptions-item>
+        <nz-descriptions-item
+          nzTitle="诊断">
+          <p>
+            {{patientSignIn.diagnoseString }}
+          </p>
+        </nz-descriptions-item>
+
+      </nz-descriptions>
+    </div>
+
+    <div nz-row>
+      <h2>
+        预结日期：  {{patientSignIn.preSettlement.createdDate }}
+      </h2>
+    </div>
+    <div>
+      <nz-descriptions nzBordered nzSize="small">
+        <nz-descriptions-item nzTitle="费用总额">
+          {{patientSignIn.preSettlement.medfee_sumamt}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="基金支付总额">
+          {{patientSignIn.preSettlement.fund_pay_sumamt}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="全自费金额">
+          {{patientSignIn.preSettlement.psn_part_amt}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="超限价自费费用">
+          {{patientSignIn.preSettlement.overlmt_selfpay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="先行自付金额">
+          {{patientSignIn.preSettlement.preselfpay_amt}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="符合政策范围金额">
+          {{patientSignIn.preSettlement.inscp_scp_amt}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="实际支付起付线">
+          {{patientSignIn.preSettlement.act_pay_dedc}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="基本医疗保险统筹基金支出">
+          {{patientSignIn.preSettlement.hifp_pay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="基本医疗保险统筹基金支付比例">
+          {{patientSignIn.preSettlement.pool_prop_selfpay}}
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="公务员医疗补助资金支出">
+          {{patientSignIn.preSettlement.cvlserv_pay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="企业补充医疗保险基金支出">
+          {{patientSignIn.preSettlement.hifes_pay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="居民大病保险资金支出">
+          {{patientSignIn.preSettlement.hifmi_pay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="职工大额医疗费用补助基金支出">
+          {{patientSignIn.preSettlement.hifob_pay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="医疗救助基金支出">
+          {{patientSignIn.preSettlement.maf_pay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="医院负担金额">
+          {{patientSignIn.preSettlement.hosp_part_amt}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="其他支出">
+          {{patientSignIn.preSettlement.oth_pay}}元
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="个人负担总金额">
+          {{patientSignIn.preSettlement.psn_part_amt}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="个人账户支出">
+          {{patientSignIn.preSettlement.acct_pay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="个人现金支出">
+          {{patientSignIn.preSettlement.psn_cash_pay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="个人账户共济支付金额">
+          {{patientSignIn.preSettlement.acct_mulaid_pay}}元
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="余额">
+          {{patientSignIn.preSettlement.balc}}元
+        </nz-descriptions-item>
+      </nz-descriptions>
+    </div>
+
+    <div nz-row>
+      <h2 style="margin-top: 20px">
+        缴费信息：
+      </h2>
+    </div>
+    <div>
+      <nz-descriptions nzBordered nzSize="small">
+        <nz-descriptions-item nzTitle="费用总额">
+          {{patientSignIn.totalFeeAmount}}元
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="报销总额">
+          {{patientSignIn.coveredFeeAmount}}元
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="自费总额">
+          {{patientSignIn.selfPayFeeAmount}}元
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="未上传费用">
+          {{patientSignIn.pendingFeeAmount}}元
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="已付金额">
+          {{patientSignIn.totalPaidAmount}}元
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="余额">
+          {{patientSignIn.accountBalance}}元
+        </nz-descriptions-item>
+      </nz-descriptions>
+    </div>
+
+  </div>
+</ng-template>

@@ -1,4 +1,3 @@
-<button nz-button nzType="primary" (click)="newPaymentClicked()">新增缴费</button>
 <div nz-row>
   <nz-descriptions [nzColumn]="{ xxl: 3, xl: 6, lg: 6, md: 6, sm: 1, xs: 1 }">
     <nz-descriptions-item nzTitle="费用总额">
@@ -20,6 +19,18 @@
       {{this.patientSignIn ? this.patientSignIn.accountBalance : undefined}}
     </nz-descriptions-item>
   </nz-descriptions>
+</div>
+
+<div nz-row>
+  <button nz-button nzType="primary" (click)="newPaymentClicked()"
+          style=" float: left; margin-left: 10px;"
+  >新增缴费
+  </button>
+
+  <button nz-button nzSize="small" nzType="primary" nzShape="circle" (click)="this.loadPaymentList()"
+          style=" float: left; margin-left: 10px;">
+    <i nz-icon nzType="reload"></i>
+  </button>
 </div>
 <div nz-row>
   <nz-table #basicTable [nzData]="paymentList"

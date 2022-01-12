@@ -2,7 +2,7 @@
   <nz-range-picker [(ngModel)]="filterDateRange"
                    style="float: left;"
                    [nzAllowClear]="false"
-                   (ngModelChange)="this.loadPaymentList(1)"
+                   (ngModelChange)="this.loadPaymentList()"
                    nzShowTime
   ></nz-range-picker>
 
@@ -13,9 +13,6 @@
               [nzFrontPagination]=false
               nzSize="small"
               style="background-color:white"
-              [(nzPageIndex)]="currentPageIndex"
-              [nzPageSize]="tablePageSize"
-              (nzPageIndexChange)=loadPaymentList(undefined)
     >
       <thead>
       <tr>

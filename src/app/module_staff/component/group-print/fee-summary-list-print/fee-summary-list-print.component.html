@@ -14,19 +14,47 @@
     </h2>
   </div>
   <div nz-row>
-    <nz-descriptions [nzColumn]="{ xxl: 5, xl: 5, lg: 5, md: 1, sm: 1, xs: 1 }"
+    <nz-descriptions [nzColumn]="{ xxl: 6, xl: 6, lg: 6, md: 1, sm: 1, xs: 1 }"
                      style="width: 994px; margin-left: 40px"
     >
       <nz-descriptions-item
-        nzTitle="姓名">{{this.printData.patientSignIn ? this.printData.patientSignIn.patient.name : undefined}}</nz-descriptions-item>
+        nzTitle="姓名"
+      ><p>
+          {{this.printData.patientSignIn ? this.printData.patientSignIn.patient.name : undefined}}
+        </p>
+      </nz-descriptions-item>
       <nz-descriptions-item
-        nzTitle="科室">{{this.printData.patientSignIn ? this.printData.patientSignIn.departmentTreatment.department.name : undefined}}</nz-descriptions-item>
+        nzTitle="科室">
+        <p>
+        {{this.printData.patientSignIn ? this.printData.patientSignIn.departmentTreatment.department.name : undefined}}
+        </p>
+      </nz-descriptions-item>
       <nz-descriptions-item
-        nzTitle="住院号">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInNumberCode : undefined}}</nz-descriptions-item>
+        nzTitle="住院号">
+        <p>
+        {{this.printData.patientSignIn ? this.printData.patientSignIn.signInNumberCode : undefined}}
+        </p>
+      </nz-descriptions-item>
       <nz-descriptions-item
-        nzTitle="入院日期">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInDate : undefined}}</nz-descriptions-item>
+        nzTitle="入院日期">
+        <p>
+        {{this.printData.patientSignIn ? this.printData.patientSignIn.signInDate : undefined}}
+        </p>
+      </nz-descriptions-item>
+
       <nz-descriptions-item
-        nzTitle="诊断">{{this.printData.patientSignIn ? this.printData.patientSignIn.diagnoseString : undefined}}</nz-descriptions-item>
+        nzTitle="出院日期">
+        <p>
+          {{this.printData.patientSignIn ? this.datePipe.transform(this.printData.patientSignIn.signOutDate, 'yyyy-MM-dd'): undefined}}
+        </p>
+      </nz-descriptions-item>
+
+      <nz-descriptions-item
+        nzTitle="诊断">
+        <p>
+        {{this.printData.patientSignIn ? this.printData.patientSignIn.diagnoseString : undefined}}
+        </p>
+      </nz-descriptions-item>
     </nz-descriptions>
   </div>
   </THEAD>
@@ -40,12 +68,12 @@
             [nzNoResult]=emptyResult
   >
     <thead style="display: table-header-group">
-    <tr>
-      <th>项目类型</th>
-      <th>项目名称</th>
-      <th>数量</th>
-      <th>单价</th>
-      <th>总价</th>
+    <tr >
+      <th style=" color: black">项目类型</th>
+      <th style=" color: black">项目名称</th>
+      <th style=" color: black">数量</th>
+      <th style=" color: black">单价</th>
+      <th style=" color: black">总价</th>
     </tr>
     </thead>
     <tbody>

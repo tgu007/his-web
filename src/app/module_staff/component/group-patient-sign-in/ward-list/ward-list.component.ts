@@ -59,6 +59,8 @@ export class WardListComponent implements OnInit {
   treatmentList: any;
   selectedTreatment: any;
   uiPermission: any;
+  searchCode: any;
+  timer: any;
 
 
   constructor(private patientService: PatientService,
@@ -72,13 +74,23 @@ export class WardListComponent implements OnInit {
 
   ngOnInit() {
     this.uiPermission = this.sessionService.getUserPermission().commonComponent.patientSignIn;
-    this.loadWardList();
+    this.loadWardList(false);
+
+    this.timer = setInterval(() => {
+      this.loadWardList(false);
+    }, 600000)
   }
 
 
-  loadWardList() {
+  loadWardList(reset:any = false) {
+    if(reset)
+      this.searchCode = undefined;
+
     this.isLoading = true;
-    let wardFilter = {hideEmptyBed: this.hideEmptyBed};
+    let wardFilter = {
+      hideEmptyBed: this.hideEmptyBed,
+      searchCode: this.searchCode,
+    };
     if (!this.sessionService.getUserPermission().fullWardPermission)
       wardFilter["wardIdList"] = this.sessionService.loginUser.wardIdList;
 
@@ -120,16 +132,19 @@ export class WardListComponent implements OnInit {
   }
 
   assignBed(selectedSignIn: any) {
+    this.signInSelectComponent.busy = true;
     this.patientService.assignSignInBed({patientSignInId: selectedSignIn.uuid, bedId: this.bedToAssign.uuid})
       .subscribe(response => {
           if (response) {
             this.message.create("success", "床位分配成功")
-            this.loadWardList();
+            this.loadWardList(false);
             this.patientSignInVisible = false;
           }
+          this.signInSelectComponent.busy = false;
         },
         error => {
           this.message.create("error", error.error.message);
+          this.signInSelectComponent.busy = false;
         });
   }
 

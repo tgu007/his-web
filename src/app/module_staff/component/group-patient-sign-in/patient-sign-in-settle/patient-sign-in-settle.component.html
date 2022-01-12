@@ -38,6 +38,41 @@
     style="float: left; margin-left: 10px"
   >发票打印
   </button>
+
+  <button
+    *ngIf="this.patientSignIn.settlement  && !this.patientSignIn.selfPay"
+    (click)="this.printSettlementClicked()"
+    nz-button nzType="primary"
+    [nzLoading]=this.isSaving
+    class="ant-btn ant-btn-primary"
+    style="float: left; margin-left: 10px"
+  >结算单打印
+  </button>
+
+  <button
+    *ngIf="this.patientSignIn.settlement  && !this.patientSignIn.selfPay"
+    (click)="this.uploadSettlement()"
+    nz-button nzType="primary"
+    [nzLoading]=this.isSaving
+    class="ant-btn ant-btn-primary"
+    style="float: left; margin-left: 10px"
+  >上传结算单
+  </button>
+
+  <button nz-button nzSize="small" nzType="primary" nzShape="circle" (click)="this.refresh()"
+          style=" float: left; margin-left: 10px;">
+    <i nz-icon nzType="reload"></i>
+  </button>
+
+<!--  <button-->
+<!--    *ngIf="this.patientSignIn.settlement  && !this.patientSignIn.selfPay"-->
+<!--    (click)="this.downloadSettlement()"-->
+<!--    nz-button nzType="primary"-->
+<!--    [nzLoading]=this.isSaving-->
+<!--    class="ant-btn ant-btn-primary"-->
+<!--    style="float: left; margin-left: 10px"-->
+<!--  >下载结算信息-->
+<!--  </button>-->
 </div>
 
 <div nz-row style="width: 100%">

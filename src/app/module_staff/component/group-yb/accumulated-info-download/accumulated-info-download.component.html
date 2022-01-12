@@ -1,0 +1,35 @@
+<div nz-row>
+  <input nz-input [(ngModel)]="signInNumber"
+         placeholder="输入住院号"
+         style=" float: left; margin-left: 10px; width:300px"/>
+  <button nz-button nzType="primary" (click)="this.searchAccumulatedInfo()"
+          [nzLoading] = "this.busy"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询</button>
+</div>
+
+
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.infoList" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>险种类型</th>
+      <th>年度</th>
+      <th>累计年月</th>
+      <th>累计类别代码</th>
+      <th>累计值</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.insutype}}</td>
+      <td>{{data.year}}</td>
+      <td>{{data.cum_ym}}</td>
+      <td>{{data.cum_type_code}}</td>
+      <td>{{data.cum}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

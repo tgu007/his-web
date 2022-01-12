@@ -1,0 +1,39 @@
+<div nz-row>
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   style="float: left;margin-left: 10px;"
+  ></nz-range-picker>
+
+  <button nz-button (click)="this.search()"
+          [nzLoading]="this.busy"
+          style="float: left;margin-left: 10px;"
+  >查询
+  </button>
+</div>
+
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.signInHistoryList" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>人员姓名</th>
+      <th>性别</th>
+      <th>年龄</th>
+      <th>住院号</th>
+      <th>就诊ID</th>
+      <th>险种类型</th>
+      <th>开始日期</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.psn_name}}</td>
+      <td>{{data.gend}}</td>
+      <td>{{data.age}}</td>
+      <td>{{data.ipt_otp_no}}</td>
+      <td>{{data.mdtrt_id}}</td>
+      <td>{{data.insutype}}</td>
+      <td>{{data.begndate}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

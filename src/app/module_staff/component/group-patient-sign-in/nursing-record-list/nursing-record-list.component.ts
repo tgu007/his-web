@@ -101,11 +101,12 @@ export class NursingRecordListComponent implements OnInit, AfterViewInit {
   }
 
   printClicked() {
-
+    let cloneList = this.nursingRecordList.concat();
+    //let reversedList = this.nursingRecordList.reverse();
     this.printService.onPrintClicked.emit({
       name: 'nursingRecordList',
       data: {
-        nursingRecordList: this.nursingRecordList,
+        nursingRecordList: cloneList.reverse(),
         patientSignIn: this.patientSignIn,
       }
     });

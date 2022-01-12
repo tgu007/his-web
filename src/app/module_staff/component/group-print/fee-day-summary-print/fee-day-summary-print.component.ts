@@ -16,6 +16,7 @@ export class FeeDaySummaryPrintComponent extends BasePrint implements OnInit, Af
   }
 
   ngOnInit() {
+
   }
 
   ngAfterViewChecked(): void {

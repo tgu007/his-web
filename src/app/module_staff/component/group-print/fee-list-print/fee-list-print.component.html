@@ -18,15 +18,35 @@
                      style="width: 994px; margin-left: 40px"
     >
       <nz-descriptions-item
-        nzTitle="姓名">{{this.printData.patientSignIn ? this.printData.patientSignIn.patient.name : undefined}}</nz-descriptions-item>
+        nzTitle="姓名"
+      ><p>
+        {{this.printData.patientSignIn ? this.printData.patientSignIn.patient.name : undefined}}
+      </p>
+      </nz-descriptions-item>
       <nz-descriptions-item
-        nzTitle="科室">{{this.printData.patientSignIn ? this.printData.patientSignIn.departmentTreatment.department.name : undefined}}</nz-descriptions-item>
+        nzTitle="科室">
+        <p>
+          {{this.printData.patientSignIn ? this.printData.patientSignIn.departmentTreatment.department.name : undefined}}
+        </p>
+      </nz-descriptions-item>
       <nz-descriptions-item
-        nzTitle="住院号">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInNumberCode : undefined}}</nz-descriptions-item>
+        nzTitle="住院号">
+        <p>
+          {{this.printData.patientSignIn ? this.printData.patientSignIn.signInNumberCode : undefined}}
+        </p>
+      </nz-descriptions-item>
       <nz-descriptions-item
-        nzTitle="入院日期">{{this.printData.patientSignIn ? this.printData.patientSignIn.signInDate : undefined}}</nz-descriptions-item>
+        nzTitle="入院日期">
+        <p>
+          {{this.printData.patientSignIn ? this.printData.patientSignIn.signInDate : undefined}}
+        </p>
+      </nz-descriptions-item>
       <nz-descriptions-item
-        nzTitle="诊断">{{this.printData.patientSignIn ? this.printData.patientSignIn.diagnoseString : undefined}}</nz-descriptions-item>
+        nzTitle="诊断">
+        <p>
+          {{this.printData.patientSignIn ? this.printData.patientSignIn.diagnoseString : undefined}}
+        </p>
+      </nz-descriptions-item>
     </nz-descriptions>
   </div>
   </THEAD>
@@ -41,15 +61,21 @@
   >
     <thead style="display: table-header-group">
     <tr>
-      <th nzWidth='130px'>费用日期</th>
-      <th>项目类型</th>
-      <th>项目名称</th>
-      <th>数量</th>
-      <th>单价</th>
-      <th>总价</th>
-      <th>计费人</th>
+      <th style=" color: black" nzWidth='130px'>费用日期</th>
+      <th style=" color: black">项目类型</th>
+      <th style=" color: black">项目名称</th>
+      <th style=" color: black">数量</th>
+      <th style=" color: black">单价</th>
+      <th style=" color: black">总价</th>
+
+      <ng-template [ngIf]="!this.printData.patientSignIn.selfPay">
+        <th>自费比例</th>
+        <th>自费</th>
+        <th>报销金额</th>
+      </ng-template>
+      <th style=" color: black"  nzWidth='80px'>计费人</th>
       <ng-template [ngIf]="this.printData.printFormat">
-        <th>带教人</th>
+        <th style=" color: black">带教人</th>
       </ng-template>
     </tr>
     </thead>
@@ -62,6 +88,12 @@
         <td>{{data.displayQuantityInfo}}</td>
         <td>{{data.displayUnitAmount}}</td>
         <td>{{data.totalAmount}}元</td>
+        <ng-template [ngIf]="!this.printData.patientSignIn.selfPay">
+          <td>{{data.selfRatio}}</td>
+          <td>{{data.selfZF}}元</td>
+          <td>{{data.insuranceAmount}}元</td>
+        </ng-template>
+
         <td>{{data.whoCreated}}</td>
         <ng-template [ngIf]="this.printData.printFormat">
           <td>{{data.supervisorName}}</td>

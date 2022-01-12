@@ -13,7 +13,7 @@ export class PaymentListAllComponent implements OnInit {
   loading: any;
   paymentList: any;
   totalDataCount: any;
-  currentPageIndex: any = 1;
+  //currentPageIndex: any = 1;
   tablePageSize = globals.tablePageSize;
 
 
@@ -25,18 +25,16 @@ export class PaymentListAllComponent implements OnInit {
     let today = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     //let yesterday =  this.datePipe.transform(addDays(today, -1), 'yyyy-MM-dd');
     this.filterDateRange = [today + ' 00:00:00', today + ' 23:59:59'];
-    this.loadPaymentList(1);
+    this.loadPaymentList();
   }
 
-  loadPaymentList(pageIndex:any) {
-    if(pageIndex)
-      this.currentPageIndex = 1;
+  loadPaymentList() {
 
     let dateFilter = {};
     dateFilter['startDate'] = this.datePipe.transform(this.filterDateRange[0], 'yyyy-MM-dd HH:mm:ss');
     dateFilter['endDate'] = this.datePipe.transform(this.filterDateRange[1], 'yyyy-MM-dd HH:mm:ss')
     this.loading = true;
-    this.feeService.getAllPaymentList(dateFilter, this.currentPageIndex)
+    this.feeService.getAllPaymentList(dateFilter)
       .subscribe(response => {
         if (response) {
           this.totalDataCount = response.totalCount;

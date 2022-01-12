@@ -15,7 +15,8 @@ export class YbTzService {
   }
 
   getLocalIpInfo() {
-    return this.appService.httpPost(`yb/util/local_ip`, undefined, this.localUrl);
+    //return this.appService.httpPost(`yb/util/local_ip`, undefined, this.localUrl);
+    return this.appService.httpPost(`yb/util/local_ip`, undefined);
   }
 
   getCenterMedicineList() {
@@ -97,6 +98,10 @@ export class YbTzService {
     return this.appService.httpPost(`api/yb/patient/sign_in/settle/${signInId}`, clientIpUrl);
   }
 
+  uploadSettlement(signInId: any) {
+    return this.appService.httpPost(`api/yb/patient/sign_in/settle/upload/${signInId}`);
+  }
+
   selfSettle(signInId: any) {
     return this.appService.httpPost(`api/yb/patient/sign_in/settle/self/${signInId}`);
   }
@@ -162,6 +167,7 @@ export class YbTzService {
   }
 
   cancelYBSignIn(clientServerInfo: any, signInId: any) {
+    //return this.appService.httpPost(`api/yb/patient/sign_in/cancel/${signInId}`, clientServerInfo);
     return this.appService.httpPost(`api/yb/patient/sign_in/cancel/${signInId}`, clientServerInfo);
   }
 
@@ -215,5 +221,88 @@ export class YbTzService {
 
   cancelYBSideFee(feeId: any) {
     return this.appService.httpPost(`api/yb/fee/cancel/${feeId}`);
+  }
+
+  validateOverALL(pram: any) {
+    return this.appService.httpPost(`api/yb/settlement/validate/overall`, pram);
+  }
+
+  downloadFile(pram: any) {
+    return this.appService.httpPost(`api/yb/file/download`, pram);
+  }
+
+  downloadSettlement(patientSignInId: any) {
+    return this.appService.httpPost(`api/yb/settlement/download/${patientSignInId}`);
+  }
+
+  downloadSettlementDetail(patientSignInId: any) {
+    return this.appService.httpPost(`api/yb/settlement/detail/download/${patientSignInId}`);
+  }
+
+  validateDetail(pram: {}) {
+    return this.appService.httpPost(`api/yb/settlement/validate/detail`, pram);
+  }
+
+  downloadDepartment() {
+    return this.appService.httpPost(`api/yb/department/download`);
+  }
+
+  downloadSignInHistory(signInNumber: any) {
+    let url  = `api/yb/signin_info/download/${signInNumber}`;
+    return this.appService.httpPost(url);
+    // return this.appService.httpPost(`api/yb/signin_info/download/${signInNumber}`);
+  }
+
+  downloadDiagnose(signInNumber: any) {
+    let url  = `api/yb/diagnose/download/${signInNumber}`;
+    return this.appService.httpPost(url);
+  }
+
+  downloadFee(signInNumber: any) {
+    let url  = `api/yb/fee/download/${signInNumber}`;
+    return this.appService.httpPost(url);
+  }
+
+  downloadAccumulatedInfo(signInNumber: any) {
+    let url  = `api/yb/accumulated/download/${signInNumber}`;
+    return this.appService.httpPost(url);
+  }
+
+  downloadSignInHistoryByTime(pram: any) {
+    let url  = `api/yb/sign_in/by_time/download`;
+    return this.appService.httpPost(url, pram);
+  }
+
+  searchCommon(pageNumber: any, info_number: string) {
+    let url  = `api/yb/common/download/${info_number}/${pageNumber}`;
+    return this.appService.httpPost(url);
+  }
+
+  ybSignOut(signInId: any) {
+    return this.appService.httpPost(`api/yb/sign_out/${signInId}`);
+  }
+
+  cancelYBSignOut(signInId: any) {
+    return this.appService.httpPost(`api/yb/sign_out/cancel/${signInId}`);
+  }
+
+  cancelSettlement(signInId: any) {
+    return this.appService.httpPost(`api/yb/settlement/cancel/${signInId}`);
+  }
+
+  getSettlementSummary(signInId: any) {
+    return this.appService.httpPost(`api/yb/settlement/summary/print/${signInId}`);
+  }
+
+  loadPatientDetail(selectedPatientIdList: any) {
+    return this.appService.httpPost(`api/yb/pre_settlement/list/print`, selectedPatientIdList);
+  }
+
+  getPatientInfo(pram: any) {
+    return this.appService.httpPost(`api/yb/patient/info/request`, pram);
+  }
+
+  yBSignIn(signInId: any) {
+    return this.appService.httpPost(`api/yb/patient/sign_in/signIn/${signInId}`);
   }
 }

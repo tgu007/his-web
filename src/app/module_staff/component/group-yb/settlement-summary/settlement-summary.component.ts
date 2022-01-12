@@ -87,6 +87,7 @@ export class SettlementSummaryComponent implements OnInit {
       this.preSettling = false;
       this.message.create("success", "预结已更新");
       this.patientSignIn.preSettlement = response.content;
+      console.log(this.patientSignIn.preSettlement);
     })
       .catch(error => {
         this.preSettling = false;
@@ -104,9 +105,11 @@ export class SettlementSummaryComponent implements OnInit {
       newPayment["amount"] = this.paymentAmount;
       newPayment["status"] = '已缴费';
     } else {
-      newPayment["paymentType"] = '结算退费';
-      newPayment["amount"] = this.paymentAmount * -1;
-      newPayment["status"] = '已退费';
+      this.message.warning("请到缴费菜单退费");
+      return;
+      // newPayment["paymentType"] = '结算退费';
+      // newPayment["amount"] = this.paymentAmount * -1;
+      // newPayment["status"] = '已退费';
     }
     newPayment["paymentMethodId"] = this.selectPaymentMethod.id;
 
@@ -131,5 +134,15 @@ export class SettlementSummaryComponent implements OnInit {
           this.message.create("error", error.error.message);
         }
       );
+  }
+
+  disablePayment() {
+    if (this.patientSignIn) {
+      if (this.patientSignIn.accountBalance == 0)
+        return true;
+      if (!this.patientSignIn.selfPay && !this.patientSignIn.settlement)
+        return true;
+    }
+    return false;
   }
 }

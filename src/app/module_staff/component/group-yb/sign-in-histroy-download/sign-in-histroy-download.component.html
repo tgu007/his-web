@@ -1,0 +1,42 @@
+
+
+
+<div nz-row>
+  <input nz-input [(ngModel)]="signInNumber"
+         placeholder="输入住院号"
+         style=" float: left; margin-left: 10px; width:300px"/>
+  <button nz-button nzType="primary" (click)="this.searchHistory()"
+          [nzLoading] = "this.busy"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询</button>
+</div>
+
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.signInHistoryList" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>住院号</th>
+      <th>就诊ID</th>
+      <th>人员编号</th>
+      <th>开始时间</th>
+      <th>结束时间</th>
+      <th>科室</th>
+      <th>主诊医生</th>
+      <th>主诊断</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.ipt_otp_no}}</td>
+      <td>{{data.mdtrt_id}}</td>
+      <td>{{data.psn_no}}</td>
+      <td>{{data.begntime}}</td>
+      <td>{{data.endtime}}</td>
+      <td>{{data.adm_dept_name}}</td>
+      <td>{{data.chfpdr_name}}</td>
+      <td>{{data.dscg_maindiag_name}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

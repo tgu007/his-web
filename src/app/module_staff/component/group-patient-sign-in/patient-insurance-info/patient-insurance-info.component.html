@@ -1,0 +1,71 @@
+<div nz-row>
+  <div nz-col nzSpan="10">
+    <input nz-input [(ngModel)]="this.name"
+           placeholder="输入姓名"
+           style="width: 50%"
+    />
+  </div>
+
+  <div nz-col nzSpan="10">
+    <input nz-input [(ngModel)]="this.idNumber"
+           placeholder="输入身份证号码"
+           style="width: 80%"
+    />
+  </div>
+
+  <div nz-col nzSpan="4">
+    <button nz-button nzType="primary" (click)="checkPatientInfoClicked()" [nzLoading]="this.isLoading"
+    >查询
+    </button>
+  </div>
+
+</div>
+
+<div nz-row style="margin-top: 10px">
+  <nz-descriptions [nzColumn]="{ xxl: 6, xl: 6, lg: 6, md: 4, sm: 2, xs: 1 }" nzBordered nzSize="small">
+    <nz-descriptions-item nzTitle="医保编号">
+      {{this.patientBasicInfo?.psn_no}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="性别">
+      {{this.patientBasicInfo?.gend}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="生日">
+      {{this.patientBasicInfo?.brdy}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="年龄">
+      {{this.patientBasicInfo?.age}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</div>
+
+<div nz-row style="margin-top: 10px">
+  <nz-table #basicTable [nzData]="this.patientInsuranceInfo" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>参保地区</th>
+      <th>基金名称</th>
+      <th>余额</th>
+      <th>人员类别</th>
+      <th>人员参保状态</th>
+      <th>开始日期</th>
+      <th>结束日期</th>
+      <th>公务员标志</th>
+      <th>单位名称</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.areaName}}</td>
+      <td>{{data.insutypeText}}</td>
+      <td>{{data.psn_type_text}}</td>
+      <td>{{data.psn_insu_stas}}</td>
+      <td>{{data.balc}}</td>
+      <td>{{data.psn_insu_date}}</td>
+      <td>{{data.paus_insu_date}}</td>
+      <td>{{data.cvlserv_flag}}</td>
+      <td>{{data.emp_name}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

@@ -3,7 +3,6 @@ import {PatientService} from "../../../../service/patient.service";
 import {PatientDetailComponent} from "../patient-detail/patient-detail.component";
 import {PatientSignInDetailComponent} from "../patient-sign-in-detail/patient-sign-in-detail.component";
 import * as globals from "../../../../../globals";
-import {error} from "util";
 import {NzMessageService} from "ng-zorro-antd";
 import {SessionService} from "../../../../service/session.service";
 import {PrintService} from "../../../../service/print.service";
@@ -29,6 +28,7 @@ export class PatientListComponent implements OnInit {
   tablePageSize: any = globals.tablePageSize;
   isLoading: any = false;
   uiPermission;
+  insuranceCheckModalVisible: any = false;
 
 
   constructor(private patientService: PatientService,
@@ -83,6 +83,7 @@ export class PatientListComponent implements OnInit {
   handleCancel() {
     this.patientDetailModalVisible = false;
     this.signInModalVisible = false;
+    this.insuranceCheckModalVisible = false;
   }
 
   saveNewPatient() {
@@ -119,5 +120,9 @@ export class PatientListComponent implements OnInit {
       name: 'patientSignInDetail',
       data: this.newSignInComponent.patientSignIn
     });
+  }
+
+  insuranceCheck() {
+    this.insuranceCheckModalVisible = true;
   }
 }

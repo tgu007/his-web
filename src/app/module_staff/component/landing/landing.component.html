@@ -63,6 +63,7 @@
                     <li nz-menu-item (click)="newTab('所有发药记录', 'prescriptionProcessedMedicineOrderList')">所有发药记录</li>
                   </ul>
                 </li>
+                <li nz-menu-item (click)="newTab('预结算打印', 'printPreSettlementList')">预结算打印</li>
               </ul>
             </li>
           </ng-container>
@@ -118,6 +119,7 @@
               </ul>
             </li>
             <li nz-menu-item (click)="newTab('用户管理', 'userManagement')">用户管理</li>
+            <li nz-menu-item (click)="newTab('预结算打印', 'printPreSettlementList')">预结算打印</li>
           </ng-template>
         </ng-template>
         <ng-template [ngIf]="this.uiPermission.doctorStation">
@@ -139,6 +141,7 @@
             <li nz-menu-item (click)="newTab('病区列表', 'wardList')">病区列表</li>
             <li nz-menu-item (click)="newTab('病人信息', 'patientList')">病人基本信息</li>
             <li nz-menu-item (click)="newTab('住院记录', 'signInList')">住院记录</li>
+            <li nz-menu-item (click)="newTab('诊疗项目', 'treatmentList', 'full')">诊疗项目</li>
             <li nz-submenu nzTitle="设置">
               <ul>
                 <li nz-menu-item (click)="newTab('模板管理', 'templateList')">模板管理</li>
@@ -218,6 +221,7 @@
                   <li nz-menu-item (click)="this.matchEntity('medicine')">匹配药品</li>
                   <li nz-menu-item (click)="this.uploadMedicine('medicine')">上传所有药品</li>
                   <li nz-menu-item (click)="this.uploadPrescriptionOrder()">上传发药记录</li>
+<!--                  <li nz-menu-item (click)="this.validateSettlementOverallClicked()">医保对账</li>-->
                 </nz-spin>
               </ul>
             </li>
@@ -421,6 +425,34 @@
                 </li>
                 <li nz-menu-item (click)="this.uploadAllPendingFee()">上传所有费用</li>
                 <li nz-menu-item (click)="this.initializeWarehouse()">库房初始化</li>
+                <li nz-menu-item (click)="this.validateSettlementOverallClicked()">医保对账</li>
+                <li nz-submenu nzTitle="下载">
+                  <ul>
+                    <li nz-menu-item (click)="this.downloadFile('1302', '中药饮片目录.txt.zip')">中药饮片目录</li>
+                    <li nz-menu-item (click)="this.downloadFile('1301', '西药中成药目录.txt.zip')">西药中成药目录</li>
+<!--                    <li nz-menu-item (click)="this.downloadFile('1303', '医疗机构制剂目录.txt.zip')">医疗机构制剂目录</li>-->
+<!--                    <li nz-menu-item (click)="this.downloadFile('1305', '医疗服务项目目录.txt.zip')">医疗服务项目目录</li>-->
+                    <li nz-menu-item (click)="this.downloadFile('1306', '医用耗材目录.txt.zip')">医用耗材目录</li>
+                    <li nz-menu-item (click)="this.downloadFile('1307', '疾病与诊断目录.txt.zip')">疾病与诊断目录</li>
+<!--                    <li nz-menu-item (click)="this.downloadFile('1901', '字典表.txt.zip')">字典表</li>-->
+                  </ul>
+                </li>
+                <li nz-submenu nzTitle="信息查询">
+                  <ul>
+                    <li nz-menu-item (click)="this.lookupDepartment()">科室查询</li>
+                    <li nz-menu-item (click)="this.lookupEmployee()">医执人员查询</li>
+                    <li nz-menu-item (click)="this.lookupSignInHistory()">住院记录查询</li>
+                    <li nz-menu-item (click)="this.lookupDiagnoseInfo()">诊断查询</li>
+                    <li nz-menu-item (click)="this.lookupSettlement()">结算查询</li>
+                    <li nz-menu-item (click)="this.lookupFee()">费用查询</li>
+                    <li nz-menu-item (click)="this.lookupAccumulatedInfo()">人员累计信息查询</li>
+                    <li nz-menu-item (click)="this.lookupSignInByTime()">在院信息查询</li>
+                    <li nz-menu-item (click)="this.lookupMatchedEntityOne()">医疗目录与医保目录匹配信息查询</li>
+                    <li nz-menu-item (click)="this.lookupMatchedEntityTwo()">医药机构目录匹配信息查询</li>
+                    <li nz-menu-item (click)="this.lookupPriceLimit()">医保目录限价信息查询</li>
+                  </ul>
+                </li>
+
               </nz-spin>
             </ul>
           </li>
@@ -503,11 +535,18 @@
 
       <nz-tabset [nzType]="'card'" [(nzSelectedIndex)]="activeTabIndex" nzSize="small" nzTabPosition="top"
       >
+
+
         <nz-tab *ngFor="let tab of tabs" [nzTitle]="titleTemplate" (nzClick)=tabClicked(tab)>
           <ng-template #titleTemplate>
             <div>{{ tab.tabName }}<i nz-icon nzType="close" class="ant-tabs-close-x"
                                      (click)="closeTab(tab)"></i></div>
           </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'printPreSettlementList'">
+            <app-pre-settlement-print-selection></app-pre-settlement-print-selection>
+          </ng-template>
+
           <ng-template [ngIf]="tab.componentName == 'departmentFeeSummary'">
             <app-department-fee-summary></app-department-fee-summary>
           </ng-template>
@@ -797,7 +836,68 @@
           <ng-template [ngIf]="tab.componentName == 'internalChargePaymentList'">
             <app-his-internal-payment-list [patientSignIn]="tab.pram"></app-his-internal-payment-list>
           </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'validateSettlementOverall'">
+            <app-settlement-validation-overall></app-settlement-validation-overall>
+          </ng-template>
+          <ng-template [ngIf]="tab.componentName == 'departmentLookup'">
+            <app-department-download></app-department-download>
+          </ng-template>
 
+          <ng-template [ngIf]="tab.componentName == 'employeeLookup'">
+            <app-employee-download></app-employee-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'signInHistoryLookup'">
+            <app-sign-in-histroy-download></app-sign-in-histroy-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'diagnoseLookup'">
+            <app-diagnose-download></app-diagnose-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'settlementLookup'">
+            <app-settlement-download></app-settlement-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'feeLookup'">
+            <app-fee-download></app-fee-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'accumulatdInfoLookup'">
+            <app-accumulated-info-download></app-accumulated-info-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'signInByTime'">
+            <app-sign-in-by-time-download></app-sign-in-by-time-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'matchedEntityOneLookup'">
+            <app-center-entity-match-download></app-center-entity-match-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'matchedEntityTwoLookup'">
+            <app-center-entity-match-two-download></app-center-entity-match-two-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'priceLimitLookup'">
+            <app-center-entity-limit-download></app-center-entity-limit-download>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'centerChineseMedicine'">
+           <app-center-medicine-chinese [data]="tab.pram" ></app-center-medicine-chinese>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'centerWestMedicine'">
+            <app-center-medicine-west [data]="tab.pram" ></app-center-medicine-west>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'centerItem'">
+            <app-center-item [data]="tab.pram" ></app-center-item>
+          </ng-template>
+
+          <ng-template [ngIf]="tab.componentName == 'centerDisease'">
+            <app-center-disease [data]="tab.pram" ></app-center-disease>
+          </ng-template>
         </nz-tab>
       </nz-tabset>
     </nz-layout>

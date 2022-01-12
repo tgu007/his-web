@@ -37,7 +37,9 @@
     <td>{{patientSignIn.signInDate}}</td>
     <td>{{patientSignIn.currentBed}}</td>
     <td>
-      <button nz-button nzSize="small" (click)='signInSelected(patientSignIn)'>分配</button>
+      <button nz-button nzSize="small" (click)='signInSelected(patientSignIn)'
+      [nzLoading]="this.busy"
+      >分配</button>
     </td>
   </tr>
   </tbody>

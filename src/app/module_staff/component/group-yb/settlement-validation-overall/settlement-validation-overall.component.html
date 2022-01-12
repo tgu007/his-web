@@ -1,0 +1,69 @@
+<div nz-row>
+  <nz-select
+    nzShowSearch
+    [(ngModel)]="selectInsuranceType"
+    style="width: 200px; float: left; margin-left: 10px"
+  >
+    <ng-template [ngIf]="insuranceTypeList">
+      <nz-option *ngFor="let insuranceType of this.insuranceTypeList"
+                 [nzValue]="insuranceType"
+                 [nzLabel]="insuranceType.name"></nz-option>
+    </ng-template>
+  </nz-select>
+
+  <input nz-input  [(ngModel)]="txtSetlOption"
+         style="width: 200px; float: left; margin-left: 10px"
+  />
+
+  <nz-range-picker [(ngModel)]="filterDateRange"
+                   style="float: left;margin-left: 10px;"
+  ></nz-range-picker>
+
+  <button nz-button (click)="this.validate()"
+          [nzLoading]="this.busy"
+          style="float: left;margin-left: 10px;"
+  >对总账
+  </button>
+
+  <button nz-button (click)="this.validateDetail()"
+          style="float: left;margin-left: 10px;"
+  >对明细
+  </button>
+</div>
+
+<div nz-row>
+  对账结果：{{this.result}}
+</div>
+
+<div nz-row>
+  <nz-spin [nzSpinning]="this.busy">
+    <nz-table #basicTable [nzData]="this.settledPatientList"
+              nzSize="small"
+              [nzFrontPagination]=false
+              style="background-color:white"
+    >
+      <thead>
+      <tr>
+        <th>住院号</th>
+        <th>姓名</th>
+        <th>结算日期</th>
+        <th>结算编号</th>
+        <th>总费用</th>
+        <th>自费</th>
+        <th>医保费用</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let patientSignIn of basicTable.data">
+        <td>{{patientSignIn.signInNumberCode}}</td>
+        <td>{{patientSignIn.patient.name}}</td>
+        <td>{{patientSignIn.settlement.setl_time}}</td>
+        <td>{{patientSignIn.settlement.medins_setl_id}}</td>
+        <td>{{patientSignIn.settlement.medfee_sumamt}}</td>
+        <td>{{patientSignIn.settlement.psn_part_amt}}</td>
+        <td>{{patientSignIn.settlement.fund_pay_sumamt}}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-spin>
+</div>

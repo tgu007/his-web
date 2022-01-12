@@ -136,7 +136,7 @@
               <nz-select
                 nzShowSearch
                 formControlName="selectInsuranceType"
-                [nzDisabled]="this.patientSignIn?.status =='已入院'"
+                [nzDisabled]="this.allowChangeInsuranceType()"
               >
                 <ng-template [ngIf]="this.initializePrams && this.initializePrams.insuranceTypeList">
                   <nz-option *ngFor="let insuranceType of this.initializePrams.insuranceTypeList"
@@ -216,6 +216,58 @@
       </div>
 
       <div nz-row>
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="dateSignIn">入院时间</nz-form-label>
+            <nz-form-control [nzSm]="12" [nzXs]="24">
+              <nz-date-picker
+                nzShowTime
+                nzFormat="yyyy-MM-dd HH:mm:ss"
+                nzPlaceHolder="选择日期时间"
+                formControlName="dateSignIn"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectMedType">医疗类别</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选择医疗类别">
+              <nz-select
+                nzShowSearch
+                formControlName="selectMedType"
+              >
+                <ng-template [ngIf]="initializePrams != undefined">
+                  <nz-option *ngFor="let medType of this.initializePrams.medTypeList"
+                             [nzValue]="medType.id"
+                             [nzLabel]="medType.name"></nz-option>
+                </ng-template>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+<!--        <div nz-col nzSpan="8">-->
+<!--          <nz-form-item>-->
+<!--            <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="selectInsuranceArea">医保地区</nz-form-label>-->
+<!--            <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选择医保地区">-->
+<!--              <nz-select-->
+<!--                nzShowSearch-->
+<!--                formControlName="selectInsuranceArea"-->
+<!--              >-->
+<!--                <ng-template [ngIf]="initializePrams != undefined">-->
+<!--                  <nz-option *ngFor="let insuranceArea of this.initializePrams.insuranceAreaList"-->
+<!--                             [nzValue]="insuranceArea.id"-->
+<!--                             [nzLabel]="insuranceArea.name"></nz-option>-->
+<!--                </ng-template>-->
+<!--              </nz-select>-->
+<!--            </nz-form-control>-->
+<!--          </nz-form-item>-->
+<!--        </div>-->
+      </div>
+
+      <div nz-row>
         <div nz-col nzSpan="24">
           <nz-form-item>
             <nz-form-label [nzSm]="4" [nzXs]="12" nzFor="txtReference">备注</nz-form-label>
@@ -227,6 +279,8 @@
       </div>
 
     </fieldset>
+
+
     <fieldset>
       <legend>病情诊断：</legend>
       <div nz-row>

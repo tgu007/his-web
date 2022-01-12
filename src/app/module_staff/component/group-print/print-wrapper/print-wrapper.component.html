@@ -202,3 +202,19 @@
   >
   </app-lab-test-request-print>
 </ng-template>
+
+
+<ng-template [ngIf]="this.showSettlementSummary">
+  <app-settlement-print
+    [printData]="this.printData"
+  >
+  </app-settlement-print>
+</ng-template>
+
+
+<ng-template [ngIf]="this.showPreSettlementList">
+  <app-pre-settlement-print
+    [printData]="this.printData"
+  >
+  </app-pre-settlement-print>
+</ng-template>

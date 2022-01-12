@@ -8,7 +8,7 @@ export const environment = {
   serverUrl: 'http://127.0.0.1:8100',
   // serverUrl: 'http://120.77.159.81:8100',
   // serverUrl: 'http://8.129.178.181:8100',
-  //serverUrl: 'https://2l70386w17.wicp.vip',
+  // serverUrl: 'https://2l70386w17.wicp.vip'
 };
 
 /*

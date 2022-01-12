@@ -272,5 +272,9 @@ export class BasicService {
   jdyDemo() {
     return this.appService.httpPost(`public/jdy/demo`, undefined);
   }
+
+  getInsuranceTypeList() {
+    return this.appService.httpGet(`api/basic/insurance_type/list`);
+  }
 }
 

@@ -456,4 +456,81 @@ export class LandingComponent implements OnInit, OnDestroy {
         this.message.create("success", "执行完成");
       })
   }
+
+  validateSettlementOverallClicked() {
+    this.newTab("医保对账", 'validateSettlementOverall')
+  }
+
+  downloadFile(infoNumber: string, fileName: string) {
+    let pram = {
+      infoNumber:infoNumber,
+      fileName:fileName
+    }
+    this.ybService.downloadFile(pram).toPromise()
+      .then(response => {
+        this.message.create("success", "下载完成");
+       this.openNewTab(response, infoNumber);
+       // this.newTab("中药饮片目录", 'ybChineseMedicine')
+      })
+      .catch(error => {
+        this.processError(error);
+      })
+  }
+
+  private openNewTab(response: any, infoNumber: string) {
+    if(infoNumber == '1302')
+      this.newTab("中药饮片目录", 'centerChineseMedicine', response);
+    else if(infoNumber == '1301')
+      this.newTab("西药中成药目录", 'centerWestMedicine', response);
+    else if(infoNumber == '1306')
+      this.newTab("医用耗材目录", 'centerItem', response);
+    else if(infoNumber == '1307')
+      this.newTab("疾病与诊断目录", 'centerDisease', response);
+  }
+
+  lookupDepartment() {
+    this.newTab("科室查询", 'departmentLookup');
+  }
+
+  lookupEmployee() {
+    this.newTab("医嘱人员查询", 'employeeLookup');
+  }
+
+  lookupSignInHistory() {
+    this.newTab("住院记录查询", 'signInHistoryLookup');
+  }
+
+  lookupDiagnoseInfo() {
+    this.newTab("诊断查询", 'diagnoseLookup');
+  }
+
+  lookupSettlement() {
+    this.newTab("结算查询", 'settlementLookup');
+  }
+
+  lookupFee() {
+    this.newTab("费用查询", 'feeLookup');
+  }
+
+  lookupAccumulatedInfo() {
+    this.newTab("人员累计信息查询", 'accumulatdInfoLookup');
+  }
+
+  lookupSignInByTime() {
+    this.newTab("在院信息查询", 'signInByTime');
+  }
+
+  lookupMatchedEntityOne() {
+    this.newTab("医疗目录与医保目录匹配信息查询", 'matchedEntityOneLookup');
+  }
+
+  lookupMatchedEntityTwo() {
+    this.newTab("医药机构目录匹配信息查询", 'matchedEntityTwoLookup');
+  }
+
+  lookupPriceLimit() {
+    this.newTab("医保目录限价信息查询", 'priceLimitLookup');
+  }
+
+
 }

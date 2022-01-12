@@ -9,7 +9,6 @@ import {SessionService} from "../../../../service/session.service";
   styleUrls: ['./nursing-record-print.component.css']
 })
 export class NursingRecordPrintComponent extends BasePrint implements OnInit, AfterViewChecked {
-  nursingRecordList: any = []
 
   constructor(printService: PrintService,
               public sessionService: SessionService) {
@@ -17,13 +16,6 @@ export class NursingRecordPrintComponent extends BasePrint implements OnInit, Af
   }
 
   ngOnInit() {
-    this.nursingRecordList = this.printData.nursingRecordList.reverse();
-    // for (let nursingRecord of this.printData.nursingRecordList) {
-    //   nursingRecord["dateToSort"] = new Date(nursingRecord.recordDate)
-    //   this.nursingRecordList.push(nursingRecord);
-    // }
-    // let test = this.nursingRecordList.sort((a, b) => a.dateToSort.getTime() - b.dateToSort.getTime());
-    // console.log(test);
   }
 
   ngAfterViewChecked(): void {

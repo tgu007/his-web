@@ -156,23 +156,44 @@ import {NursingCardPrintComponent} from './component/group-print/nursing-card-pr
 import {NursingTreatmentCardPrintComponent} from './component/group-print/nursing-treatment-card-print/nursing-treatment-card-print.component';
 import {YbSignInRecordComponent} from './component/group-patient-sign-in/yb-sign-in-record/yb-sign-in-record.component';
 import {PrescriptionListLongTermPrintComponent} from "./component/group-print/prescription-list-long-term-print/prescription-list-long-term-print.component";
-import { DrgRecordComponent } from './component/group-yb/drg-record/drg-record.component';
-import { FeeDaySummaryPrintComponent } from './component/group-print/fee-day-summary-print/fee-day-summary-print.component';
-import { InternalFeeSummaryPrintComponent } from './component/group-print/internal-fee-summary-print/internal-fee-summary-print.component';
-import { PrescriptionReturnOrderPrintComponent } from './component/group-print/prescription-return-order-print/prescription-return-order-print.component';
-import { DrgRecordOperationComponent } from './component/group-yb/drg-record-operation/drg-record-operation.component';
+import {DrgRecordComponent} from './component/group-yb/drg-record/drg-record.component';
+import {FeeDaySummaryPrintComponent} from './component/group-print/fee-day-summary-print/fee-day-summary-print.component';
+import {InternalFeeSummaryPrintComponent} from './component/group-print/internal-fee-summary-print/internal-fee-summary-print.component';
+import {PrescriptionReturnOrderPrintComponent} from './component/group-print/prescription-return-order-print/prescription-return-order-print.component';
+import {DrgRecordOperationComponent} from './component/group-yb/drg-record-operation/drg-record-operation.component';
 import {ChineseMedicineSlipComponent} from "./component/group-print/chinese-medicine-slip/chinese-medicine-slip.component";
-import { SettlementSummaryComponent } from './component/group-yb/settlement-summary/settlement-summary.component';
-import { DepartmentFeeSummaryComponent } from './component/group-fee/department-fee-summary/department-fee-summary.component';
-import { SettlementPaymentRequestComponent } from './component/group-yb/settlement-payment-request/settlement-payment-request.component';
-import { PrintSettlementPaymentRequestComponent } from './component/group-print/print-settlement-payment-request/print-settlement-payment-request.component';
-import { ChangedPrescriptionListPrintComponent } from './component/group-print/changed-prescription-list-print/changed-prescription-list-print.component';
-import { HyInvoicePrintComponent } from './component/group-print/hy-invoice-print/hy-invoice-print.component';
-import { PaymentSummaryComponent } from './component/group-fee/payment-summary/payment-summary.component';
-import { PaymentSummaryPrintComponent } from './component/group-print/payment-summary-print/payment-summary-print.component';
-import { LabTestRequestPrintComponent } from './component/group-print/lab-test-request-print/lab-test-request-print.component';
-import { PreDefinedMedicinePrescriptionComponent } from './component/group-prescription/pre-defined-medicine-prescription/pre-defined-medicine-prescription.component';
-import { PaymentListAllComponent } from './component/group-fee/payment-list-all/payment-list-all.component';
+import {SettlementSummaryComponent} from './component/group-yb/settlement-summary/settlement-summary.component';
+import {DepartmentFeeSummaryComponent} from './component/group-fee/department-fee-summary/department-fee-summary.component';
+import {SettlementPaymentRequestComponent} from './component/group-yb/settlement-payment-request/settlement-payment-request.component';
+import {PrintSettlementPaymentRequestComponent} from './component/group-print/print-settlement-payment-request/print-settlement-payment-request.component';
+import {ChangedPrescriptionListPrintComponent} from './component/group-print/changed-prescription-list-print/changed-prescription-list-print.component';
+import {HyInvoicePrintComponent} from './component/group-print/hy-invoice-print/hy-invoice-print.component';
+import {PaymentSummaryComponent} from './component/group-fee/payment-summary/payment-summary.component';
+import {PaymentSummaryPrintComponent} from './component/group-print/payment-summary-print/payment-summary-print.component';
+import {LabTestRequestPrintComponent} from './component/group-print/lab-test-request-print/lab-test-request-print.component';
+import {PreDefinedMedicinePrescriptionComponent} from './component/group-prescription/pre-defined-medicine-prescription/pre-defined-medicine-prescription.component';
+import {PaymentListAllComponent} from './component/group-fee/payment-list-all/payment-list-all.component';
+import {IntroductionModule} from "../module_introduction/introduction.module";
+import {SettlementPrintComponent} from "./component/group-print/settlement-print/settlement-print.component";
+import {SettlementValidationOverallComponent} from './component/group-yb/settlement-validation-overall/settlement-validation-overall.component';
+import {DepartmentDownloadComponent} from "./component/group-yb/department-download/department-download.component";
+import { EmployeeDownloadComponent } from './component/group-yb/employee-download/employee-download.component';
+import { SignInHistroyDownloadComponent } from './component/group-yb/sign-in-histroy-download/sign-in-histroy-download.component';
+import { DiagnoseDownloadComponent } from './component/group-yb/diagnose-download/diagnose-download.component';
+import { SettlementDownloadComponent } from './component/group-yb/settlement-download/settlement-download.component';
+import { FeeDownloadComponent } from './component/group-yb/fee-download/fee-download.component';
+import { AccumulatedInfoDownloadComponent } from './component/group-yb/accumulated-info-download/accumulated-info-download.component';
+import { SignInByTimeDownloadComponent } from './component/group-yb/sign-in-by-time-download/sign-in-by-time-download.component';
+import { CenterEntityMatchDownloadComponent } from './component/group-yb/center-entity-match-download/center-entity-match-download.component';
+import { CenterEntityMatchTwoDownloadComponent } from './component/group-yb/center-entity-match-two-download/center-entity-match-two-download.component';
+import { CenterEntityLimitDownloadComponent } from './component/group-yb/center-entity-limit-download/center-entity-limit-download.component';
+import { CenterMedicineWestComponent } from './component/group-yb/center-medicine-west/center-medicine-west.component';
+import { CenterMedicineChineseComponent } from './component/group-yb/center-medicine-chinese/center-medicine-chinese.component';
+import { CenterItemComponent } from './component/group-yb/center-item/center-item.component';
+import { CenterDiseaseComponent } from './component/group-yb/center-disease/center-disease.component';
+import { PreSettlementPrintSelectionComponent } from './component/group-patient-sign-in/pre-settlement-print-selection/pre-settlement-print-selection.component';
+import { PreSettlementPrintComponent } from './component/group-print/pre-settlement-print/pre-settlement-print.component';
+import { PatientInsuranceInfoComponent } from './component/group-patient-sign-in/patient-insurance-info/patient-insurance-info.component';
 
 registerLocaleData(zh);
 
@@ -316,7 +337,28 @@ registerLocaleData(zh);
     PaymentSummaryPrintComponent,
     LabTestRequestPrintComponent,
     PreDefinedMedicinePrescriptionComponent,
-    PaymentListAllComponent,],
+    PaymentListAllComponent,
+    SettlementPrintComponent,
+    SettlementValidationOverallComponent,
+    DepartmentDownloadComponent,
+    EmployeeDownloadComponent,
+    SignInHistroyDownloadComponent,
+    DiagnoseDownloadComponent,
+    SettlementDownloadComponent,
+    FeeDownloadComponent,
+    AccumulatedInfoDownloadComponent,
+    SignInByTimeDownloadComponent,
+    CenterEntityMatchDownloadComponent,
+    CenterEntityMatchTwoDownloadComponent,
+    CenterEntityLimitDownloadComponent,
+    CenterMedicineWestComponent,
+    CenterMedicineChineseComponent,
+    CenterItemComponent,
+    CenterDiseaseComponent,
+    PreSettlementPrintSelectionComponent,
+    PreSettlementPrintComponent,
+    PatientInsuranceInfoComponent,
+  ],
   imports: [
     NzAlertModule,
     NzToolTipModule,

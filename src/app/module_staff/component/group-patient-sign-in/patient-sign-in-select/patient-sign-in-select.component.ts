@@ -15,6 +15,7 @@ export class PatientSignInSelectComponent implements OnInit {
   tablePageSize: any = globals.tablePageSize;
   @Output() onSignInSelectedEvent = new EventEmitter<any>();
   searchCode: any;
+  busy: any = false;
 
   constructor(private patientService: PatientService,
               public sessionService: SessionService,) {

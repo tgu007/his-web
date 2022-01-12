@@ -66,6 +66,7 @@
         <th hidden></th>
         <th>名称</th>
         <th>每次剂量</th>
+        <th>已作废</th>
         <th></th>
       </tr>
       </thead>
@@ -125,6 +126,7 @@
             </nz-form-control>
           </ng-template>
         </td>
+        <td><label nz-checkbox [nzChecked]="!lineControl.value.selectMedicine?.enabled" nzDisabled></label></td>
         <td>
           <ng-container *ngIf="!editCache[i].inEdit;">
             <button nz-button nzType="primary" (click)="editLineControl(i)"

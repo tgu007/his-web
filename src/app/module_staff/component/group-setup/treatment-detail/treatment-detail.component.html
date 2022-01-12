@@ -14,6 +14,15 @@
             (onSelectedItemChangedEvent)="this.selectedCenterTreatmentChanged($event)"
           >
           </app-common-dynamic-select>
+          <button nz-button
+                  nzType="primary"
+                  nzSize="small"
+                  [nzLoading]="this.isSaving"
+                  (click)="this.matchTreatment()"
+                  style="float: left; margin-top: 10px"
+          >
+            匹配
+          </button>
         </nz-form-control>
       </nz-form-item>
     </div>

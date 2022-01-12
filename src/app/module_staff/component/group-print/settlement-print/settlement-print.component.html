@@ -1,0 +1,1463 @@
+<div nz-row  style="margin-bottom: 5px; margin-top: 10px" class="title">
+  <span style="font-size: x-large">湖南省衡阳市住院费用结算单</span>
+</div>
+<div nz-row style="width: 100%;color: black; ">
+  <p>
+    参保地区：{{this.printData.settleInfo.ybAreaCode}}
+  </p>
+
+</div>
+<div nz-row style="width: 100%;color: black; ">
+  <div nz-col nzSpan="8">
+    <p style="margin-top: 2mm">
+      医疗机构名称：衡阳市新安康复医院
+    </p>
+  </div>
+
+  <div nz-col nzSpan="8">
+    <p style="margin-top: 2mm">
+      医保登记：二级
+    </p>
+  </div>
+
+  <div nz-col nzSpan="8">
+    <p style="margin-top: 2mm">
+      就诊号：{{this.printData.settlement.mdtrt_id}}
+    </p>
+  </div>
+
+</div>
+
+<div nz-row class="container" style="margin-top: 2mm">
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="12">
+      <div nz-row>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 2mm">
+            姓名
+          </p>
+        </div>
+        <div nz-col nzSpan="5" class="cell">
+          <p style="margin-top: 2mm">
+            {{this.printData.patient.name}}
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 2mm">
+            性别
+          </p>
+        </div>
+        <div nz-col nzSpan="5" class="cell">
+          <p style="margin-top: 2mm">
+            {{this.printData.patient.genderDto.name}}
+          </p>
+        </div>
+        <div nz-col nzSpan="3" class="cell">
+          <p style="margin-top: 2mm">
+            年龄
+          </p>
+        </div>
+        <div nz-col nzSpan="5" class="cell">
+          <p style="margin-top: 2mm">
+            {{this.printData.age}}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <div nz-row>
+        <div nz-col nzSpan="4" class="cell">
+          <p style="margin-top: 2mm">
+            个人编号
+          </p>
+        </div>
+        <div nz-col nzSpan="8" class="cell">
+          <p style="margin-top: 2mm">
+            {{this.printData.cardNumber}}
+          </p>
+        </div>
+        <div nz-col nzSpan="4" class="cell">
+          <p style="margin-top: 2mm">
+            补助类别
+          </p>
+        </div>
+        <div nz-col nzSpan="8" class="cell">
+          <p style="margin-top: 2mm">
+            {{this.printData.settleInfo.identityType}}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        单位名称
+      </p>
+    </div>
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.patient.placeOfWork}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        人员类别
+      </p>
+    </div>
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.patient.occupationDto.name}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        联系电话
+      </p>
+    </div>
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.patient.patientContactDtoList[0].phoneNumber}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        公务员标志
+      </p>
+    </div>
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.cvlserv_flag == '0' ? '否' : '是'}}
+      </p>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="12">
+      <div nz-col nzSpan="4" class="cell">
+        <p style="margin-top: 2mm">
+          住院号
+        </p>
+      </div>
+      <div nz-col nzSpan="4" class="cell">
+        <p style="margin-top: 2mm">
+          {{this.printData.signInNumberCode}}
+        </p>
+      </div>
+
+      <div nz-col nzSpan="4" class="cell">
+        <p style="margin-top: 2mm">
+          科室
+        </p>
+      </div>
+      <div nz-col nzSpan="4" class="cell">
+        <p style="margin-top: 2mm">
+          {{this.printData.departmentTreatment.department.name}}
+        </p>
+      </div>
+
+      <div nz-col nzSpan="4" class="cell">
+        <p style="margin-top: 2mm">
+          床位号
+        </p>
+      </div>
+      <div nz-col nzSpan="4" class="cell">
+        <p style="margin-top: 2mm">
+          {{this.printData.currentBed.name}}
+        </p>
+      </div>
+    </div>
+
+    <div nz-col nzSpan="12">
+      <div nz-col nzSpan="4" class="cell">
+        <p style="margin-top: 2mm; font-size: xx-small; margin-left: 0px">
+          入院日期
+        </p>
+      </div>
+      <div nz-col nzSpan="5" class="cell">
+        <p style="margin-top: 2mm">
+          {{this.printData.signInDate}}
+        </p>
+      </div>
+
+      <div nz-col nzSpan="4" class="cell">
+        <p style="margin-top: 2mm">
+          出院日期
+        </p>
+      </div>
+      <div nz-col nzSpan="5" class="cell">
+        <p style="margin-top: 2mm; font-size: xx-small;">
+          {{this.printData.signOutDate}}
+        </p>
+      </div>
+
+      <div nz-col nzSpan="4" class="cell">
+        <p style="margin-top: 2mm">
+          住院天数
+        </p>
+      </div>
+      <div nz-col nzSpan="2" class="cell">
+        <p style="margin-top: 2mm">
+          {{this.printData.signedInDays}}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        证件号码
+      </p>
+    </div>
+    <div nz-col nzSpan="6" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.patient.idNumber}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        证件类型
+      </p>
+    </div>
+    <div nz-col nzSpan="6" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.patient.idTypeDto.name}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        出院诊断
+      </p>
+    </div>
+    <div nz-col nzSpan="6" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.signOutReq.diagnoseList[0].name}}
+      </p>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        医疗类别
+      </p>
+    </div>
+    <div nz-col nzSpan="6" class="cell">
+      <p style="margin-top: 2mm">
+        普通住院
+      </p>
+    </div>
+
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        结算时间
+      </p>
+    </div>
+    <div nz-col nzSpan="6" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.basicInfo.setl_time}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        主管医生
+      </p>
+    </div>
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.doctor.name}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        个账余额
+      </p>
+    </div>
+    <div nz-col nzSpan="2" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.balc}}
+      </p>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="2" class="cell" style="height: 40mm">
+      <p style="margin-top: 18mm">
+        既往费用
+      </p>
+    </div>
+
+    <div nz-col nzSpan="6">
+      <div nz-row style="width: 100%">
+        <div nz-col nzSpan="10" class="cell" style="height: 20mm">
+          <p style="margin-top: 8mm">
+            本年住院<br>次数
+          </p>
+        </div>
+
+        <div nz-col nzSpan="14" class="cell" style="height: 20mm">
+          <p style="margin-top: 8mm">
+            本年度分段<br>计算费用累计
+          </p>
+        </div>
+      </div>
+
+      <div nz-row style="width: 100%">
+        <div nz-col nzSpan="10" class="cell" style="height: 20mm">
+          <p style="margin-top: 8mm">
+            {{this.printData.settleInfo.accumulatedInfo.currentYearCount}}
+          </p>
+        </div>
+
+        <div nz-col nzSpan="14" class="cell" style="height: 20mm">
+          <p style="margin-top: 8mm">
+            {{this.printData.settleInfo.accumulatedInfo.fdlj}}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div nz-col nzSpan="16">
+      <div nz-row style="width: 100%" style="height: 10mm">
+        <p style="margin-top: 2mm">
+          本年度已发生的住院医疗费用支出
+        </p>
+      </div>
+
+      <div nz-row style="width: 100%">
+        <div nz-col nzSpan="8">
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              医疗费<br>合计
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              已付<br>起付线
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              统筹支付
+            </p>
+          </div>
+        </div>
+
+        <div nz-col nzSpan="8">
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              政策自费
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              政策<br>自付
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              大额基金<br>支付
+            </p>
+          </div>
+        </div>
+
+        <div nz-col nzSpan="8">
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              大病保险<br>合规费用
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              大病保<br>险支付
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              医疗救助<br>支付
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div nz-row style="width: 100%">
+        <div nz-col nzSpan="8">
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              {{this.printData.settleInfo.accumulatedInfo.totalFee }}
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              {{this.printData.settleInfo.accumulatedInfo.paidStartLine }}
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              {{this.printData.settleInfo.accumulatedInfo.fundTongChou}}
+            </p>
+          </div>
+        </div>
+
+        <div nz-col nzSpan="8">
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              {{this.printData.settleInfo.accumulatedInfo.zcZifei}}
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              {{this.printData.settleInfo.accumulatedInfo.zcZifu}}
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              {{this.printData.settleInfo.accumulatedInfo.fundDEJJ}}
+            </p>
+          </div>
+        </div>
+
+        <div nz-col nzSpan="8">
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              {{this.printData.settleInfo.accumulatedInfo.fundDBBXHG }}
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              {{this.printData.settleInfo.accumulatedInfo.fundDBBXZF }}
+            </p>
+          </div>
+
+          <div nz-row nz-col nzSpan="8" style="height: 15mm" class="cell">
+            <p style="margin-top: 2mm">
+              {{this.printData.settleInfo.accumulatedInfo.fundYLJZ  }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        收费项目类别
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        总费用
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        甲类费用
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        乙类费用
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        收费项目类别
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        总费用
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        甲类费用
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        乙类费用
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        西药费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeXY0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeXY1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeXY2}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        中药饮片费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZYYPF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZYYPF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZYYPF2}}
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        中成药费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZhongCheng0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZhongChen1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZhongCheng2}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        诊察费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZCF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZCF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZCF2}}
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        治疗费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZLF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZLF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeZLF2}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        手术费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeSSF}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeSSF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeSSF2}}
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        护理费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeHLF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeHLF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeHLF2}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        卫生材料费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeWSCLF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeWSCLF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeWSCLF2}}
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        化验费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeHYF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeHYF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeHYF2}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        一般诊疗费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeYBZLF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeYBZLF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeYBZLF2}}
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        检查费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeJCF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeJCF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeJCF2}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        挂号费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeGHF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeGHF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeGHF2}}
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        床位费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeCWF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeCWF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeCWF2}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        其他费
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeQTF0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeQTF1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeQTF2}}
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        合计
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeTotal0}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeTotal1}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="3" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settleInfo.feeSummaryInfo.feeTotal2}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="12" class="cell">
+      <p style="margin-top: 2mm">
+
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="4" style="height: 20mm" class="cell">
+      <p style="margin-top: 8mm">
+        政策项
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <div nz-row style="width: 100%" style="height: 10mm" class="cell">
+        <p style="margin-top: 2mm">
+          个人负担
+        </p>
+      </div>
+
+      <div nz-row style="width: 100%">
+        <div nz-col nzSpan="12" style="height: 10mm" class="cell">
+          <p style="margin-top: 2mm">
+            金额
+          </p>
+        </div>
+
+        <div nz-col nzSpan="12" style="height: 10mm" class="cell">
+          <p style="margin-top: 2mm">
+            个人负担比例
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div nz-col nzSpan="8">
+      <div nz-row style="width: 100%" style="height: 10mm" class="cell">
+        <p style="margin-top: 2mm">
+          基金支付
+        </p>
+      </div>
+
+      <div nz-row style="width: 100%">
+        <div nz-col nzSpan="12" style="height: 10mm" class="cell">
+          <p style="margin-top: 2mm">
+            金额
+          </p>
+        </div>
+
+        <div nz-col nzSpan="12" style="height: 10mm" class="cell">
+          <p style="margin-top: 2mm">
+            基金支付比例
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div nz-col nzSpan="4" style="height: 20mm" class="cell">
+      <p style="margin-top: 8mm">
+        合计
+      </p>
+    </div>
+
+
+  </div>
+
+
+  <div nz-row style="width: 100%" *ngFor="let data of this.printData.settleInfo.detailInfo.settlementDetailList">
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{data.polItemName}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{data.selfPayAmt}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{data.selfPayProp}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{data.fundPayAmt}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{data.fundPayProp}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{data.polItemPaySum}}
+      </p>
+    </div>
+
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        合计
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.psn_part_amt}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.fund_pay_sumamt}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.medfee_sumamt}}
+      </p>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        本次医疗费总额
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.medfee_sumamt}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+
+      </p>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        统筹基金支付
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.hifp_pay}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        个人账户支付金额
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.acct_pay}}
+      </p>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        公务员补助支付
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.cvlserv_pay}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        现金支付金额
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.psn_cash_pay}}
+      </p>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        大额基金支付
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.hifob_pay}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        医疗救助支付
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.maf_pay}}
+      </p>
+    </div>
+  </div>
+
+  <div nz-row style="width: 100%">
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        大病保险支付
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.hifmi_pay}}
+      </p>
+    </div>
+
+    <div nz-col nzSpan="8" class="cell">
+      <p style="margin-top: 2mm">
+        其他基金支付
+      </p>
+    </div>
+
+    <div nz-col nzSpan="4" class="cell">
+      <p style="margin-top: 2mm">
+        {{this.printData.settlement.oth_pay}}
+      </p>
+    </div>
+  </div>
+</div>
+
+<div nz-row style="width: 100%;color: black; ">
+  <div nz-col nzSpan="6">
+    <p style="margin-top: 2mm">
+      患者/家属签字：
+    </p>
+  </div>
+
+  <div nz-col nzSpan="6">
+    <p style="margin-top: 2mm">
+      联系电话：
+    </p>
+  </div>
+
+  <div nz-col nzSpan="6">
+    <p style="margin-top: 2mm">
+      经办人：
+    </p>
+  </div>
+
+  <div nz-col nzSpan="6">
+    <p style="margin-top: 2mm">
+      审核人：
+    </p>
+  </div>
+
+</div>
+
+
+
+<!--<div nz-row style="width: 100%">-->
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      全自费-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPayAmount1}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPaymentRatio1}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentAmount1}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentRatio1}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.lineTotal1}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--</div>-->
+
+<!--<div nz-row style="width: 100%">-->
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      乙类先自付-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPayAmount2}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPaymentRatio2}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentAmount2}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentRatio2}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.lineTotal2}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--</div>-->
+
+<!--<div nz-row style="width: 100%">-->
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      超限额自付-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPayAmount3}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPaymentRatio3}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentAmount3}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentRatio3}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.lineTotal3}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--</div>-->
+
+<!--<div nz-row style="width: 100%">-->
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      本次应付起付标准-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPayAmount4}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPaymentRatio4}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentAmount4}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentRatio4}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.lineTotal4}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--</div>-->
+
+<!--<div nz-row style="width: 100%">-->
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      统筹一段-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPayAmount5}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPaymentRatio5}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentAmount5}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentRatio5}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.lineTotal5}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--</div>-->
+
+<!--<div nz-row style="width: 100%">-->
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      统筹二段-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPayAmount6}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPaymentRatio6}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentAmount6}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentRatio6}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.lineTotal6}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--</div>-->
+
+<!--<div nz-row style="width: 100%">-->
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      大额一段-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPayAmount7}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.selfPaymentRatio7}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentAmount7}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.fundPaymentRatio7}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--  <div nz-col nzSpan="4" class="cell">-->
+<!--    <p style="margin-top: 2mm">-->
+<!--      {{this.printData.settleInfo.detailInfo.lineTotal7}}-->
+<!--    </p>-->
+<!--  </div>-->
+
+<!--</div>-->

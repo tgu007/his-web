@@ -378,7 +378,7 @@
                         <li *ngIf="data.status =='执行中' && !data.oneOff" nz-menu-item
                             (click)="this.disablePrescription(data)">停嘱
                         </li>
-                        <li *ngIf="data.status =='执行中'" nz-menu-item
+                        <li *ngIf="data.status =='执行中' || data.status =='已停用'" nz-menu-item
                             (click)="this.cancelPrescription(data)">作废
                         </li>
                         <li *ngIf="data.printSlipTypeOne" nz-menu-item
@@ -444,7 +444,7 @@
 
               </ng-template>
               <td>
-                <ng-template [ngIf]="log.whoCreated == this.sessionService.loginUser.name">
+                <ng-template [ngIf]="log.whoCreated == this.sessionService.loginUser.name || this.sessionService.getUserPermission().superAdmin">
                   <ng-container *ngIf="!editCache[log.uuid].inEdit; else inEdit">
                     <button nz-button nzType="primary" (click)="editLineControl(log.uuid)"
                     ><i nz-icon nzType="edit"></i></button>

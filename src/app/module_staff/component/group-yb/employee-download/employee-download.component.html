@@ -1,0 +1,39 @@
+
+<div nz-row>
+  <nz-select
+    [(ngModel)]="selectEmployeeType"
+    (ngModelChange)="this.reloadData()"
+    style=" float: left; margin-left: 10px; width:300px"
+  >
+    <nz-option nzLabel="医师" nzValue="1"></nz-option>
+    <nz-option nzLabel="护士" nzValue="2"></nz-option>
+    <nz-option nzLabel="药师" nzValue="3"></nz-option>
+  </nz-select>
+</div>
+
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.employeeList" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>证件类型</th>
+      <th>证件号码</th>
+      <th>执业人员代码</th>
+      <th>执业人员姓名</th>
+      <th>医保医师标志</th>
+      <th>开始时间</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.psn_cert_type}}</td>
+      <td>{{data.certno}}</td>
+      <td>{{data.prac_psn_code}}</td>
+      <td>{{data.prac_psn_name}}</td>
+      <td>{{data.hi_dr_flag}}</td>
+      <td>{{data.begntime}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+

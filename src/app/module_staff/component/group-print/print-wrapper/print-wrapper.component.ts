@@ -41,6 +41,8 @@ export class PrintWrapperComponent implements OnInit {
   showHYInvoice: boolean = false;
   showPaymentSummary: boolean = false;
   showLabTestRequest: boolean = false;
+  showSettlementSummary:boolean = false;
+  showPreSettlementList:boolean = false;
 
   constructor(public printService: PrintService,
               public sessionService: SessionService,
@@ -179,6 +181,32 @@ export class PrintWrapperComponent implements OnInit {
       if (printPram.name == 'labTestRequest') {
         this.showLabTestRequest = true;
       }
+
+      if (printPram.name == 'settlementSummary') {
+        this.showSettlementSummary = true;
+      }
+
+      if (printPram.name == 'preSettlementList') {
+        this.showPreSettlementList = true;
+      }
+    });
+
+    this.printService.onPreSettlementListClose.subscribe(() => {
+      setTimeout(() => {
+        this.showPreSettlementList = false;
+      }, 0);
+    });
+
+    this.printService.onSettlementSummaryClose.subscribe(() => {
+      setTimeout(() => {
+        this.showSettlementSummary = false;
+      }, 0);
+    });
+
+    this.printService.onHYInvoiceClose.subscribe(() => {
+      setTimeout(() => {
+        this.showHYInvoice = false;
+      }, 0);
     });
 
     this.printService.onLabTestRequestClose.subscribe(() => {

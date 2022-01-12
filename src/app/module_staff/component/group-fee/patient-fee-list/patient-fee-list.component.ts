@@ -492,7 +492,7 @@ export class PatientFeeListComponent implements OnInit, AfterViewInit {
         if (response) {
           //this.feeDepartmentList.push(response.content);
           this.feeDepartmentList = this.feeDepartmentList.concat(response.content);
-          this.listOfSelectedFeeDepartment = response.content.map(d => d.uuid);
+          this.listOfSelectedFeeDepartment = this.feeDepartmentList.map(d => d.uuid);
         }
       });
 
@@ -503,6 +503,7 @@ export class PatientFeeListComponent implements OnInit, AfterViewInit {
           if (response) {
             //this.feeDepartmentList.push(response.content);
             this.feeDepartmentList = this.feeDepartmentList.concat(response.content);
+            this.listOfSelectedFeeDepartment = this.feeDepartmentList.map(d => d.uuid);
           }
         });
     }

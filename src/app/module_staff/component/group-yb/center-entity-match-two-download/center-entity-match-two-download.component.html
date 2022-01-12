@@ -1,0 +1,47 @@
+<div nz-row>
+  <nz-input-number
+    nz-input
+    [(ngModel)]="this.pageNumber"
+    [nzStep]="1"
+    [nzMin]="1"
+    style=" float: left; margin-left: 10px;"
+  ></nz-input-number>
+
+  <button nz-button nzType="primary" (click)="this.search()"
+          [nzLoading] = "this.busy"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询</button>
+</div>
+
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.datalist" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>定点医药机构编号</th>
+      <th>定点医药机构目录编号</th>
+      <th>定点医药机构目录名称</th>
+      <th>参保机构医保区划</th>
+      <th>目录类别</th>
+      <th>医疗目录编码</th>
+      <th>开始日期</th>
+      <th>结束日期</th>
+      <th>唯一记录号</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.fixmedins_code}}</td>
+      <td>{{data.medins_list_codg}}</td>
+      <td>{{data.medins_list_name}}</td>
+      <td>{{data.insu_admdvs}}</td>
+      <td>{{data.list_type}}</td>
+      <td>{{data.med_list_codg}}</td>
+      <td>{{data.begndate}}</td>
+      <td>{{data.enddate}}</td>
+      <td>{{data.rid}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

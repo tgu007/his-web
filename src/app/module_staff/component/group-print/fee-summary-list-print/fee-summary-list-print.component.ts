@@ -2,6 +2,7 @@ import {AfterViewChecked, Component, OnInit} from '@angular/core';
 import {BasePrint} from "../BasePrint";
 import {PrintService} from "../../../../service/print.service";
 import {SessionService} from "../../../../service/session.service";
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-fee-summary-list-print',
@@ -11,7 +12,9 @@ import {SessionService} from "../../../../service/session.service";
 export class FeeSummaryListPrintComponent extends BasePrint implements OnInit, AfterViewChecked {
 
   constructor(printService: PrintService,
-              public sessionService: SessionService) {
+              public sessionService: SessionService,
+              public datePipe: DatePipe
+  ) {
     super(printService, sessionService);
   }
 

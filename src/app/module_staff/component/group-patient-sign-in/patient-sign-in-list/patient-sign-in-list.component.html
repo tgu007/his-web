@@ -9,6 +9,7 @@
       <nz-option nzLabel="已入院" nzValue="已入院"></nz-option>
       <nz-option nzLabel="待出院" nzValue="待出院"></nz-option>
       <nz-option nzLabel="已出院" nzValue="已出院"></nz-option>
+      <nz-option nzLabel="已取消" nzValue="已取消"></nz-option>
     </nz-select>
 
     <nz-select
@@ -16,14 +17,42 @@
       [(ngModel)]="selectInsuranceType"
       style=" float: left; margin-left: 10px; width:200px"
     >
-      <nz-option nzLabel="医保" nzValue="医保"></nz-option>
-      <nz-option nzLabel="工伤" nzValue="工伤"></nz-option>
       <nz-option nzLabel="自费" nzValue="自费"></nz-option>
+      <nz-option nzLabel="职工基本医疗保险" nzValue="职工基本医疗保险"></nz-option>
+      <nz-option nzLabel="公务员医疗补助" nzValue="公务员医疗补助"></nz-option>
+      <nz-option nzLabel="大额医疗费用补助" nzValue="大额医疗费用补助"></nz-option>
+      <nz-option nzLabel="离休人员医疗保障" nzValue="离休人员医疗保障"></nz-option>
+      <nz-option nzLabel="一至六级残废军人医疗补助" nzValue="一至六级残废军人医疗补助"></nz-option>
+      <nz-option nzLabel="老红军医疗保障" nzValue="老红军医疗保障"></nz-option>
+      <nz-option nzLabel="企业补充医疗保险" nzValue="企业补充医疗保险"></nz-option>
+      <nz-option nzLabel="新型农村合作医疗" nzValue="新型农村合作医疗"></nz-option>
+      <nz-option nzLabel="城乡居民基本医疗保险" nzValue="城乡居民基本医疗保险"></nz-option>
+      <nz-option nzLabel="城镇居民基本医疗保险" nzValue="城镇居民基本医疗保险"></nz-option>
+      <nz-option nzLabel="城乡居民大病医疗保险" nzValue="城乡居民大病医疗保险"></nz-option>
+      <nz-option nzLabel="其他特殊人员医疗保障" nzValue="其他特殊人员医疗保障"></nz-option>
+      <nz-option nzLabel="长期照护保险" nzValue="长期照护保险"></nz-option>
+      <nz-option nzLabel="生育保险" nzValue="生育保险"></nz-option>
     </nz-select>
 
 
     <input nz-input placeholder="病人姓名/住院号" [(ngModel)]="searchCode"
            style=" float: left; margin-left: 10px; width:300px"/>
+
+    <nz-select
+      nzMode="multiple"
+      nzPlaceHolder="住院科室"
+      style="float: left;margin-right: 10px; width:160pt;"
+      [(ngModel)]="listOfSelectedDepartment"
+      [nzMaxTagCount]="2"
+    >
+      <nz-option *ngFor="let department of departmentList" [nzValue]="department.uuid"
+                 [nzLabel]="department.department.name"></nz-option>
+    </nz-select>
+
+    <nz-range-picker [(ngModel)]="filterDateRange"
+                     style="float: left;margin-right: 10px;"
+    ></nz-range-picker>
+
 
     <button nz-button nzType="primary" (click)="reloadPatientSignInList()"
             style=" float: left; margin-left: 10px; ">查询
@@ -165,10 +194,10 @@
                   <li
                     *ngIf="this.uiPermission.cancelSignIn"
                     nz-menu-item (click)="cancelSignIn(patientSignIn.uuid)"
-                    [hidden]="patientSignIn.status != '待入院'">
+                  >
                     <a>取消入院</a>
                   </li>
-                  <ng-template [ngIf]="this.uiPermission.confirmSignIn && patientSignIn.status == '待入院'" >
+                  <ng-template [ngIf]="this.uiPermission.confirmSignIn && patientSignIn.status == '待入院'">
                     <li
                       *ngIf="this.patientSignIn.selfPay"
                       nz-menu-item (click)="confirmSignIn(patientSignIn, false)"
@@ -180,7 +209,7 @@
                       nz-submenu nzTitle="确认入院">
                       <ul>
                         <li nz-menu-item (click)="this.confirmSignIn(patientSignIn, false)">
-                          <a>实体医保卡</a>
+                          <a>调取身份证信息</a>
                         </li>
                         <li nz-menu-item (click)="this.confirmSignIn(patientSignIn, true)">
                           <a>支付宝电子凭证</a>
@@ -226,34 +255,41 @@
                   <li
                     nz-submenu nzTitle="医保">
                     <ul>
-                      <li nz-menu-item
-                          *ngIf="(this.sessionService.getUserPermission().commonComponent.patientSignIn.drgRecord
-                          && patientSignIn.status == '已出院' && !patientSignIn.selfPay) ||
-                          (this.sessionService.getUserPermission().superAdmin)"
-                          (click)="drgRecordClicked(patientSignIn)">
-                        DRG上传
-                      </li>
+                      <!--                      <li nz-menu-item-->
+                      <!--                          *ngIf="(this.sessionService.getUserPermission().commonComponent.patientSignIn.drgRecord-->
+                      <!--                          && patientSignIn.status == '已出院' && !patientSignIn.selfPay) ||-->
+                      <!--                          (this.sessionService.getUserPermission().superAdmin)"-->
+                      <!--                          (click)="drgRecordClicked(patientSignIn)">-->
+                      <!--                        DRG上传-->
+                      <!--                      </li>-->
 
-                      <li [hidden]="patientSignIn.status != '已入院'" nz-menu-item (click)="uploadFee(patientSignIn)">
+                      <li nz-menu-item (click)="uploadFee(patientSignIn)">
                         上传费用
                       </li>
-                      <li [hidden]="patientSignIn.status != '已入院'" nz-menu-item
+                      <li nz-menu-item
                           (click)="deleteAllUploadFee(patientSignIn)">删除所有以上传费用
                       </li>
-                      <li
-                        *ngIf="!patientSignIn.selfPay && patientSignIn.status != '已出院'"
-                        nz-menu-item (click)="ybSignInRecordClicked(patientSignIn)">医保备案信息
-                      </li>
-                      <li nz-menu-item
-                          *ngIf="!patientSignIn.selfPay"
-                          (click)="centerFeeValidation(patientSignIn)">医保对账
-                      </li>
-                      <ng-template [ngIf]="this.sessionService.getUserPermission().superAdmin">
-                        <li nz-menu-item (click)="selfYBSignIn(patientSignIn.uuid)">医保自费入院登记</li>
-                        <li nz-menu-item (click)="cancelYBSignIn(patientSignIn.uuid)">医保入院取消</li>
-                      </ng-template>
+                      <!--                      <li-->
+                      <!--                        *ngIf="!patientSignIn.selfPay && patientSignIn.status != '已出院'"-->
+                      <!--                        nz-menu-item (click)="ybSignInRecordClicked(patientSignIn)">医保备案信息-->
+                      <!--                      </li>-->
+                      <!--                      <li nz-menu-item-->
+                      <!--                          *ngIf="!patientSignIn.selfPay"-->
+                      <!--                          (click)="centerFeeValidation(patientSignIn)">医保对账-->
+                      <!--                      </li>-->
+                      <!--                      <ng-template [ngIf]="this.sessionService.getUserPermission().superAdmin">-->
+                      <!--                        <li nz-menu-item (click)="selfYBSignIn(patientSignIn.uuid)">医保自费入院登记</li>-->
+                      <li nz-menu-item (click)="yBSignIn(patientSignIn.uuid)">医保入院</li>
+                      <li nz-menu-item (click)="cancelYBSignIn(patientSignIn.uuid)">取消医保入院</li>
+                      <li nz-menu-item (click)="ybSignOut(patientSignIn.uuid)">医保出院</li>
+                      <li nz-menu-item (click)="cancelYBSignOut(patientSignIn.uuid)">取消医保出院</li>
+                      <li nz-menu-item (click)="cancelSettlement(patientSignIn.uuid)">取消结算</li>
+
+
+                      <!--                      </ng-template>-->
                     </ul>
                   </li>
+                  <li nz-menu-item (click)="signOutClicked(patientSignIn)">出院证</li>
                   <li
                     *ngIf="this.uiPermission.confirmSignOut"
                     nz-menu-item (click)="this.settlementClicked(patientSignIn)"
@@ -390,3 +426,24 @@
 >
   <app-yb-sign-in-record (recordSaved)="this.reloadPatientSignInList()"></app-yb-sign-in-record>
 </nz-modal>
+
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="signOutModalVisible"
+  nzTitle=出院处理
+  (nzOnCancel)="handleCancel()"
+  nzWidth="1000"
+  [nzFooter]="signOutModalFooter"
+>
+
+  <app-patient-sign-out (signOutRequestSavedEvent)="onSignOutRequestSaved($event)"
+  ></app-patient-sign-out>
+</nz-modal>
+<ng-template #signOutModalFooter>
+  <button nz-button nzType="primary" (click)="handleCancel()">关闭</button>
+  <button nz-button nzType="primary"
+          [nzLoading]=this.patientSignOutComponent.saving
+          (click)="this.okButtonClicked()">保存
+  </button>
+</ng-template>

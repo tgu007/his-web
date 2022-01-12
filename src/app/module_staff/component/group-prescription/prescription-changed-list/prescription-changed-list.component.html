@@ -23,6 +23,11 @@
         (nzOnOk)="dateOkClicked($event)"
         style="float: left;margin-left: 10px"
       ></nz-range-picker>
+
+      <label nz-checkbox [(ngModel)]="this.chkNotOneOff"
+             (ngModelChange)="this.loadChangedPrescriptionLogList()"
+             style=" float: left; margin-left: 10px;">长期医嘱</label>
+
       <button nz-button nzSize="small" nzType="primary" nzShape="circle"
               (click)="this.loadChangedPrescriptionLogList()"
               style="float: left;margin-left: 10px"

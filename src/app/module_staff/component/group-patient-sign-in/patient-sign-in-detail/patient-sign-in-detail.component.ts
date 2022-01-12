@@ -9,6 +9,7 @@ import {FormValidator} from "../../../../../validation/FormValidator";
 import {YbTzService} from "../../../../service/yb-tz.service";
 import {HttpClient} from "@angular/common/http";
 import {BasicService} from "../../../../service/basic.service";
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-patient-sign-in-detail',
@@ -35,6 +36,7 @@ export class PatientSignInDetailComponent implements OnInit {
               private ybService: YbTzService,
               private modal: NzModalService,
               private basicService: BasicService,
+              private datePipe: DatePipe,
   ) {
   }
 
@@ -50,19 +52,22 @@ export class PatientSignInDetailComponent implements OnInit {
       selectInsuranceType: ["", [Validators.required]],
       txtReference: ["", null],
       selectDrgGroup: ["", undefined],
-      selectFromHospital:["", null],
+      selectFromHospital: ["", null],
       diseaseList: this.fb.array([]),
+      dateSignIn: ["", [Validators.required]],
+      selectMedType: ["", [Validators.required]],
+      //selectInsuranceArea: ["", [Validators.required]],
     });
   }
 
-  public initializeSelectionList() {
+  public initializeSelectionList(patientSignInLoaded: boolean) {
 
     this.patientService.getSignInInitializeSelectionList()
       .subscribe(response => {
         if (response) {
           this.initializePrams = response.content;
           this.filterDepartment();
-          this.setDefaultValue();
+          this.setDefaultValue(patientSignInLoaded);
         }
       });
 
@@ -84,7 +89,10 @@ export class PatientSignInDetailComponent implements OnInit {
       reference: data.txtReference,
       drgGroupId: data.selectDrgGroup,
       fromHospitalId: data.selectFromHospital,
-      diseaseIdList: diseaseIdList
+      diseaseIdList: diseaseIdList,
+      signInDate: this.datePipe.transform(data.dateSignIn, 'yyyy-MM-dd HH:mm:ss'),
+      medTypeId: data.selectMedType,
+      //insuranceAreaId: data.selectInsuranceArea,
     };
   }
 
@@ -170,18 +178,18 @@ export class PatientSignInDetailComponent implements OnInit {
   resetUi(patientSignIn: any, patientSignInLoaded = false) {
     this.patientSignInForm.reset();
     this.patientSignInDiseaseTableComponent.resetUi();
-    if (this.initializePrams == undefined)
-      this.initializeSelectionList();
-    else
-      this.setDefaultValue();
-
     this.patientSignIn = patientSignIn;
+    if (this.initializePrams == undefined)
+      this.initializeSelectionList(patientSignInLoaded);
+    else
+      this.setDefaultValue(patientSignInLoaded);
 
-    if (patientSignIn.uuid)
-      if (patientSignInLoaded)
-        this.patchPatientSignInData();
-      else
-        this.loadPatientSignInDetail();
+
+    // if (this.patientSignIn.uuid)
+    //   if (patientSignInLoaded)
+    //     this.patchPatientSignInData();
+    //   else
+    //     this.loadPatientSignInDetail();
   }
 
 
@@ -196,7 +204,7 @@ export class PatientSignInDetailComponent implements OnInit {
       });
   }
 
-  private setDefaultValue() {
+  private setDefaultValue(patientSignInLoaded: boolean) {
     let defaultDoctorId = undefined;
     let currentUserId = this.sessionService.loginUser.uuid;
     if (this.initializePrams.employeeList.map(e => e.uuid).includes(currentUserId))
@@ -212,7 +220,16 @@ export class PatientSignInDetailComponent implements OnInit {
       selectDepartment: departmentList.length > 0 ? departmentList[0].uuid : undefined,
       selectDrgGroup: undefined,
       selectFromHospital: undefined,
+      dateSignIn: new Date(),
+      selectMedType: this.initializePrams.medTypeList.find(t => t.defaultSelection === true).id,
+     // selectInsuranceArea: this.initializePrams.insuranceAreaList.find(t => t.defaultSelection === true).id,
     });
+
+    if (this.patientSignIn.uuid)
+      if (patientSignInLoaded)
+        this.patchPatientSignInData();
+      else
+        this.loadPatientSignInDetail();
   }
 
 
@@ -227,7 +244,10 @@ export class PatientSignInDetailComponent implements OnInit {
       txtReference: this.patientSignIn.reference,
       selectInsuranceType: this.patientSignIn.insuranceType.id,
       selectDrgGroup: this.patientSignIn.drgGroup ? this.patientSignIn.drgGroup.uuid : undefined,
-      selectFromHospital: this.patientSignIn.fromHospital ? this.patientSignIn.fromHospital.uuid : undefined
+      selectFromHospital: this.patientSignIn.fromHospital ? this.patientSignIn.fromHospital.uuid : undefined,
+      dateSignIn: this.patientSignIn.signInDateTime,
+      selectMedType: this.patientSignIn.medType.id,
+      //selectInsuranceArea: this.patientSignIn.insuranceArea.id,
     });
     this.patientSignInDiseaseTableComponent.patchTableFromValue(this.patientSignIn.diagnoseList);
   }
@@ -323,5 +343,15 @@ export class PatientSignInDetailComponent implements OnInit {
           openedSelectComponent.closeDropDown();
       }
     });
+  }
+
+  allowChangeInsuranceType() {
+    if (this.patientSignIn && this.patientSignIn.uuid == undefined) //新病人
+      return false;
+    else if (this.patientSignIn && this.patientSignIn.status != '待入院' && !this.patientSignIn.selfPay)
+      return true;
+
+    return false;
+    //this.patientSignIn?.status =='已入院'
   }
 }

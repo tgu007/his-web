@@ -1,0 +1,48 @@
+<div nz-row>
+  <input nz-input [(ngModel)]="signInNumber"
+         placeholder="输入住院号"
+         style=" float: left; margin-left: 10px; width:300px"/>
+  <button nz-button nzType="primary" (click)="this.searchFee()"
+          [nzLoading] = "this.busy"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询</button>
+</div>
+
+
+
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.feeList" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>明细流水号</th>
+      <th>发生时间</th>
+      <th>数量</th>
+      <th>单价</th>
+      <th>费用总额</th>
+      <th>收费项目等级</th>
+      <th>医保目录编码</th>
+      <th>医保目录名称</th>
+      <th>目录类别</th>
+      <th>医疗目录编码</th>
+      <th>医药机构目录编码</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.feedetl_sn}}</td>
+      <td>{{data.fee_ocur_time}}</td>
+      <td>{{data.cnt}}</td>
+      <td>{{data.pric}}</td>
+      <td>{{data.det_item_fee_sumamt}}</td>
+      <td>{{data.chrgitm_lv}}</td>
+      <td>{{data.hilist_code}}</td>
+      <td>{{data.hilist_name}}</td>
+      <td>{{data.list_type}}</td>
+      <td>{{data.med_list_codg}}</td>
+      <td>{{data.medins_list_codg}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

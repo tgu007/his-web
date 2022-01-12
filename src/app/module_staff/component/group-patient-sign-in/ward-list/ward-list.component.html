@@ -15,14 +15,22 @@
   ></i>
   <nz-layout class="inner-layout">
     <div nz-row>
+      <input nz-input placeholder="病人姓名" [(ngModel)]="searchCode"
+             style=" float: left; margin-left: 10px; width:300px"/>
+
+      <button nz-button nzType="primary" (click)="this.loadWardList(false)"
+              style=" float: left; margin-left: 10px; ">查询
+      </button>
+
+
       <button nz-button nzSize="small" nzType="primary"
-              nzShape="circle" (click)="this.loadWardList()"
-              style="float: left;margin-right: 10px;"
+              nzShape="circle" (click)="this.loadWardList(true)"
+              style="float: left;margin-left: 10px;"
       ><i nz-icon
           nzType="reload"></i>
       </button>
 
-      <label nz-checkbox [(ngModel)]="this.hideEmptyBed" (ngModelChange)="this.loadWardList()">隐藏空床位</label>
+      <label   style="float: left;margin-left: 10px;" nz-checkbox [(ngModel)]="this.hideEmptyBed" (ngModelChange)="this.loadWardList(true)">隐藏空床位</label>
     </div>
     <div nz-row>
       <nz-spin [nzSpinning]="this.isLoading">

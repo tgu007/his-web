@@ -83,11 +83,12 @@
           nzPlaceHolder="费用科室"
           style="float: left;margin-right: 10px; width:160pt;"
           [(ngModel)]="listOfSelectedFeeDepartment"
+          [nzMaxTagCount]="2"
         >
           <nz-option *ngFor="let feeDepartment of feeDepartmentList" [nzValue]="feeDepartment.uuid"
                      [nzLabel]="feeDepartment.department.name"></nz-option>
         </nz-select>
-        <ng-template #tagPlaceHolder let-selectedList> 其余{{ selectedList.length }}个 </ng-template>
+        <ng-template #tagPlaceHolder let-selectedList> 其余{{ selectedList.length }}个</ng-template>
         <nz-select
           nzMode="multiple"
           nzPlaceHolder="费用类型"
@@ -153,10 +154,13 @@
                 <th>单价</th>
                 <th>总价</th>
                 <th>状态</th>
-                <th>上传状态</th>
-<!--                <th>自费比例</th>-->
-                <th>自费自理</th>
-                <th>报销金额</th>
+                <ng-template [ngIf]="!this.patientSignIn.selfPay">
+                  <th>上传状态</th>
+                  <th>收费等级</th>
+                  <th>自费比例</th>
+                  <th>自费</th>
+                  <th>报销金额</th>
+                </ng-template>
                 <th *ngIf="showReturnQuantity">退还数量</th>
                 <th *ngIf="showReturnQuantity"></th>
                 <th *ngIf="!showReturnQuantity"></th>
@@ -241,15 +245,17 @@
                 <td>{{fee.displayUnitAmount}}</td>
                 <td>{{fee.totalAmount}}元</td>
                 <td>{{fee.feeStatus}}</td>
-
-                <td
-                  nz-popover
-                  [nzPopoverTitle]="fee.uploadStatus == '上传出错'?'错误信息':null"
-                  [nzPopoverContent]="fee.uploadStatus =='上传出错'?fee.uploadError:null"
-                >{{fee.uploadStatus}}</td>
-<!--                <td>{{fee.selfRatio}}</td>-->
-                <td>{{fee.selfFeeAmount}}元</td>
-                <td>{{fee.insuranceAmount}}元</td>
+                <ng-template [ngIf]="!this.patientSignIn.selfPay">
+                  <td
+                    nz-popover
+                    [nzPopoverTitle]="fee.uploadStatus == '上传出错'?'错误信息':null"
+                    [nzPopoverContent]="fee.uploadStatus =='上传出错'?fee.uploadError:null"
+                  >{{fee.uploadStatus}}</td>
+                  <td>{{fee.chargeLevel}}</td>
+                  <td>{{fee.selfRatio}}</td>
+                  <td>{{fee.selfZF}}元</td>
+                  <td>{{fee.insuranceAmount}}元</td>
+                </ng-template>
                 <td *ngIf="fee.showReturnQuantity">
                   <nz-input-number
                     nz-input

@@ -1,9 +1,4 @@
 
-.table {
-  display: table;
-  border: 1px solid #cccccc;
-  margin: 5px;
-}
 
 .row {
   display: table-row;
@@ -20,8 +15,14 @@
   display:table-header-group;
 }
 
+
 table, td, th, thead {
+  margin: 5px;
   border: 1px solid black;
   color: black;
   font-family: Arial, "Microsoft YaHei";
+}
+
+div,p {
+  color: black
 }

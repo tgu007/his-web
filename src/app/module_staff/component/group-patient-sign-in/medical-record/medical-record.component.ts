@@ -476,7 +476,7 @@ export class MedicalRecordComponent implements OnInit, OnDestroy {
   hasEditTemplatePermission(medicalRecordType: any) {
     if (this.sessionService.getUserPermission().fullTemplatePermission)
       return true;
-    else if (medicalRecordType.permittedRoleIdList.includes(this.sessionService.loginUser.userRole.uuid) > 0)
+    else if (medicalRecordType && medicalRecordType.permittedRoleIdList.includes(this.sessionService.loginUser.userRole.uuid) > 0)
       return true;
     else
       return false;

@@ -1,0 +1,43 @@
+<div nz-row>
+  <input nz-input [(ngModel)]="signInNumber"
+         placeholder="输入住院号"
+         style=" float: left; margin-left: 10px; width:300px"/>
+  <button nz-button nzType="primary" (click)="this.searchDiagnose()"
+          [nzLoading] = "this.busy"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询</button>
+</div>
+
+
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.diagnoseList" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>诊断类别</th>
+      <th>主诊断标志</th>
+      <th>诊断排序号</th>
+      <th>诊断代码</th>
+      <th>诊断名称</th>
+      <th>科室</th>
+      <th>诊断医生编码</th>
+      <th>诊断医生姓名</th>
+      <th>诊断时间</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.diag_type}}</td>
+      <td>{{data.maindiag_flag}}</td>
+      <td>{{data.diag_srt_no}}</td>
+      <td>{{data.diag_code}}</td>
+      <td>{{data.diag_name}}</td>
+      <td>{{data.diag_dept}}</td>
+      <td>{{data.dise_dor_no}}</td>
+      <td>{{data.dise_dor_name}}</td>
+      <td>{{data.diag_time}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+

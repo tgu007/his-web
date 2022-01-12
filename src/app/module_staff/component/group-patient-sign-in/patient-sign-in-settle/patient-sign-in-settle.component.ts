@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {PatientService} from "../../../../service/patient.service";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {SessionService} from "../../../../service/session.service";
@@ -6,6 +6,8 @@ import {YbTzService} from "../../../../service/yb-tz.service";
 import {HttpClient} from "@angular/common/http";
 import {FeeService} from "../../../../service/fee.service";
 import {PrintService} from "../../../../service/print.service";
+import {PatientSignInDetailComponent} from "../patient-sign-in-detail/patient-sign-in-detail.component";
+import {SettlementSummaryComponent} from "../../group-yb/settlement-summary/settlement-summary.component";
 
 @Component({
   selector: 'app-patient-sign-in-settle',
@@ -20,6 +22,8 @@ export class PatientSignInSettleComponent implements OnInit {
   currentInvoiceNumber: any;
   printInvoiceModalVisible: boolean = false;
   generatingInvoice: any = false;
+  private printSettlementModalVisible: boolean = false;
+  @ViewChild(SettlementSummaryComponent, {static: true}) settlementSummaryComponent: SettlementSummaryComponent;
 
 
   constructor(private patientService: PatientService,
@@ -41,6 +45,7 @@ export class PatientSignInSettleComponent implements OnInit {
     //       this.patientSignIn = response.content;
     //     }
     //   });
+
   }
 
 
@@ -52,16 +57,17 @@ export class PatientSignInSettleComponent implements OnInit {
     //
     // }
     this.isSaving = true;
-    this.ybService.getLocalIpInfo()
-      .toPromise().then(response => {
-      clientUrl["clientUrl"] = response.content;
-      clientUrl["employeeId"] = this.sessionService.loginUser.uuid;
-      clientUrl["employeeName"] = this.sessionService.loginUser.name;
-      this.hisSettle(clientUrl);
-    })
-      .catch(error => {
-        this.processError(error);
-      });
+    this.hisSettle(clientUrl);
+    // this.ybService.getLocalIpInfo()
+    //   .toPromise().then(response => {
+    //   clientUrl["clientUrl"] = response.content;
+    //   clientUrl["employeeId"] = this.sessionService.loginUser.uuid;
+    //   clientUrl["employeeName"] = this.sessionService.loginUser.name;
+    //   this.hisSettle(clientUrl);
+    // })
+    //   .catch(error => {
+    //     this.processError(error);
+    //   });
   }
 
 
@@ -81,8 +87,7 @@ export class PatientSignInSettleComponent implements OnInit {
     this.isSaving = true;
     this.ybService.settle(this.patientSignIn.uuid, clientUrl).toPromise()
       .then(response => {
-        this.isSaving = false;
-        this.patientSignIn.settlement = response.content;
+       this.refresh();
       })
       .catch(error => {
         this.processError(error);
@@ -187,6 +192,25 @@ export class PatientSignInSettleComponent implements OnInit {
       })
   }
 
+  printSettlementClicked() {
+    this.isSaving = true;
+    this.ybService.getSettlementSummary(this.patientSignIn.uuid).toPromise()
+      .then(response => {
+        this.isSaving = false;
+        let pram = this.patientSignIn;
+        pram['settleInfo'] = response.content;
+        this.printService.onPrintClicked.emit({
+          name: 'settlementSummary',
+          data: pram
+        });
+      })
+      .catch(error => {
+      this.processError(error);
+    })
+
+
+  }
+
 
   generateInvoice() {
     this.generatingInvoice = true
@@ -198,11 +222,48 @@ export class PatientSignInSettleComponent implements OnInit {
           name: 'invoice',
           data: response.content
         });
-      })
+      }) .catch(error => {
+      this.generatingInvoice = false
+      this.processError(error);
+    })
   }
 
   handleCancel() {
     this.printInvoiceModalVisible = false;
   }
 
+
+  uploadSettlement() {
+    this.isSaving = true;
+    this.ybService.uploadSettlement(this.patientSignIn.uuid).toPromise()
+      .then(response => {
+        this.isSaving = false;
+        this.message.success("成功上传")
+      })
+      .catch(error => {
+        this.processError(error);
+      })
+  }
+
+  downloadSettlement() {
+    this.isSaving = true;
+    this.ybService.downloadSettlement(this.patientSignIn.uuid).toPromise()
+      .then(response => {
+        this.isSaving = false;
+        this.message.success("下载成功")
+      })
+      .catch(error => {
+        this.processError(error);
+      })
+  }
+
+  refresh() {
+    this.patientService.getSignInDetail(this.patientSignIn.uuid).subscribe(
+      response => {
+        this.patientSignIn = response.content;
+        this.settlementSummaryComponent.paymentAmount = this.patientSignIn.accountBalance * -1;
+        this.isSaving = false;
+      }
+    );
+  }
 }

@@ -42,7 +42,7 @@ export class PaymentListComponent implements OnInit {
     this.loadPaymentList();
   }
 
-  private loadPaymentList() {
+  loadPaymentList() {
     this.patientService.getSignInDetail(this.patientSignIn.uuid).subscribe(
       response => {
         if (response) {

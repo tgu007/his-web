@@ -1,0 +1,33 @@
+<div nz-row>
+  <button nz-button nzType="primary" (click)="this.search()"
+          [nzLoading] = "this.busy"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询</button>
+</div>
+
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.departmentList" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>科室编码</th>
+      <th>科室名称</th>
+      <th>负责人姓名</th>
+      <th>负责人电话</th>
+      <th>科别</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.hosp_dept_codg}}</td>
+      <td>{{data.hosp_dept_name}}</td>
+      <td>{{data.dept_resper_name}}</td>
+      <td>{{data.dept_resper_tel}}</td>
+      <td>{{data.caty}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+
+

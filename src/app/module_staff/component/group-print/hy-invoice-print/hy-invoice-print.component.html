@@ -2,8 +2,8 @@
   <div id="hospitalName" style="width: 70mm; height: 5mm; margin-top: 18mm; margin-left: 16mm">
     <span>衡阳新安康复医院</span>
   </div>
-  <div id="selfPayInfo" style="width: 35mm; height: 5mm; margin-top: 0mm;margin-left: 16mm">
-    <span>个人支付{{this.printData.feeTotalSelf}}元</span>
+  <div id="selfPayInfo" style="width: 100mm; height: 5mm; margin-top: 0mm;margin-left: 16mm">
+    <span>个付:{{this.printData.feeTotalSelf}}元, 基金:{{this.printData.totalFundAmount}}元 </span>
   </div>
 
   <div nz-row style="height:5mm;margin-top: 2mm; margin-left: 16mm;font-size: x-small;" >
@@ -66,7 +66,7 @@
     </div>
 
     <div style="width: 18mm; height: 6.1mm; margin-top: 0mm; margin-left: 23mm; float: left">
-      <span> {{this.printData.feeZL}}</span>
+<!--      <span> {{this.printData.feeZL}}</span>-->
     </div>
   </div>
 
@@ -209,7 +209,7 @@
 
   <div nz-row  style="font-size: x-small; margin-top: 6.3mm; width: 171mm; height: 9mm;margin-left: 16mm;">
     <div style="width: 100mm; height: 9mm; margin-top: 0mm; margin-left: 17mm; float: left">
-      <span> {{this.printData.totalAmountChinese}} ({{this.printData.feeTotalSelf}})</span>
+      <span> {{this.printData.totalAmountChinese}} ({{this.printData.feeTotal}})</span>
     </div>
 
   </div>

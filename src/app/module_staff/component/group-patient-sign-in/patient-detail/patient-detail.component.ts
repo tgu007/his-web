@@ -176,32 +176,35 @@ export class PatientDetailComponent implements OnInit {
       selectMarriageStatus: this.marriageStatusList.find(t => t.defaultSelection === true).id,
       selectOccupation: this.occupationList.find(t => t.defaultSelection === true).id,
       selectIdType: this.idTypeList.find(t => t.defaultSelection === true).id,
-      txtBirthPlace: '浙江省台州市',
-      txtNativePlace: '浙江省',
+      txtBirthPlace: '湖南省衡阳市',
+      txtNativePlace: '湖南省',
     });
   }
 
   readIcCard() {
     this.readingIcCard = true;
-    this.ybService.getLocalIpInfo()
-      .toPromise().then(response => {
-      let clientUrl = {clientUrl: response.content};
-      //clientUrl["clientUrl"] = undefined;
-      this.ybService.readIcCard(clientUrl).toPromise()
-        .then(response => {
-          this.readingIcCard = false;
-          this.patchCardInfo(response);
-        })
-        .catch(error => {
-          this.message.create("error", error.error.message);
-          this.readingIcCard = false;
-        })
-    })
-      .catch(error => {
+    // this.ybService.getLocalIpInfo()
+    //   .toPromise().then(response => {
+    //
+    // })
+    //   .catch(error => {
+    //
+    //     this.message.create("error", error.error.message);
+    //     this.readingIcCard = false;
+    //   });
 
+    //let clientUrl = {clientUrl: response.content};
+    let clientUrl = {clientUrl: undefined};
+    //clientUrl["clientUrl"] = undefined;
+    this.ybService.readIcCard(clientUrl).toPromise()
+      .then(response => {
+        this.readingIcCard = false;
+        //this.patchCardInfo(response);
+      })
+      .catch(error => {
         this.message.create("error", error.error.message);
         this.readingIcCard = false;
-      });
+      })
   }
 
   private patchCardInfo(ybInfo: any) {

@@ -1,0 +1,20 @@
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.data" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>key</th>
+      <th>编码</th>
+      <th>名称</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.id}}</td>
+      <td>{{data.code}}</td>
+      <td>{{data.name}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

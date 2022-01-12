@@ -1,0 +1,16 @@
+
+.container {
+  /*font-weight: bold !important;*/
+  text-align: center !important;
+  border: black 1px solid;
+  width: 20cm;
+  color: black;
+  font-family: Arial,"Microsoft YaHei";
+  border: black 1px solid;
+  font-size: x-small;
+}
+
+.cell {
+  border: black 1px solid;
+  height: 7mm;
+}

@@ -18,6 +18,7 @@ export class PrescriptionChangedListComponent implements OnInit, AfterViewInit {
   filterDateRange: any;
   @ViewChild(PatientSelectComponent, {static: true}) patientSelectComponent: PatientSelectComponent;
   collapsed: any = false;
+  chkNotOneOff: any = false;
 
   constructor(private prescriptionService: PrescriptionService,
               private datePipe: DatePipe,
@@ -73,6 +74,7 @@ export class PrescriptionChangedListComponent implements OnInit, AfterViewInit {
     let filterDto = {
       changedStartDate: this.datePipe.transform(this.filterDateRange[0], 'yyyy-MM-dd HH:mm:ss'),
       changedEndDate: this.datePipe.transform(this.filterDateRange[1], 'yyyy-MM-dd HH:mm:ss'),
+      oneOff:!this.chkNotOneOff,
       patientSignInIdList: this.patientSelectComponent.getSelectedPatientList(),
       //departmentId: this.selectDepartment.uuid,
     };

@@ -44,6 +44,8 @@ export class PrintService {
   onHYInvoiceClose: EventEmitter<any> = new EventEmitter<any>();
   onPaymentSummaryClose: EventEmitter<any> = new EventEmitter<any>();
   onLabTestRequestClose: EventEmitter<any> = new EventEmitter<any>();
+  onSettlementSummaryClose: EventEmitter<any> = new EventEmitter<any>();
+  onPreSettlementListClose: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() {
   }

@@ -12,6 +12,10 @@ import {PatientSignInSettleComponent} from "../patient-sign-in-settle/patient-si
 import {HttpClient} from "@angular/common/http";
 import {FeeService} from "../../../../service/fee.service";
 import {YbSignInRecordComponent} from "../yb-sign-in-record/yb-sign-in-record.component";
+import {PatientSignInInfoComponent} from "../patient-sign-in-Info/patient-sign-in-info.component";
+import {PatientSignOutComponent} from "../patient-sign-out/patient-sign-out.component";
+import {DatePipe} from "@angular/common";
+import {BasicService} from "../../../../service/basic.service";
 
 @Component({
   selector: 'app-patient-sign-in-list',
@@ -42,7 +46,7 @@ export class PatientSignInListComponent implements OnInit {
   qrCodeBase64: any = undefined;
   selectedPatientSignIn: any = undefined;
   filterPendingUploadFee: any = false;
-  selectInsuranceType: any = ["医保", "工商", "自费"];
+  selectInsuranceType: any = [];
   // settleModalVisible: any = false;
   // @ViewChild(PatientSignInSettleComponent, {static: true}) patientSignInSettleComponent: PatientSignInSettleComponent;
   @Output() internalChargeFeeListClickedEvent = new EventEmitter<any>();
@@ -58,6 +62,12 @@ export class PatientSignInListComponent implements OnInit {
   ybSignInRecordModalVisible: any = false;
   @ViewChild(YbSignInRecordComponent, {static: true}) ybSignInRecordComponent: YbSignInRecordComponent;
 
+  signOutModalVisible: any = false;
+  @ViewChild(PatientSignOutComponent, {static: true}) patientSignOutComponent: PatientSignOutComponent;
+  departmentList: any = undefined;
+  listOfSelectedDepartment: any = undefined;
+  filterDateRange: any;
+
 
   constructor(private patientService: PatientService,
               private message: NzMessageService,
@@ -67,14 +77,32 @@ export class PatientSignInListComponent implements OnInit {
               private ybService: YbTzService,
               private feeService: FeeService,
               private modal: NzModalService,
+              private datePipe: DatePipe,
+              private basicService: BasicService,
   ) {
   }
 
   ngOnInit() {
     this.uiPermission = this.sessionService.getUserPermission().commonComponent.patientSignIn;
     this.selectStatus = this.uiPermission.defaultStatus;
+    this.loadDepartmentList();
     this.loadPatientSignInList();
   }
+
+  private loadDepartmentList() {
+    let userDepartmentFilter = {departmentTreatmentType: "病区科室"};
+    if (!this.sessionService.loginUser.uiPermission.fullDepartmentPermission)
+      userDepartmentFilter["departmentTreatmentIdList"] = this.sessionService.loginUser.departmentIdList;
+    this.basicService.getDepartmentList(userDepartmentFilter)
+      .subscribe(response => {
+        if (response) {
+          this.departmentList = response.content;
+          this.listOfSelectedDepartment = this.departmentList.map(d => d.uuid);
+          this.loadPatientSignInList();
+        }
+      });
+  }
+
 
   reloadPatientSignInList() {
     this.loadPatientSignInList();
@@ -87,11 +115,17 @@ export class PatientSignInListComponent implements OnInit {
       searchCode: this.searchCode,
       insuranceTypeList: this.selectInsuranceType
     }
-    if (this.sessionService.getUserPermission().commonComponent.patientSignIn.filterOnDepartment)
-      searchDto["departmentIdList"] = this.sessionService.loginUser.departmentIdList;
+    // if (this.sessionService.getUserPermission().commonComponent.patientSignIn.filterOnDepartment)
+    //   searchDto["departmentIdList"] = this.sessionService.loginUser.departmentIdList;
+    searchDto["departmentIdList"] = this.listOfSelectedDepartment;
     if (this.filterPendingUploadFee)
       searchDto["pendingUploadFee"] = true;
     searchDto["check3024"] = this.patient3024Check;
+
+    if (this.filterDateRange != undefined) {
+      searchDto["startDate"] = this.datePipe.transform(this.filterDateRange[0], 'yyyy-MM-dd HH:mm:ss');
+      searchDto["endDate"] = this.datePipe.transform(this.filterDateRange[1], 'yyyy-MM-dd HH:mm:ss');
+    }
 
     this.patientService.getPatientSignInList(this.currentPageIndex, searchDto)
       .subscribe(response => {
@@ -128,37 +162,51 @@ export class PatientSignInListComponent implements OnInit {
       this.hisConfirmSignIn(clientServerInfo, patientSignIn);
     else {
       this.isLoading = true;
-      this.ybService.getLocalIpInfo()
-        .toPromise().then(response => {
-        clientServerInfo["clientUrl"] = response.content;
-        clientServerInfo["electronicCard"] = readElectronicCard;
-        clientServerInfo["employeeId"] = this.sessionService.loginUser.uuid;
-        clientServerInfo["employeeName"] = this.sessionService.loginUser.name;
-        if (!readElectronicCard)
-          this.hisConfirmSignIn(clientServerInfo, patientSignIn);
-        else
-          this.showHelpInfo(clientServerInfo, patientSignIn);
-      })
-        .catch(error => {
-          this.processError(error);
-        });
+      this.hisConfirmSignIn(clientServerInfo, patientSignIn);
+      // this.ybService.getLocalIpInfo()
+      //   .toPromise().then(response => {
+      //   clientServerInfo["clientUrl"] = response.content;
+      //   clientServerInfo["electronicCard"] = readElectronicCard;
+      //   clientServerInfo["employeeId"] = this.sessionService.loginUser.uuid;
+      //   clientServerInfo["employeeName"] = this.sessionService.loginUser.name;
+      //   if (!readElectronicCard)
+      //     this.hisConfirmSignIn(clientServerInfo, patientSignIn);
+      //   else
+      //     this.showHelpInfo(clientServerInfo, patientSignIn);
+      // })
+      //   .catch(error => {
+      //     this.processError(error);
+      //   });
     }
   }
 
   hisConfirmSignIn(clientServerInfo: any, patientSignIn: any) {
     this.isLoading = true;
+    // this.patientService.confirmSignIn(patientSignIn.uuid, clientServerInfo)
+    //   .toPromise().then(response => {
+    //   this.message.create("success", "入院成功");
+    //   this.reloadPatientSignInList();
+    //   this.isLoading = false;
+    // })
+    //   .catch(error => {
+    //     console.log(error);
+    //     this.processError(error);
+    //   });
+
     this.patientService.confirmSignIn(patientSignIn.uuid, clientServerInfo)
-      .toPromise().then(response => {
-      this.message.create("success", "入院成功");
-      this.reloadPatientSignInList();
-      this.isLoading = false;
-    })
-      .catch(error => {
-        this.processError(error);
-      });
+      .subscribe(response => {
+          this.message.create("success", "入院成功");
+          this.reloadPatientSignInList();
+          this.isLoading = false;
+        },
+        error => {
+          console.log(error);
+          this.processError(error);
+        });
   }
 
   processError(error: any) {
+
     this.message.create("error", error.error.message);
     this.isLoading = false;
   }
@@ -185,6 +233,7 @@ export class PatientSignInListComponent implements OnInit {
     this.qrCodeModalVisible = false;
     this.printInvoiceModalVisible = false;
     this.ybSignInRecordModalVisible = false;
+    this.signOutModalVisible = false;
   }
 
   saveNewSignIn() {
@@ -413,25 +462,28 @@ export class PatientSignInListComponent implements OnInit {
   }
 
   cancelYBSignIn(signInId: any) {
-    this.isLoading = true;
-    let clientServerInfo = {};
-    this.ybService.getLocalIpInfo()
-      .toPromise().then(response => {
-      clientServerInfo["clientUrl"] = response.content;
-      clientServerInfo["employeeId"] = this.sessionService.loginUser.uuid;
-      clientServerInfo["employeeName"] = this.sessionService.loginUser.name;
-      this.hisCancelSignIn(clientServerInfo, signInId);
-    })
-      .catch(error => {
-        this.processError(error);
-      });
+    // this.isLoading = true;
+    // let clientServerInfo = {};
+    // this.ybService.getLocalIpInfo()
+    //   .toPromise().then(response => {
+    //   clientServerInfo["clientUrl"] = response.content;
+    //   clientServerInfo["employeeId"] = this.sessionService.loginUser.uuid;
+    //   clientServerInfo["employeeName"] = this.sessionService.loginUser.name;
+    //   this.hisCancelSignIn(clientServerInfo, signInId);
+    // })
+    //   .catch(error => {
+    //     this.processError(error);
+    //   });
+    this.hisCancelSignIn({}, signInId);
   }
 
   private hisCancelSignIn(clientServerInfo: any, signInId: any) {
+    this.isLoading = true;
     this.ybService.cancelYBSignIn(clientServerInfo, signInId).toPromise()
       .then(response => {
         this.isLoading = false;
         this.message.create("success", "医保入院取消成功");
+        this.loadPatientSignInList();
       })
       .catch(error => {
         this.processError(error);
@@ -471,4 +523,70 @@ export class PatientSignInListComponent implements OnInit {
   }
 
 
+  ybSignOut(signInId: any) {
+    this.isLoading = true;
+    this.ybService.ybSignOut(signInId).toPromise()
+      .then(response => {
+        this.isLoading = false;
+        this.message.create("success", "医保出院成功");
+        //this.loadPatientSignInList();
+      })
+      .catch(error => {
+        this.processError(error);
+      })
+  }
+
+  cancelYBSignOut(signInId: any) {
+    this.isLoading = true;
+    this.ybService.cancelYBSignOut(signInId).toPromise()
+      .then(response => {
+        this.isLoading = false;
+        this.message.create("success", "取消医保出院成功");
+        //this.loadPatientSignInList();
+      })
+      .catch(error => {
+        this.processError(error);
+      })
+  }
+
+  cancelSettlement(signInId: any) {
+    this.isLoading = true;
+    this.ybService.cancelSettlement(signInId).toPromise()
+      .then(response => {
+        this.isLoading = false;
+        this.message.create("success", "取消结算成功");
+        //this.loadPatientSignInList();
+      })
+      .catch(error => {
+        this.processError(error);
+      })
+  }
+
+  signOutClicked(patientSignIn: any) {
+    this.loadSignInDetail(patientSignIn.uuid).then((ret) => {
+      this.patientSignOutComponent.resetUi(ret);
+      this.signOutModalVisible = true;
+    });
+  }
+
+  onSignOutRequestSaved($event: any) {
+    this.loadPatientSignInList();
+  }
+
+  okButtonClicked() {
+    this.patientSignOutComponent.processSignOut();
+  }
+
+  yBSignIn(signInId: any) {
+    this.isLoading = true;
+    this.ybService.yBSignIn(signInId).toPromise()
+      .then(response => {
+        this.isLoading = false;
+        this.message.create("success", "医保入院成功");
+        this.loadPatientSignInList();
+      })
+      .catch(error => {
+        this.processError(error);
+      })
+  }
 }

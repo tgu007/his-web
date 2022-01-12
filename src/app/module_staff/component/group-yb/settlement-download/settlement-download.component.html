@@ -1,0 +1,111 @@
+<div nz-row>
+  <input nz-input [(ngModel)]="signInNumber"
+         placeholder="输入住院号"
+         style=" float: left; margin-left: 10px; width:300px"/>
+  <button nz-button nzType="primary" (click)="this.searchSettlement()"
+          [nzLoading] = "this.busy"
+          style=" float: left; margin-left: 10px;"
+  ><i nz-icon nzType="search"></i>查询</button>
+</div>
+
+<div nz-row>
+  <div>
+    <nz-descriptions [nzColumn]="{ xxl: 6, xl: 6, lg: 6, md: 4, sm: 2, xs: 1 }" nzBordered nzSize="small">
+      <nz-descriptions-item nzTitle="费用总额">
+        {{this.settlement ? this.settlement.medfee_sumamt : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="全自费金额">
+        {{this.settlement ? this.settlement.psn_part_amt : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="超限价自费费用">
+        {{this.settlement ? this.settlement.overlmt_selfpay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="先行自付金额">
+        {{this.settlement ? this.settlement.preselfpay_amt : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="符合政策范围金额">
+        {{this.settlement ? this.settlement.inscp_scp_amt : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="实际支付起付线">
+        {{this.settlement ? this.settlement.act_pay_dedc : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="基本医疗保险统筹基金支出">
+        {{this.settlement ? this.settlement.hifp_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="基本医疗保险统筹基金支付比例">
+        {{this.settlement ? this.settlement.pool_prop_selfpay : undefined}}
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="公务员医疗补助资金支出">
+        {{this.settlement ? this.settlement.cvlserv_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="企业补充医疗保险基金支出">
+        {{this.settlement ? this.settlement.hifes_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="居民大病保险资金支出">
+        {{this.settlement ? this.settlement.hifmi_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="职工大额医疗费用补助基金支出">
+        {{this.settlement ? this.settlement.hifob_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="医疗救助基金支出">
+        {{this.settlement ? this.settlement.maf_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="医院负担金额">
+        {{this.settlement ? this.settlement.hosp_part_amt : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="其他支出">
+        {{this.settlement ? this.settlement.oth_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="基金支付总额">
+        {{this.settlement ? this.settlement.fund_pay_sumamt : undefined}}元
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="个人负担总金额">
+        {{this.settlement ? this.settlement.psn_part_amt : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="个人账户支出">
+        {{this.settlement ? this.settlement.acct_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="个人现金支出">
+        {{this.settlement ? this.settlement.psn_cash_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="个人账户共济支付金额">
+        {{this.settlement ? this.settlement.acct_mulaid_pay : undefined}}元
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="余额">
+        {{this.settlement ? this.settlement.balc : undefined}}元
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </div>
+</div>
+
+
+<div nz-row>
+  <nz-table #basicTable [nzData]="this.settlementDetailList" nzSize="small"
+  >
+    <thead>
+    <tr>
+      <th>代码</th>
+      <th>名称</th>
+      <th>个人支付</th>
+      <th>个人比例</th>
+      <th>基金支付</th>
+      <th>基金比例</th>
+      <th>合计</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{data.polItemCode}}</td>
+      <td>{{data.polItemName}}</td>
+      <td>{{data.selfPayAmt}}</td>
+      <td>{{data.selfPayProp}}</td>
+      <td>{{data.fundPayAmt}}</td>
+      <td>{{data.fundPayProp}}</td>
+      <td>{{data.polItemPaySum}}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+

@@ -153,7 +153,7 @@ export class TreatmentDetailComponent implements OnInit {
         });
   }
 
-  private matchTreatment() {
+  matchTreatment() {
     this.isSaving = true;
     this.ybService.matchTreatment(this.treatment.uuid)
       .subscribe(response => {

@@ -235,8 +235,9 @@
             <th>总价</th>
             <th>状态</th>
             <th>上传状态</th>
+            <th>收费等级</th>
             <th>自费比例</th>
-            <th>自费金额</th>
+            <th>自费</th>
             <th>报销金额</th>
             <th></th>
           </tr>
@@ -286,8 +287,9 @@
                 [nzPopoverTitle]="fee.uploadStatus == '上传出错'?'错误信息':null"
                 [nzPopoverContent]="fee.uploadStatus =='上传出错'?fee.uploadError:null"
               >{{fee.uploadStatus}}</td>
+              <td>{{fee.chargeLevel}}</td>
               <td>{{fee.selfRatio}}</td>
-              <td>{{fee.selfFeeAmount}}元</td>
+              <td>{{fee.selfZF}}元</td>
               <td>{{fee.insuranceAmount}}元</td>
               <td>
                 <ng-template [ngIf]="fee.showReturnQuantity">
