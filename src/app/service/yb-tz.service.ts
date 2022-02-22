@@ -66,8 +66,9 @@ export class YbTzService {
     return this.appService.httpPost(`api/yb/${entityType}/match`);
   }
 
-  readIcCard(clientUrl: any) {
-    return this.appService.httpPost(`api/yb/patient/ic_card/read`, clientUrl);
+  readIcCard() {
+    //return this.appService.httpPost(`api/yb/patient/ic_card/read`);
+    return this.appService.httpGetLocal(`http://127.0.0.1:8999/readCard`);
   }
 
   insuranceToSelfPay(patientSignInId: any) {
@@ -304,5 +305,9 @@ export class YbTzService {
 
   yBSignIn(signInId: any) {
     return this.appService.httpPost(`api/yb/patient/sign_in/signIn/${signInId}`);
+  }
+
+  yBSignInManual(signInId: any, cardInfo: any) {
+    return this.appService.httpPost('api/yb/patient/sign_in/sign_in/read_card_manual/' + signInId, cardInfo);
   }
 }

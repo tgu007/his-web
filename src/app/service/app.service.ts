@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment";
 import {BehaviorSubject, Observable, of} from "rxjs";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {catchError} from "rxjs/operators";
 import {NzMessageService} from "ng-zorro-antd";
@@ -39,6 +39,27 @@ export class AppService {
         catchError(this.handleError())
       );
   }
+
+  public httpGetLocal(url: string): Observable<any> {
+    let prams:HttpParams  = new HttpParams();
+    prams.append("cardType", "03")
+
+    let  headers:any = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': this.token()
+    });
+    //return this.http.get(this.baseUrl + '/' + url)
+    return this.http.get(url, {headers:headers, params:prams} )
+      .pipe(
+        catchError(this.handleError())
+      );
+  }
+
+  // let params = new HttpParams();
+  // params = params.append('var1', val1);
+  // params = params.append('var2', val2);
+  //
+  // this.http.get(StaticSettings.BASE_URL, {params: params}).subscribe(...);
 
 
   public httpPost(url: string, content?: any, serverUrl: any = this.baseUrl,): Observable<any> {

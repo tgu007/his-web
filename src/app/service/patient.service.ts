@@ -44,6 +44,7 @@ export class PatientService {
     return this.appService.httpPost('api/patient/sign_in/confirm/' + signInId, clientServerInfo);
   }
 
+
   cancelSignIn(signInId: any) {
     return this.appService.httpPost('api/patient/sign_in/cancel/' + signInId);
   }
@@ -217,4 +218,6 @@ export class PatientService {
   getLastSignInMedicalRecordList(signInId: any) {
     return this.appService.httpPost(`api/patient/${signInId}/medical_record/last_sign_in/list`);
   }
+
+
 }

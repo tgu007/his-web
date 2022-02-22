@@ -67,6 +67,8 @@ export class PatientSignInListComponent implements OnInit {
   departmentList: any = undefined;
   listOfSelectedDepartment: any = undefined;
   filterDateRange: any;
+  showCardInfoModal: boolean;
+  cardInfo: any = undefined;
 
 
   constructor(private patientService: PatientService,
@@ -156,28 +158,62 @@ export class PatientSignInListComponent implements OnInit {
 
   }
 
+  confirmSignInManualClicked(patientSignIn: any) {
+    this.showCardInfoModal = true;
+    this.selectedPatientSignIn = patientSignIn;
+  }
+
+  confirmSignInManual() {
+    this.isLoading = true;
+    this.ybService.yBSignInManual(this.selectedPatientSignIn.uuid, this.cardInfo)
+      .subscribe(response => {
+          this.message.create("success", "入院成功");
+          this.reloadPatientSignInList();
+          this.showCardInfoModal = false;
+          this.isLoading = false;
+        },
+        error => {
+          console.log(error);
+          this.processError(error);
+        });
+  }
+
   confirmSignIn(patientSignIn: any, readElectronicCard) {
     let clientServerInfo = {clientUrl: ''};
-    if (patientSignIn.selfPay)
-      this.hisConfirmSignIn(clientServerInfo, patientSignIn);
-    else {
+    if (readElectronicCard) {
+      //读卡
       this.isLoading = true;
+      this.ybService.readIcCard()
+        .subscribe(response => {
+            console.log(response);
+            this.isLoading = false;
+          },
+          error => {
+            console.log(error);
+            this.processError(error);
+          });
+    } else
       this.hisConfirmSignIn(clientServerInfo, patientSignIn);
-      // this.ybService.getLocalIpInfo()
-      //   .toPromise().then(response => {
-      //   clientServerInfo["clientUrl"] = response.content;
-      //   clientServerInfo["electronicCard"] = readElectronicCard;
-      //   clientServerInfo["employeeId"] = this.sessionService.loginUser.uuid;
-      //   clientServerInfo["employeeName"] = this.sessionService.loginUser.name;
-      //   if (!readElectronicCard)
-      //     this.hisConfirmSignIn(clientServerInfo, patientSignIn);
-      //   else
-      //     this.showHelpInfo(clientServerInfo, patientSignIn);
-      // })
-      //   .catch(error => {
-      //     this.processError(error);
-      //   });
-    }
+
+    // if (patientSignIn.selfPay)
+    //   this.hisConfirmSignIn(clientServerInfo, patientSignIn);
+    // else {
+    //   this.hisConfirmSignIn(clientServerInfo, patientSignIn);
+    // this.ybService.getLocalIpInfo()
+    //   .toPromise().then(response => {
+    //   clientServerInfo["clientUrl"] = response.content;
+    //   clientServerInfo["electronicCard"] = readElectronicCard;
+    //   clientServerInfo["employeeId"] = this.sessionService.loginUser.uuid;
+    //   clientServerInfo["employeeName"] = this.sessionService.loginUser.name;
+    //   if (!readElectronicCard)
+    //     this.hisConfirmSignIn(clientServerInfo, patientSignIn);
+    //   else
+    //     this.showHelpInfo(clientServerInfo, patientSignIn);
+    // })
+    //   .catch(error => {
+    //     this.processError(error);
+    //   });
+    //}
   }
 
   hisConfirmSignIn(clientServerInfo: any, patientSignIn: any) {
@@ -234,6 +270,7 @@ export class PatientSignInListComponent implements OnInit {
     this.printInvoiceModalVisible = false;
     this.ybSignInRecordModalVisible = false;
     this.signOutModalVisible = false;
+    this.showCardInfoModal = false;
   }
 
   saveNewSignIn() {
@@ -589,4 +626,7 @@ export class PatientSignInListComponent implements OnInit {
         this.processError(error);
       })
   }
+
+
+
 }

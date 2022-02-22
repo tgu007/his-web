@@ -181,31 +181,31 @@ export class PatientDetailComponent implements OnInit {
     });
   }
 
-  readIcCard() {
-    this.readingIcCard = true;
-    // this.ybService.getLocalIpInfo()
-    //   .toPromise().then(response => {
-    //
-    // })
-    //   .catch(error => {
-    //
-    //     this.message.create("error", error.error.message);
-    //     this.readingIcCard = false;
-    //   });
-
-    //let clientUrl = {clientUrl: response.content};
-    let clientUrl = {clientUrl: undefined};
-    //clientUrl["clientUrl"] = undefined;
-    this.ybService.readIcCard(clientUrl).toPromise()
-      .then(response => {
-        this.readingIcCard = false;
-        //this.patchCardInfo(response);
-      })
-      .catch(error => {
-        this.message.create("error", error.error.message);
-        this.readingIcCard = false;
-      })
-  }
+  // readIcCard() {
+  //   this.readingIcCard = true;
+  //   // this.ybService.getLocalIpInfo()
+  //   //   .toPromise().then(response => {
+  //   //
+  //   // })
+  //   //   .catch(error => {
+  //   //
+  //   //     this.message.create("error", error.error.message);
+  //   //     this.readingIcCard = false;
+  //   //   });
+  //
+  //   //let clientUrl = {clientUrl: response.content};
+  //   let clientUrl = {clientUrl: undefined};
+  //   //clientUrl["clientUrl"] = undefined;
+  //   this.ybService.readIcCard(clientUrl).toPromise()
+  //     .then(response => {
+  //       this.readingIcCard = false;
+  //       //this.patchCardInfo(response);
+  //     })
+  //     .catch(error => {
+  //       this.message.create("error", error.error.message);
+  //       this.readingIcCard = false;
+  //     })
+  // }
 
   private patchCardInfo(ybInfo: any) {
     let gender = this.genderList.find(g => g.extraInfo == ybInfo.xb);

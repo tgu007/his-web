@@ -212,7 +212,10 @@
                           <a>调取身份证信息</a>
                         </li>
                         <li nz-menu-item (click)="this.confirmSignIn(patientSignIn, true)">
-                          <a>支付宝电子凭证</a>
+                          <a>医保读卡</a>
+                        </li>
+                        <li nz-menu-item (click)="this.confirmSignInManualClicked(patientSignIn)">
+                          <a>医保读卡临时</a>
                         </li>
                       </ul>
                     </li>
@@ -447,3 +450,16 @@
           (click)="this.okButtonClicked()">保存
   </button>
 </ng-template>
+
+<nz-modal
+  [nzMaskClosable]=false
+  [(nzVisible)]="showCardInfoModal"
+  nzTitle=输入医保卡信息
+  (nzOnCancel)="handleCancel()"
+  nzWidth="800"
+  [nzOkText]="'读卡入院'"
+  (nzOnOk)="this.confirmSignInManual()"
+  [nzOkLoading]="this.isLoading"
+>
+  <textarea rows="5" nz-input [(ngModel)]="this.cardInfo"></textarea>
+</nz-modal>
